@@ -1,4 +1,4 @@
-// "node gemini.js" to run
+// "npm start" to run
 
 require('dotenv').config()
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -17,17 +17,13 @@ async function run() {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
   let result = await chat.sendMessage(prompt);
-  var code_str = result.response.text();
-  console.log(code_str);
+  var response = result.response.text();
+  console.log(response);
 
   prompt = prompt.concat("\n- It should be different from any previous scripts");
 
   result = await chat.sendMessage(prompt);
   console.log(result.response.text());
-}
-
-function separateCodeAndDesc(response) {
-  
 }
 
 run();
