@@ -7,16 +7,28 @@
 </head>
 <body>
     <form>
-        <input type="text" id="input"/>
+        <input type="text" id="context"/>
         <button id="get">get</button>
         <button id="get2">get2</button>
         <button id="post">post</button>
+        <label for="cars">Choose a topic:</label>
+        <select id="topics">
+            <option value="DataFrame">DataFrame</option>
+            <option value="Normalised Mutual Information">NMI (Normalised Mutual Information)</option>
+            <option value="Sentence splitting using nltk">Sentence splitting using nltk</option>
+            <option value="Correlation">Correlation</option>
+            <option value="Linear Regression">Linear Regression</option>
+            <option value="Decision Tree Classifier">Decision Tree Classifier</option>
+            <option value="Reading/Writing CSV files">Reading/Writing CSV files</option>
+        </select>
     </form>
     <script>
         const getBtn = document.getElementById('get')
         const getBtn2 = document.getElementById('get2')
         const postBtn = document.getElementById('post')
-        const input = document.getElementById('input')
+        const context = document.getElementById('context')
+        const topic = document.getElementById("topics")
+
 
         const baseURL = 'http://localhost:8383/'
         getBtn.addEventListener('click', getInfo)
@@ -30,12 +42,12 @@
             console.log(res)
             console.log("Used get info")
             const data = await res.json()
-            input.value = data.info
+            context.value = data.info
         }
 
         async function postInfo(e) {
             e.preventDefault()
-            if (input.value == '') {
+            if (context.value == '') {
                 return
             }
             const res = await fetch(baseURL, {
@@ -44,7 +56,8 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify ({
-                    parcel: input.value // whatever is in the const input will be sent
+                    parcel: context.value + "|" +topic.value // whatever is in the const input will be sent
+                    //BETTER WAY TO DO THIS ????^^^
                 })
             })
             console.log(res)
@@ -60,7 +73,7 @@
             console.log(res)
             console.log("used second get info")
             const data = await res.json()
-            input.value = data.info
+            context.value = data.info
         }
 
 

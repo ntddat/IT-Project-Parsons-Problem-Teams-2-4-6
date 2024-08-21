@@ -4,6 +4,7 @@
   "description": "Verified to be working (Huy Minh Do)",
   "main": "index.js",
   "dependencies": {
+    "@google/generative-ai": "^0.17.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "string-format": "^2.0.0"
