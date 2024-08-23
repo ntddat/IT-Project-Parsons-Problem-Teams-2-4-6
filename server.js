@@ -2,6 +2,7 @@ const express = require('express')
 const format = require('string-format')
 const app = express()
 const port = 8383
+var answer = "Haven't queried yet";
 
 require('dotenv').config()
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -20,11 +21,7 @@ async function askGemini(topic, context) {
     const chat = model.startChat({ history: [] })
     let result = await chat.sendMessage(prompt);
     console.log(result.response.text());
-
-    prompt = prompt.concat("that's different from the last one");
-
-    result = await chat.sendMessage(prompt);
-    console.log(result.response.text());
+    answer = result.response.text();
 }
 
 
@@ -35,21 +32,13 @@ app.use(express.static('public'))
 app.use(express.json())
 
 app.get('/info', (req, res) => {
-    //res.status(200).send('<h1>hi<h1/>')
-    res.status(200).json({info: 'preset text :)'})
+    res.status(200).json({info: answer})
 })
 
-app.get('/info2', (req, res) => {
-    //res.status(200).send('<h1>hi<h1/>')
-    res.status(200).json({info: 'OTHER THING'})
-})
 
 app.post('/', (req,res) => {
     const {parcel} = req.body
-    console.log("PARCEL:" + parcel)
     const arr = parcel.split("|")
-    console.log("PARCEL:" + arr[0])
-    console.log("PARCEL:" + arr[1])
     topic = arr[0]
     context = arr[1]
     

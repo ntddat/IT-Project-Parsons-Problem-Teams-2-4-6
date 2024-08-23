@@ -9,9 +9,8 @@
     <form>
         <input type="text" id="context"/>
         <button id="get">get</button>
-        <button id="get2">get2</button>
-        <button id="post">post</button>
-        <label for="cars">Choose a topic:</label>
+        <button id="post">Query Gemini</button>
+        <label>Choose a topic:</label>
         <select id="topics">
             <option value="DataFrame">DataFrame</option>
             <option value="Normalised Mutual Information">NMI (Normalised Mutual Information)</option>
@@ -24,16 +23,14 @@
     </form>
     <script>
         const getBtn = document.getElementById('get')
-        const getBtn2 = document.getElementById('get2')
         const postBtn = document.getElementById('post')
         const context = document.getElementById('context')
         const topic = document.getElementById("topics")
-
+        const answer = document.getElementById("answer")
 
         const baseURL = 'http://localhost:8383/'
         getBtn.addEventListener('click', getInfo)
         postBtn.addEventListener('click', postInfo)
-        getBtn2.addEventListener('click', getInfo2)
         async function getInfo(e) {
             e.preventDefault()
             const res = await fetch(baseURL + "info/", {
@@ -42,7 +39,8 @@
             console.log(res)
             console.log("Used get info")
             const data = await res.json()
-            context.value = data.info
+            console.log(data)
+            answer.value = data.info
         }
 
         async function postInfo(e) {
@@ -63,17 +61,6 @@
             console.log(res)
             console.log("Used post")
 
-        }
-
-        async function getInfo2(e) {
-            e.preventDefault()
-            const res = await fetch("http://localhost:8383/info2", {
-                method: 'GET'
-            })
-            console.log(res)
-            console.log("used second get info")
-            const data = await res.json()
-            context.value = data.info
         }
 
 
