@@ -8,5 +8,5 @@ eslint.config.mjs
 # testing outputs
 runs/
 
-# ignore node modules
+# Ignore node_modules
 node_modules/

@@ -5,6 +5,7 @@ require('dotenv').config()
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const parsers = require("./OutputParser");
 const topics = require("./TopicsContexts");
+const { PythonShell } = require('python-shell')
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -14,33 +15,6 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 // DataFrames, Normalized Mutual Information, Sentence splitting using NLTK
 // Correlation, Linear Regression, Decision Tree Classifier, Read/Write CSV files
 
-function generateFromPrompt() {
-
-  // given a prompt, give the output in json 
-  let prompt = "Create a Python script with the following requirements:\n"
-    
-    // topic + context
-    .concat("- The code must create a Linear Regression model\n")
-    .concat("- The code must use the Scikit Learn library\n")
-    .concat("- The code must create the model from a CSV file\n")
-    
-    // code formatting requirements
-    .concat("- The code must not contain comment\n")
-    .concat("- The code must not contain two or more consecutive newline characters\n")
-    .concat("- The code must be written with 12 lines")
-    
-    // response format requirements
-    .concat("Give a response in JSON file format with the following attributes:\n")
-    .concat("- Code: The generated code.\n")
-    .concat("- Description: Briefly describe what the code does\n")
-    .concat("- ExpectedOutput: Briefly describe what the code is supposed to output\n")
-    .concat("- CSV: If the code reads from any CSV file(s), give an example CSV; otherwise, leave this blank\n");
-    
-
-  return prompt;
-
-}
-
 function originalPrompt() {
   var prompt = "Create a Python script with the following requirements:\n";
   prompt = prompt.concat("- The code should be 10 lines long\n-It should be about normalized linear regression and plotting\n- It should be about the animal koala\n- It should not have any comments in the code\n- If it uses any extra files, give the file back\n- It should give a description and expected output of the code snippet\n");
@@ -49,17 +23,22 @@ function originalPrompt() {
 
 async function run() {
   
-  let prompt = generateFromPrompt();
-
   // Starting a full chat
   const chat = model.startChat({ history: [] })
   
   // another prompt using the original one 
-  let prompt2 = topics.generatePrompt(topics.TOPICS.DecisionTree);
-  let another = await chat.sendMessage(prompt2);
+  let prompt = topics.generatePrompt(topics.TOPICS.DecisionTree);
+  let another = await chat.sendMessage(prompt);
   let resp = another.response.text();
   console.log(resp);
   console.log(parsers.outputParserJson(resp));
+  // Running the response through python interpreter
+  /*
+  PythonShell.runString(response, null).then(messages=>{
+    console.log("Output:\n");
+    console.log(messages);
+  });
+  */
   
 }
 
