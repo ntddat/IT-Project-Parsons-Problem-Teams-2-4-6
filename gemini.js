@@ -32,8 +32,9 @@ function generateFromPrompt() {
     // response format requirements
     .concat("Give a response in JSON file format with the following attributes:\n")
     .concat("- Code: The generated code.\n")
-    .concat("- Description: Briefly describe what the code does")
-    .concat("- CSV: If the code reads from any CSV file(s), give an example CSV; otherwise, leave this blank");
+    .concat("- Description: Briefly describe what the code does\n")
+    .concat("- ExpectedOutput: Briefly describe what the code is supposed to output\n")
+    .concat("- CSV: If the code reads from any CSV file(s), give an example CSV; otherwise, leave this blank\n");
     
 
   return prompt;
@@ -43,7 +44,6 @@ function generateFromPrompt() {
 function originalPrompt() {
   var prompt = "Create a Python script with the following requirements:\n";
   prompt = prompt.concat("- The code should be 10 lines long\n-It should be about normalized linear regression and plotting\n- It should be about the animal koala\n- It should not have any comments in the code\n- If it uses any extra files, give the file back\n- It should give a description and expected output of the code snippet\n");
-  prompt += "Format the response in JSON format";
   return prompt;
 }
 
@@ -53,29 +53,14 @@ async function run() {
 
   // Starting a full chat
   const chat = model.startChat({ history: [] })
-  //let result = await chat.sendMessage(prompt);
-  //var response = result.response.text();
-  //console.log("Raw JSON output");
-  //console.log(response);
-  //
-  //// right now the response is wrapped around ```json{}```, we need to get the thing out 
-  //let parsedData = parsers.outputParserJson(response);
-  //console.log(parsedData);
-
+  
   // another prompt using the original one 
-  let prompt2 = originalPrompt();
+  let prompt2 = topics.generatePrompt(topics.TOPICS.DecisionTree);
   let another = await chat.sendMessage(prompt2);
-  // console.log("Another one:");
-  // console.log("Prompt:\n".concat(prompt2));
   let resp = another.response.text();
   console.log(resp);
-  // console.log("----------------------------------------");
-  // let out = parsers.outputParser(resp);
-  // out.forEach(E => {
-  //   console.log(E);
-  //   console.log("----------------------------------------");
-  // });
-  // console.log(out.length);
+  console.log(parsers.outputParserJson(resp));
+  
 }
 
 run();
