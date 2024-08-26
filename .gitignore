@@ -1,5 +1,12 @@
 # Ignoring .env files (for the API key)
 .env
 .env.test
+
+# linters to use for neovim
 eslint.config.mjs
+
+# testing outputs
 runs/
+
+# ignore node modules
+node_modules/
