@@ -2,5 +2,11 @@
 .env
 .env.test
 
+# linters to use for neovim
+eslint.config.mjs
+
+# testing outputs
+runs/
+
 # Ignore node_modules
 node_modules/
