@@ -1,11 +1,20 @@
+
+// Importing packages
+require('dotenv').config()
+const { PythonShell } = require('python-shell')
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const fs = require('fs');
 const express = require('express')
 const format = require('string-format')
 const app = express()
+
+// Importing our modules
+const parsers = require("./OutputParser");
+const topics = require("./TopicsContexts");
+
+// Constants
 const port = 8383
 var answer = "Haven't queried yet";
-
-require('dotenv').config()
-const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -14,16 +23,49 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
 // DataFrames, Normalized Mutual Information, Sentence splitting using NLTK
 // Correlation, Linear Regression, Decision Tree Classifier, Read/Write CSV files
+
 async function askGemini(topic, context) {
-    var prompt = "Create a Python code with the following requirements: The code should be less than 10 lines, It should be about " + topic + ", It should be about " + context + ", It should NOT have comments in the code, Give me a description of the code and the expected output";
-    console.log(prompt)
-    // Starting a full chat
-    const chat = model.startChat({ history: [] })
-    let result = await chat.sendMessage(prompt);
-    console.log(result.response.text());
-    answer = result.response.text();
+  // Starting a full chat
+  const chat = model.startChat({ history: [] })
+  
+  // another prompt using the original one 
+  let prompt = topics.generatePrompt(topic, context);
+  let result = await chat.sendMessage(prompt);
+  let resp = result.response.text();
+  console.log(resp);
+  let fixed_resp = parsers.outputParserJson(resp);
+
+  console.log(fixed_resp);
+  console.log("\n");
+  console.log(fixed_resp.Code)
+
+  createCSV(fixed_resp.CSV, fixed_resp.CSVName);
+
+  // Running the response through python interpreter
+  PythonShell.runString(fixed_resp.Code, null).then(messages=>{
+    console.log("Output:\n");
+    console.log(messages);
+  });
 }
 
+function createCSV(csvStr, csvName) {
+  // If no CSV files are used by the generated code
+  if ((typeof csvStr == "string" && csvStr.length == 0) || 
+    (csvStr == null) || (csvStr == 'null') || (csvStr == 'Null') ||
+    (csvStr == 'none') || (csvStr == 'None')) {
+    return;
+  }
+
+  // Creating the CSV file used by the code
+  fs.writeFile(csvName, csvStr, 'utf8', function (err) {
+    if (err) {
+      console.log("\nCreating CSV file failed!\n");
+    }
+    else {
+      console.log("\nCreating CSV file succeeded!\n");
+    }
+  });
+}
 
 
 //Allows the server to see the index.html page in the public folder
