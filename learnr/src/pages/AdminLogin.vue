@@ -12,40 +12,38 @@ function handleLogin() {
 </script>
 
 <template>
-  <div class="login">
-    <div class="header">
-      <img src="/logo.png" alt="Logo" class="logo1" />
-      <div class="company-name">learnr</div>
-    </div>
-    <div class="login-frame">
-      <div class="main-content">
-        <img src="/logo.png" alt="Logo" class="logo2" />
-        <div class="title">Admin Login</div>
-        <div class="login-form">
-          <div class="form-group">
-            <div class="subtitle">Username</div>
-            <input
-              v-model="email"
-              type="text"
-              class="login-input"
-              placeholder="Enter your Username"
-            />
-          </div>
-          <div class="form-group">
-            <div class="subtitle">Password</div>
-            <input
-              v-model="password"
-              type="password"
-              class="login-input"
-              placeholder="Enter your Password"
-            />
-          </div>
-          <button @click="handleLogin" class="login-button">Login</button>
+  <div class="header">
+    <img src="/logo.png" alt="Logo" class="logo1" />
+    <div class="company-name">learnr</div>
+  </div>
+  <div class="login-frame">
+    <div class="main-content">
+      <img src="/logo.png" alt="Logo" class="logo2" />
+      <div class="title">Admin Login</div>
+      <div class="login-form">
+        <div class="form-group">
+          <div class="subtitle">Username</div>
+          <input
+            v-model="email"
+            type="text"
+            class="login-input"
+            placeholder="Enter your Username"
+          />
         </div>
-        <div class="warning-container">
-          <div class="warning1">Not Admin?</div>
-          <div class="warning2">Go Back to Home</div>
+        <div class="form-group">
+          <div class="subtitle">Password</div>
+          <input
+            v-model="password"
+            type="password"
+            class="login-input"
+            placeholder="Enter your Password"
+          />
         </div>
+        <button @click="handleLogin" class="login-button">Login</button>
+      </div>
+      <div class="warning-container">
+        <div class="warning1">Not Admin?</div>
+        <div class="warning2">Go Back to Home</div>
       </div>
     </div>
   </div>
@@ -78,14 +76,6 @@ function handleLogin() {
   width: 100%; /* Ensure subtitle takes full width */
 }
 
-.login {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-  background: #156B3A;; /* Matching background color */
-}
-
 .header {
   display: flex;
   align-items: center;
@@ -110,9 +100,8 @@ function handleLogin() {
   display: flex; /* Align items in a row */
   justify-content: space-between; /* Distribute space between the warnings */
   position: absolute; /* Position relative to parent */
-  bottom: 115px; /* Adjust as needed for spacing from the bottom */
+  bottom: 15%; /* Adjust as needed for spacing from the bottom */
   width: 9.5%; /* Full width of the parent container */
-  padding: 20px; /* Optional padding for spacing from edges */
 }
 .warning1 {
   font-size: 10px;
