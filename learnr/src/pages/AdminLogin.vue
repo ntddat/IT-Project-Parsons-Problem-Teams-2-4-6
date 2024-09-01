@@ -22,18 +22,24 @@ function handleLogin() {
         <img src="/logo.png" alt="Logo" class="logo2" />
         <div class="title">Admin Login</div>
         <div class="login-form">
-          <input
-            v-model="email"
-            type="text"
-            class="login-input"
-            placeholder="Enter your Username"
-          />
-          <input
-            v-model="password"
-            type="password"
-            class="login-input"
-            placeholder="Enter your Password"
-          />
+          <div class="form-group">
+            <div class="subtitle">Username</div>
+            <input
+              v-model="email"
+              type="text"
+              class="login-input"
+              placeholder="Enter your Username"
+            />
+          </div>
+          <div class="form-group">
+            <div class="subtitle">Password</div>
+            <input
+              v-model="password"
+              type="password"
+              class="login-input"
+              placeholder="Enter your Password"
+            />
+          </div>
           <button @click="handleLogin" class="login-button">Login</button>
         </div>
         <div class="warning-container">
@@ -48,11 +54,11 @@ function handleLogin() {
 <style scoped>
 .login-frame {
   box-sizing: border-box;
-  margin-top: 3%;
+  margin-top: 5%;
   margin-left: 33%;
   padding-top: 30px;
   width: 550px;
-  height: 650px;
+  height: 630px;
   background: #F6F4F4;
   border-radius: 30px;
   display: flex;
@@ -61,6 +67,15 @@ function handleLogin() {
 .title {
   font-size: 30px;
   font-weight: bold;
+}
+
+.subtitle {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 0; /* Ensure there's no margin */
+  line-height: 0.5; /* Set line-height to 1 to minimize any extra space */
+  text-align: left; /* Ensure subtitles are aligned to the left */
+  width: 100%; /* Ensure subtitle takes full width */
 }
 
 .login {
@@ -75,12 +90,10 @@ function handleLogin() {
   display: flex;
   align-items: center;
   padding: 15px;
-  /* background#F6F4F4; 
-  border-bottom: 1px solid #ddd; */
 }
 
 .logo1 {
-  height: 30px; /* Adjust as needed */
+  height: 25px; /* Adjust as needed */
   margin-right: 10px;
 }
 
@@ -131,13 +144,17 @@ function handleLogin() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px; /* Space between all children */
+  gap: 10px; /* Space between all children */
+}
+
+.form-group {
+  width: 90%; /* Ensures input and subtitle take full width */
+  margin-bottom: 20px; /* Space between form groups */
 }
 
 .login-input {
-  width: 80%;
+  width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
   border-radius: 3px;
   border: 1px solid #ccc;
   outline: none;
