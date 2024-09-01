@@ -36,6 +36,10 @@ function handleLogin() {
           />
           <button @click="handleLogin" class="login-button">Login</button>
         </div>
+        <div class="warning-container">
+          <div class="warning1">Not Admin?</div>
+          <div class="warning2">Go Back to Home</div>
+        </div>
       </div>
     </div>
   </div>
@@ -89,7 +93,21 @@ function handleLogin() {
   font-size: 24px;
   font-weight: bold;
 }
-
+.warning-container {
+  display: flex; /* Align items in a row */
+  justify-content: space-between; /* Distribute space between the warnings */
+  position: absolute; /* Position relative to parent */
+  bottom: 115px; /* Adjust as needed for spacing from the bottom */
+  width: 9.5%; /* Full width of the parent container */
+  padding: 20px; /* Optional padding for spacing from edges */
+}
+.warning1 {
+  font-size: 10px;
+}
+.warning2 {
+  font-size: 10px;
+  font-weight: bold;
+}
 .main-content {
   flex: 1;
   display: flex;
@@ -104,6 +122,7 @@ function handleLogin() {
   line-height: 48px;
   word-wrap: break-word;
   margin-bottom: 80px;
+  gap: 30px; /* Space between all children */
 }
 
 .login-form {
@@ -112,6 +131,7 @@ function handleLogin() {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 15px; /* Space between all children */
 }
 
 .login-input {
