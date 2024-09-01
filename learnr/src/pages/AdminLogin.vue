@@ -121,29 +121,25 @@ function handleLogin() {
   font-size: 24px;
   font-family: Lexend, sans-serif;
   font-weight: 500;
-  line-height: 48px;
+  line-height: 230%;
   word-wrap: break-word;
-  margin-bottom: 80px;
+  margin-bottom: 20%;
   gap: 30px; /* Space between all children */
 }
 
 .login-form {
-  width: 80%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px; /* Space between all children */
+  width: 65%;
+  max-width: 350px;
 }
 
 .form-group {
   width: 90%; /* Ensures input and subtitle take full width */
-  margin-bottom: 20px; /* Space between form groups */
+  margin-bottom: 8%; /* Space between form groups */
 }
 
 .login-input {
   width: 100%;
-  padding: 10px;
+  padding: 2.5%;
   border-radius: 3px;
   border: 1px solid #ccc;
   outline: none;
