@@ -1,103 +1,136 @@
 <script setup>
 import { ref } from 'vue'
 
-const value = ref('')
+const email = ref('')
+const password = ref('')
 
-function add() {
+function handleLogin() {
   // Handle login logic here
-  console.log('Input Value:', value.value)
+  console.log('Email:', email.value)
+  console.log('Password:', password.value)
 }
 </script>
 
 <template>
-  <div class="header">
-    <!-- <img src="path/to/logo.png" alt="Logo" class="logo" /> -->
-    <div class="company-name">learnr</div>
-  </div>
-  <div class="todo-app">
-    <div class="title">Login</div>
-
-    <div class="todo-form">
-      <input
-        v-model="value"
-        type="text"
-        class="todo-input"
-        placeholder="Enter your Email"
-      />
+  <div class="login">
+    <div class="header">
+      <img src="/logo.png" alt="Logo" class="logo1" />
+      <div class="company-name">learnr</div>
     </div>
-
-    <div class="todo-form">
-      <input
-        v-model="value"
-        type="text"
-        class="todo-input"
-        placeholder="Enter your Password"
-      />
+    <div class="login-frame">
+      <div class="main-content">
+        <img src="/logo.png" alt="Logo" class="logo2" />
+        <div class="title">Admin Login</div>
+        <div class="login-form">
+          <input
+            v-model="email"
+            type="text"
+            class="login-input"
+            placeholder="Enter your Username"
+          />
+          <input
+            v-model="password"
+            type="password"
+            class="login-input"
+            placeholder="Enter your Password"
+          />
+          <button @click="handleLogin" class="login-button">Login</button>
+        </div>
+      </div>
     </div>
-
-    <div class="button-container">
-      <div @click="add" class="login-button">LOGIN</div>
-    </div>
-
   </div>
 </template>
 
 <style scoped>
-.todo-app {
+.login-frame {
   box-sizing: border-box;
-  margin-top: 40px;
-  margin-left: 1%;
+  margin-top: 3%;
+  margin-left: 33%;
   padding-top: 30px;
-  width: 98%;
-  height: 500px;
+  width: 550px;
+  height: 650px;
   background: #F6F4F4;
-  border-radius: 5px;
+  border-radius: 30px;
   display: flex;
-  flex-direction: column;
   align-items: center; /* Center all items horizontally */
 }
-
 .title {
-  text-align: center;
   font-size: 30px;
-  font-weight: 700;
-  margin-bottom: 20px;
+  font-weight: bold;
 }
 
-.todo-form {
+.login {
   display: flex;
-  flex-direction: column; /* Align inputs vertically */
-  width: 80%; /* Make inputs a bit narrower */
-  max-width: 400px; /* Set a maximum width */
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #156B3A;; /* Matching background color */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  /* background#F6F4F4; 
+  border-bottom: 1px solid #ddd; */
+}
+
+.logo1 {
+  height: 30px; /* Adjust as needed */
+  margin-right: 10px;
+}
+
+.logo2 {
+  height: 50px; /* Adjust as needed */
+  margin-right: 10px;
+}
+
+.company-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: black;
+  font-size: 24px;
+  font-family: Lexend, sans-serif;
+  font-weight: 500;
+  line-height: 48px;
+  word-wrap: break-word;
+  margin-bottom: 80px;
+}
+
+.login-form {
+  width: 80%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-input {
+  width: 80%;
+  padding: 10px;
   margin-bottom: 20px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  outline: none;
 }
 
 .login-button {
-  width: 100px;
-  height: 52px;
-  border-radius: 20px;
-  text-align: center;
-  background: #156B3A;
-  color: #fff;
-  line-height: 52px;
+  background-color: #030403;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  user-select: none;
-}
-
-.todo-input {
-  padding: 0px 15px;
-  border-radius: 20px;
-  border: 1px solid #dfe1e5;
-  outline: none;
-  width: 100%;
-  height: 50px;
-  margin-bottom: 15px; /* Add some space between inputs */
-}
-
-.button-container {
-  display: flex;
-  justify-content: center; /* Center the button horizontally */
-  width: 100%;
+  width: 55%;
+  font-size: 13px;
 }
 </style>

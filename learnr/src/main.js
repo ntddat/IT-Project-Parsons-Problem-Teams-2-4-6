@@ -3,15 +3,15 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import Generator from './pages/Generator.vue'
+import AdminLogin from './pages/AdminLogin.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import './assets/icon/iconfont.css'
 
 const app = createApp(App);
 
-
 const router = createRouter({
     history: createWebHistory(),
-    routes:[
+    routes: [
         {
             path: "/",
             redirect: '/Generator'
@@ -20,9 +20,14 @@ const router = createRouter({
             path: "/Generator",
             name: "Generator",
             component: Generator,
-          },
+        },
+        {
+            path: "/AdminLogin",
+            name: "AdminLogin",
+            component: AdminLogin,
+        },
     ]
-  });
+});
 
 app.use(router);
 app.mount("#app");
