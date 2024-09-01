@@ -12,7 +12,8 @@ const app = createApp(App);
 
 const router = createRouter({
     history: createWebHistory(),
-    routes: [
+    routes: 
+    [
         {
             path: "/",
             redirect: '/Generator'
@@ -27,7 +28,6 @@ const router = createRouter({
             name: "AdminLogin",
             component: AdminLogin,
         },
-          },
         {
             path: "/AdminProfile",
             name: "AdminProfile",
