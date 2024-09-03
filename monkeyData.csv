@@ -1,0 +1,11 @@
+MonkeyID,Species,Age,Weight,Location,Food
+1,Macaque,5,15,Jungle,Fruits
+2,Baboon,7,20,Savanna,Insects
+3,Chimpanzee,10,45,Forest,Leaves
+4,Gorilla,12,60,Mountain,Fruits
+5,Orangutan,15,80,Island,Fruits
+6,Macaque,2,10,Unknown,Fruits
+7,Baboon,4,12,Savanna,Insects
+8,Chimpanzee,6,25,Forest,Leaves
+9,Gorilla,8,35,Mountain,Fruits
+10,Orangutan,11,50,Island,Fruits

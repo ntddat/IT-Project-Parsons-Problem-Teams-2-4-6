@@ -2,6 +2,35 @@
 // containing all the relevant topics 
 // TODO: create specific contexts for topics 
 
+const fs = require('fs');
+
+// Having topic-specific tasks (outdated probably)
+/*
+let taskListDF = [];
+taskListDF.push(" create a new column and create values for it from existing columns in a DataFrame.");
+taskListDF.push(" sort the DataFrame over multiple columns.");
+taskListDF.push(" use groupby and sum on the original DataFrame, and print the grouped DataFrame.");
+taskListDF.push(" use groupby and count on the original DataFrame, and print the grouped DataFrame.");
+taskListDF.push(" use groupby and mean on the original DataFrame, and print the grouped DataFrame.");
+taskListDF.push(" use groupby and median on the original DataFrame, and print the grouped DataFrame.");
+taskListDF.push(" use groupby and mode on the original DataFrame, and print the grouped DataFrame.");
+taskListDF.push(" join two DataFrames and print the joined DataFrame.");
+
+function promptDataFrame() {
+  let promptDF = "";
+
+  promptDF += "It should create a pandas series first, then use those series to create a DataFrame.\n";
+
+  promptDF += " - It should then";
+  promptDF += taskListDF[Math.floor(Math.random() * taskListDF.length)];
+
+  return promptDF;
+}
+*/
+
+// Reading example code snippets into a string
+let data = fs.readFileSync("DataFrameSnippets.txt", "utf-8");
+
 module.exports = {
   TOPICS : {
   
@@ -14,7 +43,7 @@ module.exports = {
     CSV : "Read/Write CSV File"
   
   },
-  
+
   /**
   * @function generatePrompt
   * This function generates a prompt based on the topic  
@@ -31,23 +60,38 @@ module.exports = {
   generatePrompt : function(topic, context) {
     let prompt = "Generate a piece of Python code with the following specifications:\n";
     
-    // topic-specific requirements
-    prompt += "- The code must be about " + topic + "\n";
-    prompt += "- The code must also be about " + context + "\n";
-    //prompt += "- The code must be 10 lines long\n";
+    if (topic == "DataFrame") {
+      //prompt += promptDataFrame();
+      //console.log(prompt);
+      prompt += "- It should be similar to the following three code snippets:\n";
+      prompt += data;
+      prompt += "\n";
+      //prompt += "- If the code uses fillna(), the DataFrames must contain None values\n";
+      prompt += "The DataFrames in the code should contain some None values\n";
+    }
+    else {
+      prompt += "- The code must be about " + topic + "\n";
+    }
+    prompt += "- The code must also have the context of " + context + "\n";
+    prompt += "- The code must be at least 40 lines long\n";
     
     // code formatting requirements
-    prompt += "- The code must not contain any comments in the code\n"; 
+    prompt += "- The code must not contain any lines of comments or explanations in the code\n"; 
+    prompt += "- The code must not contain any lines starting with #\n"; 
+    prompt += "- If the code uses fillna(), the DataFrames must contain None values\n";
     prompt += "- The code must not contain 2 or more consecutive newline characters\n";
     prompt += "Format the response in JSON format with the following attributes:";
 
     // response requirements
     prompt += "- Code: The generated piece of code\n";
-    prompt += "- Description: a brief description on what the code does\n";
+    // prompt += "- Description: a brief description on what the code does\n";
+    prompt += "- Description: a brief description on what the code does, if the code has multiple print statements, the description should specify the order in which they are printed\n";
     prompt += "- ExpectedOutput: a brief description on what the code should output\n";
     prompt += "- CSVName: If the code involves opening and reading a file, generate the name of the file\n";
     prompt += "- CSV: If the code involves opening and reading a file, generate an example of the file content";
 
     return prompt;
-  }
 }
+}
+
+ 

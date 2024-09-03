@@ -1,0 +1,11 @@
+Location,Species,Age,Weight,Fruit_Eaten
+Jungle,Macaque,5,15,Banana
+Zoo,Chimpanzee,10,50,Mango
+Forest,Gorilla,15,150,Apples
+Jungle,Orangutan,20,100,Oranges
+Forest,Macaque,,20,Bananas
+Zoo,Chimpanzee,8,40,Mangos
+Jungle,Gorilla,12,130,Apples
+Forest,Orangutan,,90,Oranges
+Zoo,Macaque,9,18,
+Jungle,Chimpanzee,11,45,Mangos

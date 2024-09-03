@@ -16,10 +16,11 @@ const topics = require("./TopicsContexts");
 const port = 8383
 var answer = "Haven't queried yet";
 
+
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Choosing Gemini model
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // DataFrames, Normalized Mutual Information, Sentence splitting using NLTK
 // Correlation, Linear Regression, Decision Tree Classifier, Read/Write CSV files
@@ -28,16 +29,16 @@ async function askGemini(topic, context) {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
   
-  // another prompt using the original one 
   let prompt = topics.generatePrompt(topic, context);
+  //console.log(prompt);
+  //console.log("\n");
   let result = await chat.sendMessage(prompt);
   let resp = result.response.text();
-  console.log(resp);
   let fixed_resp = parsers.outputParserJson(resp);
 
-  console.log(fixed_resp);
-  console.log("\n");
-  console.log(fixed_resp.Code)
+  //console.log(fixed_resp);
+  //console.log("\n");
+  console.log(fixed_resp.Code);
 
   createCSV(fixed_resp.CSV, fixed_resp.CSVName);
 
@@ -81,10 +82,12 @@ app.get('/info', (req, res) => {
 app.post('/', (req,res) => {
     const {parcel} = req.body
     const arr = parcel.split("|")
-    topic = arr[0]
-    context = arr[1]
+    topic = arr[1]
+    context = arr[0]
+    console.log(arr)
     
     askGemini(topic, context)
+
     if (!parcel) {
         res.status(400).send({status: "failed"})
     }
