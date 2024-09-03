@@ -1,4 +1,4 @@
-
+// TODO: SPLIT THIS INTO CONTROLLERM MIDDLEWARE, AND SERVICE
 // Importing packages
 require('dotenv').config()
 const { PythonShell } = require('python-shell')
@@ -9,8 +9,8 @@ const format = require('string-format')
 const app = express()
 
 // Importing our modules
-const parsers = require("./OutputParser");
-const topics = require("./TopicsContexts");
+const parsers = require("./service/OutputParser");
+const topics = require("./utils/constants/TopicsContexts");
 
 // Constants
 const port = 8383
