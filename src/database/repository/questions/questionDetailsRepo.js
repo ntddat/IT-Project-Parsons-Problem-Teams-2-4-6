@@ -1,6 +1,6 @@
-import { QuestionDetailsSchema } from "../../models/questionDetailsSchema";
+import { QuestionDetailsSchema } from "../../models/questionDetailsModel.js";
 import { getDatabaseConnection } from "../../index.js";
-import { messages } from "../../utils/constants/messages";
+import { messages } from "../../utils/constants/messages.js";
 require('dotenv').config();
 
 export const getQuestionDetails = async (questionID, dbName) => {

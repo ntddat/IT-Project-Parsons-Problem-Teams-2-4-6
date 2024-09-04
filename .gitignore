@@ -12,7 +12,7 @@ runs/
 node_modules/
 
 # Ignore generated CSV files
-.csv
+*.csv
 
 # Ignore database scripts
 databaseScripts/*.js

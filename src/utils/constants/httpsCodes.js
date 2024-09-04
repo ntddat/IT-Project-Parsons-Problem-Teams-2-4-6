@@ -1,5 +1,5 @@
 /** HTTP status codes */
-export default httpCodes = {
+const httpCodes = {
   SWITCHING_PROTOCOLS: 101,
   OK: 200,
   CREATED: 201,
@@ -40,4 +40,6 @@ export default httpCodes = {
   GATEWAY_TIMEOUT: 504,
   HTTP_VERSION_NOT_SUPPORTED: 505,
   UNKNOWN_ERROR: 520,
-}
+};
+
+export default httpCodes;
