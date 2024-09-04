@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        <input type="text" id="context"/>
+        <button id="get">get</button>
+        <button id="post">Query Gemini</button>
+        <label>Choose a topic:</label>
+        <select id="topics">
+            <option value="DataFrame">DataFrame</option>
+            <option value="Normalised Mutual Information">NMI (Normalised Mutual Information)</option>
+            <option value="Sentence splitting using nltk">Sentence splitting using nltk</option>
+            <option value="Correlation">Correlation</option>
+            <option value="Linear Regression">Linear Regression</option>
+            <option value="Decision Tree Classifier">Decision Tree Classifier</option>
+            <option value="Reading/Writing CSV files">Reading/Writing CSV files</option>
+        </select>
+    </form>
+    <script>
+        const getBtn = document.getElementById('get')
+        const postBtn = document.getElementById('post')
+        const context = document.getElementById('context')
+        const topic = document.getElementById("topics")
+        const answer = document.getElementById("answer")
+
+        const baseURL = 'http://localhost:8383/'
+        getBtn.addEventListener('click', getInfo)
+        postBtn.addEventListener('click', postInfo)
+        async function getInfo(e) {
+            e.preventDefault()
+            const res = await fetch(baseURL + "info/", {
+                method: 'GET'
+            })
+            console.log(res)
+            console.log("Used get info")
+            const data = await res.json()
+            console.log(data)
+        }
+
+        async function postInfo(e) {
+            e.preventDefault()
+            if (context.value == '') {
+                return
+            }
+            const res = await fetch(baseURL, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify ({
+                    parcel: context.value + "|" +topic.value // whatever is in the const input will be sent
+                    //BETTER WAY TO DO THIS ????^^^
+                })
+            })
+            console.log(res)
+            console.log("Used post")
+
+        }
+
+
+    </script>
+</body>
+</html>
