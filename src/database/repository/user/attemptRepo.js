@@ -1,7 +1,7 @@
 import { getDatabaseConnection } from "../../index.js";
 import { AttemptSchema } from "../../models/attemptSchema";
 import { messages } from "../../utils/constants/messages";
-require ('dotenv').config();
+require('dotenv').config();
 
 export const getUserAttemptDetails = async (userID, dbName) => {
   const attemptCollection = process.env.ATTEMPT_COLLECTION;

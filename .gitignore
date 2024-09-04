@@ -15,4 +15,4 @@ node_modules/
 .csv
 
 # Ignore database scripts
-databaseScripts/
+databaseScripts/*.js

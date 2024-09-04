@@ -1,7 +1,7 @@
 import { getDatabaseConnection } from "../../index.js";
 import { UserDataSchema } from "../../models/userDataModel.js";
 import { messages } from "../../utils/constants/messages";
-require ('dotenv').config();
+require('dotenv').config();
 
 export const getUserData = async (userID, dbName) => {
   const userDataCollection = process.env.USER_DATA_COLLECTION;
