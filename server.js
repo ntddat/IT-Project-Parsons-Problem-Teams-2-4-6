@@ -20,7 +20,8 @@ var answer = "Haven't queried yet";
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Choosing Gemini model
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+//const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: {temperature: .0 }});
 
 // DataFrames, Normalized Mutual Information, Sentence splitting using NLTK
 // Correlation, Linear Regression, Decision Tree Classifier, Read/Write CSV files
@@ -29,15 +30,21 @@ async function askGemini(topic, context) {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
   
-  let prompt = topics.generatePrompt(topic, context);
+  let prompt1 = topics.generatePrompt(topic, context);
   //console.log(prompt);
   //console.log("\n");
+  let result1 = await chat.sendMessage(prompt1);
+  console.log(result1);
+  let prompt = "Generate your previous response but remove any code comments.\n";
   let result = await chat.sendMessage(prompt);
   let resp = result.response.text();
+  //console.log(resp);
   let fixed_resp = parsers.outputParserJson(resp);
 
-  //console.log(fixed_resp);
-  //console.log("\n");
+  console.log(fixed_resp[0]);
+  console.log(fixed_resp[1]);
+  console.log(fixed_resp[2]);
+  console.log("\n");
   console.log(fixed_resp.Code);
 
   createCSV(fixed_resp.CSV, fixed_resp.CSVName);

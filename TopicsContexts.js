@@ -58,12 +58,13 @@ module.exports = {
   * or just plain response 
   */
   generatePrompt : function(topic, context) {
-    let prompt = "Generate a piece of Python code with the following specifications:\n";
+    let prompt = "Generate a piece of Python code with the following specifications, and give the 3 drafts answers as well:\n";
     
     if (topic == "DataFrame") {
       //prompt += promptDataFrame();
       //console.log(prompt);
-      prompt += "- It should be similar to the following three code snippets:\n";
+      //prompt += "- It should be similar to the following code snippets:\n";
+      prompt += "- Your response should be similar to the following examples, especially Example 1:\n";
       prompt += data;
       prompt += "\n";
       //prompt += "- If the code uses fillna(), the DataFrames must contain None values\n";
@@ -73,13 +74,11 @@ module.exports = {
       prompt += "- The code must be about " + topic + "\n";
     }
     prompt += "- The code must also have the context of " + context + "\n";
-    prompt += "- The code must be at least 40 lines long\n";
     
     // code formatting requirements
     prompt += "- The code must not contain any lines of comments or explanations in the code\n"; 
-    prompt += "- The code must not contain any lines starting with #\n"; 
-    prompt += "- If the code uses fillna(), the DataFrames must contain None values\n";
-    prompt += "- The code must not contain 2 or more consecutive newline characters\n";
+    prompt += "- The code must be at least 40 lines long, excluding any empty lines\n";
+
     prompt += "Format the response in JSON format with the following attributes:";
 
     // response requirements
@@ -88,7 +87,7 @@ module.exports = {
     prompt += "- Description: a brief description on what the code does, if the code has multiple print statements, the description should specify the order in which they are printed\n";
     prompt += "- ExpectedOutput: a brief description on what the code should output\n";
     prompt += "- CSVName: If the code involves opening and reading a file, generate the name of the file\n";
-    prompt += "- CSV: If the code involves opening and reading a file, generate an example of the file content";
+    prompt += "- CSV: If the code involves opening and reading a file, generate an example of the file content\n";
 
     return prompt;
 }
