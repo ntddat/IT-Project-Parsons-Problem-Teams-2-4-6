@@ -1,9 +1,9 @@
 <template>
   <div class="generator" @click="closeDropdowns">
     <nav class="top">
-      <div class="brand">
-        <img src="/logo.png" alt="Learnr Logo" class="logo1" />
-        <dev class="webName">Learnr</dev>
+      <div class="header">
+        <img src="/logo.png" alt="Logo" class="top-logo" />
+        <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
         <router-link to="/history" class="nav-link">History</router-link>
@@ -15,7 +15,7 @@
         <img src="../assets/icon/logo.png" alt="Logo" class="logo" />
         <h1>Question Generator</h1>
         <div>
-          Get Started by selecting a topic and content from the dropdown menus below!
+          Get Started by selecting a topic and context from the dropdown menus below!
         </div>
       </div>
       <!-- Dropdown menus and send button at the bottom -->
@@ -150,7 +150,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 15px;
   text-align: center;
   color: black;
   font-size: 20px;
@@ -230,24 +230,21 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 20px; 
-  border-bottom: 1px solid #e5e5e5;
 }
 
-.toplogo {
+.header {
   display: flex;
   align-items: center;
-  gap: 15px; /* Adjust this value to space out logo and brand name */
+  padding: 15px;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 15px; /* Adjust this value to space out logo and brand name */
+.top-logo {
+  height: 25px; /* Adjust as needed */
+  margin-right: 10px;
 }
 
-.webName {
-  font-size: 15px;
+.web-name {
+  font-size: 21px;
   font-weight: bold;
 }
 

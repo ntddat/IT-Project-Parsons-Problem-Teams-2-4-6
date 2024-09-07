@@ -14,7 +14,7 @@ function handleLogin() {
 <template>
   <div class="header">
     <img src="/logo.png" alt="Logo" class="logo1" />
-    <div class="company-name">learnr</div>
+    <div class="web-name">learnr</div>
   </div>
   <div class="login-frame">
     <div class="main-content">
@@ -92,7 +92,7 @@ function handleLogin() {
   margin-right: 10px;
 }
 
-.company-name {
+.web-name {
   font-size: 24px;
   font-weight: bold;
 }
