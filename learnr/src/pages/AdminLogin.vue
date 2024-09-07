@@ -1,15 +1,28 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'  // Import Vue Router for navigation
 
 const email = ref('')
 const password = ref('')
+const router = useRouter()  // Initialize the router
 
 function handleLogin() {
-  // Handle login logic here
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
+  // Hardcoded admin credentials
+  const adminUsername = 'admin'
+  const adminPassword = 'admin123'
+
+  // Check if entered email and password match the admin credentials
+  if (email.value === adminUsername && password.value === adminPassword) {
+    console.log('Login successful!')
+    // Navigate to the AdminProfile page
+    router.push('/AdminProfile')
+  } else {
+    console.log('Invalid login credentials.')
+    alert('Invalid Username or Password')  // Display an error message
+  }
 }
 </script>
+
 
 <template>
   <div class="header">
