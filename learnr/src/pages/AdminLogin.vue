@@ -1,15 +1,32 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'  // Import Vue Router for navigation
 
 const email = ref('')
 const password = ref('')
+const router = useRouter()  // Initialize the router
 
 function handleLogin() {
-  // Handle login logic here
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
+  // Hardcoded admin credentials
+  const adminUsername = 'admin'
+  const adminPassword = 'admin123'
+
+  // Check if entered email and password match the admin credentials
+  if (email.value === adminUsername && password.value === adminPassword) {
+    console.log('Login successful!')
+    // Navigate to the AdminProfile page
+    router.push('/AdminProfile')
+  } else {
+    console.log('Invalid login credentials.')
+    alert('Invalid Username or Password')  // Display an error message
+  }
+}
+
+function goToGenerator() {
+  router.push('/Generator')  // Navigate to the Generator page
 }
 </script>
+
 
 <template>
   <div class="header">
@@ -40,10 +57,10 @@ function handleLogin() {
           />
         </div>
         <button @click="handleLogin" class="login-button">Login</button>
-      </div>
-      <div class="warning-container">
-        <div class="warning1">Not Admin?</div>
-        <div class="warning2">Go Back to Home</div>
+        <div class="warning-container">
+          <div class="warning1">Not Admin?</div>
+          <div class="warning2" @click="goToGenerator">Go Back to Home</div>
+        </div>
       </div>
     </div>
   </div>
@@ -52,16 +69,32 @@ function handleLogin() {
 <style scoped>
 .login-frame {
   box-sizing: border-box;
-  margin-top: 5%;
-  margin-left: 33%;
+  margin: 5% auto; /* Center the login frame horizontally and add margin at the top */
   padding-top: 30px;
-  width: 550px;
-  height: 630px;
+  width: 90%; /* Adjust width relative to the viewport */
+  max-width: 550px; /* Set a maximum width to prevent it from becoming too large */
+  height: auto; /* Allow height to adjust based on content */
+  max-height: 90vh; /* Set maximum height relative to the viewport */
   background: #F6F4F4;
   border-radius: 30px;
   display: flex;
   align-items: center; /* Center all items horizontally */
+  flex-direction: column; /* Ensure children are stacked vertically */
+  position: relative; /* Make this a reference for absolute positioning */
 }
+
+@media (min-width: 768px) {
+  .login-frame {
+    width: 60%; /* Adjust for medium to large screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .login-frame {
+    width: 40%; /* Adjust for larger screens */
+  }
+}
+
 .title {
   font-size: 30px;
   font-weight: bold;
@@ -70,7 +103,6 @@ function handleLogin() {
 .subtitle {
   font-size: 12px;
   font-weight: bold;
-  margin-bottom: 0; /* Ensure there's no margin */
   line-height: 0.5; /* Set line-height to 1 to minimize any extra space */
   text-align: left; /* Ensure subtitles are aligned to the left */
   width: 100%; /* Ensure subtitle takes full width */
@@ -97,11 +129,16 @@ function handleLogin() {
   font-weight: bold;
 }
 .warning-container {
+  position: absolute; /* Position relative to login-frame */
   display: flex; /* Align items in a row */
-  justify-content: space-between; /* Distribute space between the warnings */
-  position: absolute; /* Position relative to parent */
-  bottom: 15%; /* Adjust as needed for spacing from the bottom */
-  width: 9.5%; /* Full width of the parent container */
+  justify-content: center; /* Center the items horizontally */
+  gap: 8px; /* Adjust the gap between warnings */
+  bottom: 5px; /* Position the container at the bottom */
+  width: 100%; /* Full width of the parent container */
+  padding: 0 20px; /* Optional: add padding for better spacing */
+  box-sizing: border-box; /* Ensure padding is included in width calculation */
+  text-align: center; /* Center text within the container */
+  left: 1%; /* Move the container to the left */
 }
 .warning1 {
   font-size: 10px;
@@ -128,18 +165,20 @@ function handleLogin() {
 }
 
 .login-form {
-  width: 65%;
+  width: 90%;
   max-width: 350px;
+  margin: 0 auto; /* Center the form horizontally */
 }
 
 .form-group {
-  width: 90%; /* Ensures input and subtitle take full width */
+  width: 100%; /* Ensures input and subtitle take full width */
   margin-bottom: 8%; /* Space between form groups */
+  text-align: center; /* Center the content within form group */
 }
 
 .login-input {
-  width: 100%;
-  padding: 2.5%;
+  width: 100%; /* Adjust width to fit within form group */
+  padding: 10px; /* Adjust padding for better appearance */
   border-radius: 3px;
   border: 1px solid #ccc;
   outline: none;
@@ -152,7 +191,8 @@ function handleLogin() {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-  width: 55%;
+  width: 100%; /* Adjust button width to fit within form group */
   font-size: 13px;
 }
+
 </style>
