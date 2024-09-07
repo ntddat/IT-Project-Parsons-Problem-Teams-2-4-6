@@ -1,34 +1,60 @@
 <template>
-  <div class="generator">
+  <div class="generator" @click="closeDropdowns">
+    <nav class="top">
+      <div class="header">
+        <img src="/logo.png" alt="Logo" class="top-logo" />
+        <div class="web-name">Learnr</div>
+      </div>
+      <div class="nav-links">
+        <router-link to="/history" class="nav-link">History</router-link>
+        <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
+      </div>
+    </nav>
     <div class="main-content">
-      <img src="../assets/icon/logo.png" alt="Logo" class="logo" />
-      <h1>Question Generator</h1>
-      <div>
-        Get Started by selecting a topic and content from the dropdown menus below!
+      <div class="descript">
+        <img src="../assets/icon/logo.png" alt="Logo" class="logo" />
+        <h1>Question Generator</h1>
+        <div>
+          Get Started by selecting a topic and context from the dropdown menus below!
+        </div>
       </div>
       <!-- Dropdown menus and send button at the bottom -->
       <div class="dropdown-container">
         <div class="dropdown">
-          <button @click="toggleDropdown1" class="dropdown-button">Topic
+          <button @click="toggleDropdown1" class="dropdown-button">
+            {{ selectedTopic ? selectedTopic : 'Select a Topic' }}
             <span class="iconfont icon--shanglajiantou"></span>
           </button>
-          <div v-if="isDropdownVisible1" class="dropdown-menu">
-            <div v-for="item in items1" :key="item" class="dropdown-item">
+          <div v-if="isTopicDropdownVisible" class="dropdown-menu">
+            <div 
+              v-for="item in items1" 
+              :key="item" 
+              class="dropdown-item" 
+              @click="selectTopic(item)"
+            >
               {{ item }}
             </div>
           </div>
         </div>
+
         <div class="dropdown">
-          <button @click="toggleDropdown2" class="dropdown-button">Context
+          <button @click="toggleDropdown2" class="dropdown-button">
+            {{ selectedContext ? selectedContext : 'Select Context' }}
             <span class="iconfont icon--shanglajiantou"></span>
           </button>
-          <div v-if="isDropdownVisible2" class="dropdown-menu">
-            <div v-for="item in items2" :key="item" class="dropdown-item">
+          <div v-if="isContextDropdownVisible" class="dropdown-menu">
+            <div 
+              v-for="item in items2" 
+              :key="item" 
+              class="dropdown-item" 
+              @click="selectContext(item)"
+            >
               {{ item }}
             </div>
           </div>
         </div>
-        <button class="send-button">
+
+        <button class="send-button" @click="sendData">
           <span class="iconfont icon-fasong"></span>
         </button>
       </div>
@@ -41,8 +67,13 @@ export default {
   name: 'Generator',
   data() {
     return {
-      isDropdownVisible1: false, // Track the visibility of the first dropdown
-      isDropdownVisible2: false, // Track the visibility of the second dropdown
+      isTopicDropdownVisible: false,
+      isContextDropdownVisible: false,
+      // Store the selected topic
+      selectedTopic: '', 
+      // Store the selected context
+      selectedContext: '', 
+      // Options for the topic dropdown menu
       items1: [
         'DataFrame',
         'NMI (Normalised Mutual Information)',
@@ -51,7 +82,8 @@ export default {
         'Linear Regression',
         'Decision Tree Classifier',
         'Reading/Writing CSV files'
-      ], // Options for the first dropdown menu
+      ],
+      // Options for the context dropdown menu
       items2: [
         'Koala Population in Australia',
         'Global Temperature Trends',
@@ -62,15 +94,46 @@ export default {
         'Traffic Flow Analysis',
         'Sales Forecasting',
         'Inventory Management'
-      ] // Options for the second dropdown menu
+      ]
     };
   },
   methods: {
-    toggleDropdown1() {
-      this.isDropdownVisible1 = !this.isDropdownVisible1; // Toggle first dropdown visibility
+    toggleDropdown1(event) {
+      this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
+      this.isContextDropdownVisible = false;
+      event.stopPropagation(); 
     },
-    toggleDropdown2() {
-      this.isDropdownVisible2 = !this.isDropdownVisible2; // Toggle second dropdown visibility
+    toggleDropdown2(event) {
+      this.isContextDropdownVisible = !this.isContextDropdownVisible;
+      this.isTopicDropdownVisible = false;
+      event.stopPropagation(); 
+    },
+    selectTopic(item) {
+      this.selectedTopic = item;
+      this.isTopicDropdownVisible = false;
+    },
+    selectContext(item) {
+      this.selectedContext = item;
+      this.isContextDropdownVisible = false;
+    },
+    closeDropdowns(event) {
+      // Close all drop-down boxes when clicking on other parts of the page
+      if (!event.target.closest('.dropdown')) {
+        this.isTopicDropdownVisible = false;
+        this.isContextDropdownVisible = false;
+      }
+    },
+    sendData() {
+      const payload = {
+        topic: this.selectedTopic,
+        context: this.selectedContext
+      };
+      console.log('Sending data to backend:', payload);
+
+      // Data is sent to the back end via HTTP requests
+      // axios.post('/api/sendData', payload)
+      //   .then(response => console.log('Data sent successfully:', response.data))
+      //   .catch(error => console.error('Error sending data:', error));
     }
   }
 };
@@ -81,76 +144,72 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
 }
 
 .main-content {
-  flex: 1; /* Allow main content to take up available space */
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  margin-top: 15px;
   text-align: center;
   color: black;
-  font-size: 24px;
+  font-size: 20px;
   font-family: Lexend, sans-serif;
   font-weight: 500;
-  line-height: 48px;
+  line-height: 40px;
   word-wrap: break-word;
-  margin-bottom: 80px; /* Adjust this value to move main content up */
 }
 
 .logo {
-  margin-bottom: 20px; /* Add spacing below the logo */
+  height: 40px;
 }
 
 .dropdown-container {
-  display: flex; /* Align dropdowns and button horizontally */
-  justify-content: space-between; /* Space items evenly */
-  position: fixed; /* Fix dropdowns and button at the bottom */
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
   bottom: 0;
-  width: 100%; /* Full width of the screen */
+  width: 100%;
   padding: 10px;
-  background: transparent; /* Ensure background remains as per your design */
 }
 
 .dropdown {
   position: relative;
-  flex: 1; /* Allow dropdowns to take up space */
-  margin-right: 10px; /* Space between dropdowns and the button */
+  flex: 1;
+  margin-right: 10px;
 }
 
 .dropdown-button {
-  background-color: #156B3A;
-  color: white;
-  border: none;
+  background-color: white;
+  color: black;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 15px;
   cursor: pointer;
-  width: 100%; /* Full width of the dropdown */
+  font-size: 15px;
+  font-weight: bold;
+  width: 100%;
 }
 
 .dropdown-menu {
   position: absolute;
-  bottom: 100%; /* Position the menu above the button */
+  bottom: 100%;
   left: 0;
   background: white;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  max-height: 200px; /* Adjust the max height as needed */
-  overflow-y: auto; /* Enable vertical scroll when content overflows */
-  width: 100%; /* Full width of the dropdown menu */
+  max-height: 150px;
+  overflow-y: auto;
+  width: 100%;
 }
 
 .dropdown-item {
-  padding: 10px 20px;
+  font-size: 15px;
+  padding: 5px 20px;
   cursor: pointer;
 }
 
 .dropdown-item:hover {
-  background-color: #f0f0f0;
+  background-color: #d7efd5;
 }
 
 .send-button {
@@ -158,13 +217,51 @@ export default {
   color: white;
   border: none;
   padding: 10px;
-  border-radius: 50%; /* Make the button circular */
-  cursor: pointer;
-  flex-shrink: 0; /* Prevent the button from shrinking */
-  width: 50px; /* Set width and height for the circle */
-  height: 50px;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+}
+
+.top-logo {
+  height: 25px; /* Adjust as needed */
+  margin-right: 10px;
+}
+
+.web-name {
+  font-size: 21px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  width: auto; /* Set width to auto to adjust based on content */
+  margin-right: 30px; /* Move nav bar slightly away from the right edge */
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333333;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  color: #156B3A;
 }
 </style>
