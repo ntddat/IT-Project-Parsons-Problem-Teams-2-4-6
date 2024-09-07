@@ -1,32 +1,28 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'  // Import Vue Router for navigation
+import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
-const router = useRouter()  // Initialize the router
+const router = useRouter()
 
 function handleLogin() {
-  // Hardcoded admin credentials
   const adminUsername = 'admin'
   const adminPassword = 'admin123'
 
-  // Check if entered email and password match the admin credentials
   if (email.value === adminUsername && password.value === adminPassword) {
     console.log('Login successful!')
-    // Navigate to the AdminProfile page
     router.push('/AdminProfile')
   } else {
     console.log('Invalid login credentials.')
-    alert('Invalid Username or Password')  // Display an error message
+    alert('Invalid Username or Password')
   }
 }
 
 function goToGenerator() {
-  router.push('/Generator')  // Navigate to the Generator page
+  router.push('/Generator')
 }
 </script>
-
 
 <template>
   <div class="header">
@@ -74,7 +70,6 @@ function goToGenerator() {
   width: 90%; /* Adjust width relative to the viewport */
   max-width: 550px; /* Set a maximum width to prevent it from becoming too large */
   height: auto; /* Allow height to adjust based on content */
-  max-height: 90vh; /* Set maximum height relative to the viewport */
   background: #F6F4F4;
   border-radius: 30px;
   display: flex;
@@ -161,12 +156,13 @@ function goToGenerator() {
   line-height: 230%;
   word-wrap: break-word;
   margin-bottom: 20%;
-  gap: 30px; /* Space between all children */
+  gap: 25px; /* Space between all children */
+  padding-top: 20px; /* Add padding to push content down */
 }
 
 .login-form {
   width: 90%;
-  max-width: 350px;
+  max-width: 500px; /* Maximum width of the form */
   margin: 0 auto; /* Center the form horizontally */
 }
 
@@ -178,6 +174,7 @@ function goToGenerator() {
 
 .login-input {
   width: 100%; /* Adjust width to fit within form group */
+  max-width: 400px; /* Maximum width of the input box */
   padding: 10px; /* Adjust padding for better appearance */
   border-radius: 3px;
   border: 1px solid #ccc;
