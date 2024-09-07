@@ -1,4 +1,14 @@
 <template>
+  <nav class="navbar">
+    <div class="brand">
+      <img src="/logo.png" alt="Learnr Logo" class="logo" />
+      <span>Learnr</span>
+    </div>
+      <div class="nav-links">
+        <router-link to="/history" class="nav-link">History</router-link>
+        <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
+      </div>
+  </nav>
   <div class="generator">
     <div class="main-content">
       <img src="../assets/icon/logo.png" alt="Logo" class="logo" />
@@ -85,20 +95,22 @@ export default {
 }
 
 .main-content {
-  flex: 1; /* Allow main content to take up available space */
+  flex: 0; 
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; 
   align-items: center;
   text-align: center;
   color: black;
-  font-size: 24px;
+  font-size: 20px; 
   font-family: Lexend, sans-serif;
   font-weight: 500;
-  line-height: 48px;
+  line-height: 40px; 
   word-wrap: break-word;
-  margin-bottom: 80px; /* Adjust this value to move main content up */
+  margin-top: 20px; 
+  margin-bottom: 80px; 
 }
+
 
 .logo {
   margin-bottom: 20px; /* Add spacing below the logo */
@@ -167,4 +179,37 @@ export default {
   align-items: center;
   justify-content: center;
 }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    height: 30px;
+    margin-right: 10px;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: #333333;
+    font-weight: bold;
+  }
+  
+  .nav-link:hover {
+    color: #156B3A;
+  }
 </style>

@@ -1,15 +1,32 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'  // Import Vue Router for navigation
 
 const email = ref('')
 const password = ref('')
+const router = useRouter()  // Initialize the router
 
 function handleLogin() {
-  // Handle login logic here
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
+  // Hardcoded admin credentials
+  const adminUsername = 'admin'
+  const adminPassword = 'admin123'
+
+  // Check if entered email and password match the admin credentials
+  if (email.value === adminUsername && password.value === adminPassword) {
+    console.log('Login successful!')
+    // Navigate to the AdminProfile page
+    router.push('/AdminProfile')
+  } else {
+    console.log('Invalid login credentials.')
+    alert('Invalid Username or Password')  // Display an error message
+  }
+}
+
+function goToGenerator() {
+  router.push('/Generator')  // Navigate to the Generator page
 }
 </script>
+
 
 <template>
   <div class="header">
@@ -42,7 +59,7 @@ function handleLogin() {
         <button @click="handleLogin" class="login-button">Login</button>
         <div class="warning-container">
           <div class="warning1">Not Admin?</div>
-          <div class="warning2">Go Back to Home</div>
+          <div class="warning2" @click="goToGenerator">Go Back to Home</div>
         </div>
       </div>
     </div>
@@ -108,7 +125,7 @@ function handleLogin() {
 }
 
 .company-name {
-  font-size: 24px;
+  font-size: 21px;
   font-weight: bold;
 }
 .warning-container {
