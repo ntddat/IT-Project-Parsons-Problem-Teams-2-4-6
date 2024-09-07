@@ -21,6 +21,10 @@ function handleLogin() {
     alert('Invalid Username or Password')  // Display an error message
   }
 }
+
+function goToGenerator() {
+  router.push('/Generator')  // Navigate to the Generator page
+}
 </script>
 
 
@@ -55,7 +59,7 @@ function handleLogin() {
         <button @click="handleLogin" class="login-button">Login</button>
         <div class="warning-container">
           <div class="warning1">Not Admin?</div>
-          <div class="warning2">Go Back to Home</div>
+          <div class="warning2" @click="goToGenerator">Go Back to Home</div>
         </div>
       </div>
     </div>
