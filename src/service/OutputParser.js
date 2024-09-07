@@ -20,6 +20,24 @@ import messages from "../utils/constants/messages.js";
  * @returns An array of strings where each string corresponds to a line of python
  * code to be parsed to the interactive problem
  */
+
+
+export function outputParserJson(output) {
+  const regexJsonParser = /```json\n([\s\S]*?)```/g;
+  let doParse = regexJsonParser.exec(output);
+  if (doParse === null) {
+    throw messages.INVALID_OUTPUT_FORMAT;
+    
+  }
+  let parsedData = doParse[1];
+  parsedData = JSON.parse(parsedData); 
+  console.log(parsedData.Code);
+  console.log(parsedData)
+  parsedData.Code = processString(parsedData.Code);
+  console.log(parsedData.Code);
+  return parsedData;
+}
+
 function processString(string) {
   let commentFlag = false;
   let acceptNewLinesFlag1 = false;
@@ -93,20 +111,3 @@ function processString(string) {
 
   return codeArray;
 }
-
-export function outputParserJson(output) {
-  const regexJsonParser = /```json\n([\s\S]*?)```/g;
-  let doParse = regexJsonParser.exec(output);
-  if (doParse === null) {
-    throw messages.INVALID_OUTPUT_FORMAT;
-    
-  }
-  let parsedData = doParse[1];
-  parsedData = JSON.parse(parsedData); 
-  console.log(parsedData.Code);
-  console.log(parsedData)
-  parsedData.Code = processString(parsedData.Code);
-  console.log(parsedData.Code);
-  return parsedData;
-}
-
