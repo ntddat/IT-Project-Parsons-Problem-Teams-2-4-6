@@ -31,7 +31,7 @@ function goToGenerator() {
 <template>
   <div class="header">
     <img src="/logo.png" alt="Logo" class="logo1" />
-    <div class="web-name">learnr</div>
+    <div class="company-name">Learnr</div>
   </div>
   <div class="login-frame">
     <div class="main-content">
