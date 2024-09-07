@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import Generator from './pages/Generator.vue'
 import AdminLogin from './pages/AdminLogin.vue'
+import AdminProfile from './pages/AdminProfile.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import './assets/icon/iconfont.css'
 
@@ -26,6 +27,12 @@ const router = createRouter({
             name: "AdminLogin",
             component: AdminLogin,
         },
+          },
+        {
+            path: "/AdminProfile",
+            name: "AdminProfile",
+            component: AdminProfile,
+          },  
     ]
 });
 
