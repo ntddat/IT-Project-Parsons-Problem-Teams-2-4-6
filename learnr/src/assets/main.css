@@ -20,7 +20,7 @@ body, html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at top left, rgba(21, 107, 58, 0.5) 50%, rgba(240, 164, 84, 0.5) 75%);
+  background: radial-gradient(circle at top left, rgba(21, 107, 58, 0.5) 40%, rgba(240, 164, 84, 0.5) 75%);
   filter: blur(600px); /* Adjust the blur as needed */
   z-index: -1; /* Ensure it is behind the content */
 }
