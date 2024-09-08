@@ -1,20 +1,6 @@
-Name,Age,Species,Weight (kg),Favorite Fruit
-Coco,5,Capuchin,3.5,Banana
-Luna,8,Spider,4.2,Mango
-Milo,3,Macaque,6.8,Apple
-Charlie,10,Capuchin,4.0,Banana
-Jasper,7,Spider,5.1,Mango
-Max,6,Macaque,5.9,Apple
-,,
-Coco,6,Spider,3.8,Mango
-Luna,9,Macaque,4.5,Apple
-Milo,4,Capuchin,7.2,Banana
-Charlie,11,Spider,4.3,Mango
-Jasper,8,Macaque,5.4,Apple
-Max,7,Capuchin,6.1,Banana
-Coco,7,Spider,4.1,Mango
-Luna,10,Macaque,4.8,Apple
-Milo,5,Capuchin,7.0,Banana
-Charlie,12,Spider,4.6,Mango
-Jasper,9,Macaque,5.7,Apple
-Max,8,Capuchin,6.4,Banana
+Name,Species,Habitat,Description
+Coco,Gorilla,Jungle,<p>Coco is a friendly gorilla.</p>
+King Kong,King Kong,Island,<b>King Kong is a giant ape.</b>
+Macaque,Macaque,Forest,None
+Bonobo,Bonobo,None,<p>Bonobos are known for their peaceful nature.</p>
+Chimpanzee,Chimpanzee,Forest,Chimpanzees are intelligent primates.

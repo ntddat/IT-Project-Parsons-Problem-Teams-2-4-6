@@ -1,16 +1,17 @@
-
+// TODO: SPLIT THIS INTO CONTROLLERM MIDDLEWARE, AND SERVICE
 // Importing packages
-require('dotenv').config()
-const { PythonShell } = require('python-shell')
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const fs = require('fs');
-const express = require('express')
-const format = require('string-format')
+import dotenv from 'dotenv'
+import { PythonShell } from 'python-shell';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { writeFile } from 'fs';
+import express, { static as expressStatic, json } from 'express';
+import format from 'string-format';
 const app = express()
+dotenv.config();
 
 // Importing our modules
-const parsers = require("./OutputParser");
-const topics = require("./TopicsContexts");
+import { outputParserJson } from "./service/OutputParser.js";
+import { generatePrompt } from "./utils/constants/TopicsContexts.js";
 
 // Constants
 const port = 8383
@@ -30,16 +31,12 @@ async function askGemini(topic, context) {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
   
-  let prompt1 = topics.generatePrompt(topic, context);
-  //console.log(prompt);
-  //console.log("\n");
-  let result1 = await chat.sendMessage(prompt1);
-  console.log(result1);
-  let prompt = "Generate your previous response but remove any code comments.\n";
+  // another prompt using the original one 
+  let prompt = generatePrompt(topic, context);
   let result = await chat.sendMessage(prompt);
   let resp = result.response.text();
-  //console.log(resp);
-  let fixed_resp = parsers.outputParserJson(resp);
+  console.log(resp);
+  let fixed_resp = outputParserJson(resp);
 
   console.log(fixed_resp[0]);
   console.log(fixed_resp[1]);
@@ -65,7 +62,7 @@ function createCSV(csvStr, csvName) {
   }
 
   // Creating the CSV file used by the code
-  fs.writeFile(csvName, csvStr, 'utf8', function (err) {
+  writeFile(csvName, csvStr, 'utf8', function (err) {
     if (err) {
       console.log("\nCreating CSV file failed!\n");
     }
@@ -77,9 +74,9 @@ function createCSV(csvStr, csvName) {
 
 
 //Allows the server to see the index.html page in the public folder
-app.use(express.static('public'))
+app.use(expressStatic('public'))
 //Expects to receive json in the app.post method
-app.use(express.json())
+app.use(json())
 
 app.get('/info', (req, res) => {
     res.status(200).json({info: answer})
@@ -89,9 +86,8 @@ app.get('/info', (req, res) => {
 app.post('/', (req,res) => {
     const {parcel} = req.body
     const arr = parcel.split("|")
-    topic = arr[1]
-    context = arr[0]
-    console.log(arr)
+    let topic = arr[1]
+    let context = arr[0]
     
     askGemini(topic, context)
 
