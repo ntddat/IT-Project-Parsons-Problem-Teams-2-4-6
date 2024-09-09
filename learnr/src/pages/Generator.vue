@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'Generator',
   data() {
@@ -130,10 +132,9 @@ export default {
       };
       console.log('Sending data to backend:', payload);
 
-      // Data is sent to the back end via HTTP requests
-      // axios.post('/api/sendData', payload)
-      //   .then(response => console.log('Data sent successfully:', response.data))
-      //   .catch(error => console.error('Error sending data:', error));
+      axios.post('http://localhost:3000/api/sendData', payload)
+        .then(response => console.log('Data sent successfully:', response.data))
+        .catch(error => console.error('Error sending data:', error));
     }
   }
 };
@@ -169,8 +170,8 @@ export default {
   justify-content: space-between;
   position: fixed;
   bottom: 0;
-  width: 100%;
-  padding: 10px;
+  width: 97%;
+  padding: 13px;
 }
 
 .dropdown {
