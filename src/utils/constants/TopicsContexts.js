@@ -64,10 +64,11 @@ taskDFGroupby.push(" use groupby and mode on the original DataFrame, and print t
 taskDFGroupby.push(" use groupby and agg on the original DataFrame, and print the grouped DataFrame.\n");
 
 let taskDFJoin = [];
-taskDFJoin.push(" create a new DataFrame, and perform a left join on it and the original DataFrame, then print the resulting DataFrame.\n");
-taskDFJoin.push(" create a new DataFrame and perform a join on it and the original DataFrame using concat, then print the resulting DataFrame.\n");
-taskDFJoin.push(" create a new DataFrame and perform a join on it and the original DataFrame using join, then print the resulting DataFrame.\n");
-taskDFJoin.push(" create a new DataFrame and perform a join on it and the original DataFrame using merge, then print the resulting DataFrame.\n");
+taskDFJoin.push(" create a new DataFrame, and perform a left join on it and the original DataFrame using keys from the original DataFrame, then print the resulting DataFrame.\n");
+taskDFJoin.push(" create a new DataFrame and perform a join on it and the original DataFrame along rows and assign all data, then print the resulting DataFrame.\n");
+taskDFJoin.push(" create a new DataFrame and perform a merge on it and the original DataFrame along their common column id, then print the resulting DataFrame.\n");
+taskDFJoin.push(" create a new DataFrame and perform a join on it and the original DataFrame with matching records on both sides where available, then print the resulting DataFrame.\n");
+taskDFJoin.push(" create a new DataFrame and perform a merge on it and the original DataFrame using multple join keys, then print the resulting DataFrame.\n");
 
 let taskDFRegex = [];
 taskDFRegex.push(" capitalize all string values of a column in the original DataFrame using regular expression.\n");
@@ -109,6 +110,8 @@ function promptDataFrame() {
   let taskTwoArr = tasks.get(taskTwo);
   let taskThreeArr = tasks.get(taskThree);
   console.log(taskOne);
+  console.log(taskTwo);
+  console.log(taskThree);
   str += "- It should then";
   str += taskOneArr[Math.floor(Math.random() * taskOneArr.length)];
   str += "- It should then";
@@ -124,7 +127,7 @@ export function generatePrompt(topic, context) {
     if (topic == "DataFrame") {
       //prompt += promptDataFrame();
       //console.log(prompt);
-      //prompt += "- It should be similar to the following code snippets:\n";
+     //prompt += "- It should be similar to the following code snippets:\n";
       /*
       let data = readFileSync("./src/utils/constants/DataFrameSnippets.txt", "utf-8");
       prompt += "- Your response should be similar to the following examples, especially Example 1:\n";
@@ -155,5 +158,4 @@ export function generatePrompt(topic, context) {
     prompt += "- CSV: If the code involves opening and reading a file, generate an example of the file content\n";
 
     return prompt;
-  return prompt;
 }
