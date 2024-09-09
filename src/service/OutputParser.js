@@ -10,16 +10,6 @@ import messages from "../utils/constants/messages.js";
   * will throw an "Invalid output format" exception.
   */
 
-/**
- * @function processString
- * @param {*} string 
- * Filters out comments
- * Filters out any \n followed by spaces, tabs or \n
- * Accounts for print statements containing \n
- * @returns An array of strings where each string corresponds to a line of python
- * code to be parsed to the interactive problem
- */
-
 
 export function outputParserJson(output) {
   const regexJsonParser = /```json\n([\s\S]*?)```/g;
@@ -37,6 +27,16 @@ export function outputParserJson(output) {
   return parsedData;
 }
 
+/**
+ * @function processString
+ * @param {*} string 
+ * Filters out comments
+ * Filters out any \n followed by spaces, tabs or \n
+ * Accounts for print statements containing \n
+ * @returns An array of strings where each string corresponds to a line of python
+ * code to be parsed to the interactive problem
+ */
+
 function processString(string) {
   let commentFlag = false;
   let acceptNewLinesFlag1 = false;
@@ -52,7 +52,7 @@ function processString(string) {
 
     //flags
 
-    //Assuming commens end in a newline character
+    //Assuming comments end in a newline character
     //Also assuming that the ai doesn't write code on the same line as a comment following the comment
     if (!commentFlag) {
       if (currentChar == "#") {
@@ -65,6 +65,7 @@ function processString(string) {
       }
     }
 
+    //If there is an open quote then stop looking for new line characters
     //Doesn't handle multiple embedded quotation marks ie: "'""'"
     if (!acceptNewLinesFlag1) {
       if (currentChar == "'") {
@@ -86,12 +87,15 @@ function processString(string) {
       }
     }
 
+    //If we just saw a new line, check to see if there are any more space characters or we've moved onto the next line of code
     if (newLineFlag) {
       if (currentChar != ' ' && currentChar != '\n' && currentChar != '\t') {
         newLineFlag = false;
         nextLineFlag = true;
       }
     }
+
+    //If we're scanning code lookout for a new line character to see if that code line has ended
     if (!newLineFlag) {
       if (currentChar == '\n' && !acceptNewLinesFlag1 && !acceptNewLinesFlag2) {
         newLineFlag = true;
@@ -99,6 +103,7 @@ function processString(string) {
     }
 
     //adding to array
+    //If we just had a newline or a comment then add an extra element to the array for the next line of code
     if (!newLineFlag && !commentFlag && (nextLineFlag == true || codeArray.length == 0)) {
       codeArray.push(currentChar);
       nextLineFlag = false;
