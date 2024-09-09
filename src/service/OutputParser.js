@@ -10,7 +10,6 @@ import messages from "../utils/constants/messages.js";
   * will throw an "Invalid output format" exception.
   */
 
-
 /**
  * @function processString
  * @param {*} string 
