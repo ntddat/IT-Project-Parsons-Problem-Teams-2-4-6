@@ -37,13 +37,14 @@ async function askGemini(topic, context) {
   let fixed_resp = outputParserJson(resp);
 
   console.log(fixed_resp);
-  console.log("\n");
-  console.log(fixed_resp.Code)
+  console.log("Python code as array:\n");
+  console.log(fixed_resp.Code);
 
   createCSV(fixed_resp.CSV, fixed_resp.CSVName);
 
   // Running the response through python interpreter
-  PythonShell.runString(fixed_resp.Code, null).then(messages=>{
+  console.log(fixed_resp.Code.join('\n'));
+  PythonShell.runString(fixed_resp.Code.join('\n'), null).then(messages=>{
     console.log("Output:\n");
     console.log(messages);
   });
