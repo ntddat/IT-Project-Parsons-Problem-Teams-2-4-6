@@ -1,19 +1,27 @@
-// DATABASE CONNECTION GOES HERE
+import { MongoClient, ListCollectionsCursor } from 'mongodb';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const { MongoClient, ListCollectionsCursor } = require('mongodb');
+const mongoUsername = process.env.MONGO_DB_USERNAME;
+const mongoPassword = process.env.MONGO_DB_PASSWORD;
+const mongoClusterUrl = process.env.MONGO_DB_CLUSTER_URL;
+const mongoClusterName = process.env.MONGO_DB_CLUSTER_NAME;
+const questionsDbName = process.env.QUESTIONS_DATABASE;
+const mongoOptions = process.env.MONGO_DB_OPTIONS || '';
+const questionsDetailsCollection = process.env.QUESTION_DETAILS_COLLECTION;
 
 async function main() {
 
-    const uri = "mongodb+srv://parsonsproblemteams246:Password12345@parsonsproblemcluster.ufx52.mongodb.net/?retryWrites=true&w=majority&appName=ParsonsProblemCluster"
+    const mongoUri = `mongodb+srv://${mongoUsername}:${mongoPassword}@${mongoClusterUrl}/${mongoOptions}&appName=${mongoClusterName}`;
 
-    const client = new MongoClient(uri);
+    const client = new MongoClient(mongoUri);
 
     try 
     {
         await client.connect();
         await listDatabases(client);
-        const db = client.db("questions");
-        const coll = db.collection("question_details");
+        const db = client.db(questionsDbName);
+        const coll = db.collection(questionsDetailsCollection);
         const cursor = coll.find();
         await cursor.forEach(console.log);
     } 
@@ -33,7 +41,7 @@ main().catch(console.error);
 
 async function listDatabases(client) 
 {
-    databasesList = await client.db().admin().listDatabases();
+    let databasesList = await client.db().admin().listDatabases();
     console.log("Databases:");
     databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 }

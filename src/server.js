@@ -1,13 +1,13 @@
 // TODO: SPLIT THIS INTO CONTROLLERM MIDDLEWARE, AND SERVICE
 // Importing packages
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import { PythonShell } from 'python-shell';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { writeFile } from 'fs';
 import express, { static as expressStatic, json } from 'express';
 import format from 'string-format';
-const app = express()
 dotenv.config();
+const app = express()
 
 // Importing our modules
 import { outputParserJson } from "./service/OutputParser.js";
