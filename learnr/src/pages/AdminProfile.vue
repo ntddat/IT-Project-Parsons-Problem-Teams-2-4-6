@@ -14,7 +14,6 @@
         </nav>
         <div id="cont_box">
 
-
             <!-- Profile Section -->
             <div class="profile-container">
                 <div class="profile-header">
