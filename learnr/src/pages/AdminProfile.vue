@@ -1,10 +1,10 @@
 <template>
     <div class="admin-profile">
         <!-- Navigation Bar -->
-        <nav class="navbar">
-            <div class="brand">
-                <img src="/logo.png" alt="Learnr Logo" class="logo" />
-                <span>Learnr</span>
+        <nav class="top">
+            <div class="header">
+                <img src="/logo.png" alt="Logo" class="top-logo" />
+                <div class="web-name">Learnr</div>
             </div>
             <div class="nav-links">
                 <router-link to="/history" class="nav-link">History</router-link>
@@ -92,48 +92,49 @@ export default {
     /* max-width: 1000px; */
 }
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e5e5e5;
-    width: 90vw;
-    margin-left: 5vw;
-    line-height: 80px;
-    padding: 0px 30px;
-    font-weight: 600;
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.brand {
-    display: flex;
-    align-items: center;
+.header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
 }
 
-.logo {
-    height: 20px;
-    margin-right: 15px;
+.top-logo {
+  height: 25px; /* Adjust as needed */
+  margin-right: 10px;
+}
+
+.web-name {
+  font-size: 21px;
+  font-weight: bold;
 }
 
 .nav-links {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
+  width: auto; /* Set width to auto to adjust based on content */
+  margin-right: 30px; /* Move nav bar slightly away from the right edge */
 }
 
 .nav-link {
-    text-decoration: none;
-    color: #333333;
-    font-weight: bold;
-    margin-left: 10vw;
+  text-decoration: none;
+  color: #333333;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  color: #156B3A;
 }
 
 #cont_box {
     max-width: 1000px;
     margin: 0px auto;
     margin-top: 20px;
-}
-
-.nav-link:hover {
-    color: #156B3A;
 }
 
 .profile-container {
