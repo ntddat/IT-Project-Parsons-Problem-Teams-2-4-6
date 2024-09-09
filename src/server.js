@@ -6,12 +6,16 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { writeFile } from 'fs';
 import express, { static as expressStatic, json } from 'express';
 import format from 'string-format';
+import { establishConnection } from './database/connection.js';
 dotenv.config();
 const app = express()
 
 // Importing our modules
 import { outputParserJson } from "./service/OutputParser.js";
 import { generatePrompt } from "./utils/constants/TopicsContexts.js";
+
+// Establishing connection to the database
+establishConnection();
 
 // Constants
 const port = 8383
