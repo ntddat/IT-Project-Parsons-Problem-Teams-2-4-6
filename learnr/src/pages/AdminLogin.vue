@@ -1,92 +1,100 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'  // Import Vue Router for navigation
 
 const email = ref('')
 const password = ref('')
-const router = useRouter()
+const router = useRouter()  // Initialize the router
 
 function handleLogin() {
-  const adminUsername = 'admin'
-  const adminPassword = 'admin123'
+ // Hardcoded admin credentials
+ const adminUsername = 'admin'
+ const adminPassword = 'admin123'
 
-  if (email.value === adminUsername && password.value === adminPassword) {
-    console.log('Login successful!')
-    router.push('/AdminProfile')
-  } else {
-    console.log('Invalid login credentials.')
-    alert('Invalid Username or Password')
-  }
+ // Check if entered email and password match the admin credentials
+ if (email.value === adminUsername && password.value === adminPassword) {
+   console.log('Login successful!')
+  // Navigate to the AdminProfile page
+   router.push('/AdminProfile')
+ } else {
+ console.log('Invalid login credentials.')
+ alert('Invalid Username or Password') // Display an error message
+ }
 }
 
 function goToGenerator() {
-  router.push('/Generator')
+ router.push('/Generator') // Navigate to the Generator page
 }
 </script>
 
+
 <template>
-  <div class="header">
-    <img src="/logo.png" alt="Logo" class="logo1" />
-    <div class="company-name">Learnr</div>
-  </div>
-  <div class="login-frame">
-    <div class="main-content">
-      <img src="/logo.png" alt="Logo" class="logo2" />
-      <div class="title">Admin Login</div>
-      <div class="login-form">
-        <div class="form-group">
-          <div class="subtitle">Username</div>
-          <input
-            v-model="email"
-            type="text"
-            class="login-input"
-            placeholder="Enter your Username"
-          />
-        </div>
-        <div class="form-group">
-          <div class="subtitle">Password</div>
-          <input
-            v-model="password"
-            type="password"
-            class="login-input"
-            placeholder="Enter your Password"
-          />
-        </div>
-        <button @click="handleLogin" class="login-button">Login</button>
-        <div class="warning-container">
-          <div class="warning1">Not Admin?</div>
-          <div class="warning2" @click="goToGenerator">Go Back to Home</div>
-        </div>
+ <div class="header">
+  <img src="/logo.png" alt="Logo" class="logo1" />
+  <div class="company-name">Learnr</div>
+</div>
+<div class="login-frame">
+  <div class="main-content">
+    <img src="/logo.png" alt="Logo" class="logo2" />
+    <div class="title">Admin Login</div>
+    <div class="login-form">
+      <div class="form-group">
+        <div class="subtitle">Username</div>
+        <input
+          v-model="email"
+          type="text"
+          class="login-input"
+          placeholder="Enter your Username"
+        />
+      </div>
+      <div class="form-group">
+        <div class="subtitle">Password</div>
+        <input
+          v-model="password"
+          type="password"
+          class="login-input"
+          placeholder="Enter your Password"
+        />
+      </div>
+      <button @click="handleLogin" class="login-button">Login</button>
+      <div class="warning-container">
+        <div class="warning1">Not Admin?</div>
+        <div class="warning2" @click="goToGenerator">Go Back to Home</div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <style scoped>
 .login-frame {
   box-sizing: border-box;
   margin: 5% auto; /* Center the login frame horizontally and add margin at the top */
-  padding-top: 30px;
+  padding-top: 50px;
   width: 90%; /* Adjust width relative to the viewport */
-  max-width: 550px; /* Set a maximum width to prevent it from becoming too large */
-  height: auto; /* Allow height to adjust based on content */
-  background: #F6F4F4;
+  max-width: 480px; /* Set a maximum width to prevent it from becoming too large */
+  min-height: 50vh; /* Ensure the frame doesn't shrink below a reasonable size */
+  max-height: 80vh; /* Prevent it from growing too large */
+  background: rgba(246, 244, 244, 0.6); /* Semi-transparent background */
+  backdrop-filter: blur(30px); /* Apply blur effect */
   border-radius: 30px;
   display: flex;
-  align-items: center; /* Center all items horizontally */
-  flex-direction: column; /* Ensure children are stacked vertically */
   position: relative; /* Make this a reference for absolute positioning */
 }
 
+/* Media query for medium screens (768px and above) */
 @media (min-width: 768px) {
   .login-frame {
-    width: 60%; /* Adjust for medium to large screens */
+    min-height: 60vh; /* Adjust for medium-sized screens */
+    max-height: 85vh;
   }
 }
 
+/* Media query for larger screens (1024px and above) */
 @media (min-width: 1024px) {
   .login-frame {
-    width: 40%; /* Adjust for larger screens */
+    min-height: 65vh; /* Adjust for larger screens */
+    max-height: 90vh;
   }
 }
 
@@ -101,6 +109,7 @@ function goToGenerator() {
   line-height: 0.5; /* Set line-height to 1 to minimize any extra space */
   text-align: left; /* Ensure subtitles are aligned to the left */
   width: 100%; /* Ensure subtitle takes full width */
+  margin-right: 50px;
 }
 
 .header {
@@ -141,6 +150,7 @@ function goToGenerator() {
 .warning2 {
   font-size: 10px;
   font-weight: bold;
+  cursor: pointer;
 }
 .main-content {
   flex: 1;
@@ -156,14 +166,16 @@ function goToGenerator() {
   line-height: 230%;
   word-wrap: break-word;
   margin-bottom: 20%;
-  gap: 25px; /* Space between all children */
-  padding-top: 20px; /* Add padding to push content down */
+  gap: 5px; /* Space between all children */
+  overflow: auto;
 }
 
 .login-form {
   width: 90%;
-  max-width: 500px; /* Maximum width of the form */
+  max-width: 350px;
   margin: 0 auto; /* Center the form horizontally */
+  gap: auto;
+  padding-top: 15px;
 }
 
 .form-group {
@@ -173,8 +185,7 @@ function goToGenerator() {
 }
 
 .login-input {
-  width: 100%; /* Adjust width to fit within form group */
-  max-width: 400px; /* Maximum width of the input box */
+  width: 90%; /* Adjust width to fit within form group */
   padding: 10px; /* Adjust padding for better appearance */
   border-radius: 3px;
   border: 1px solid #ccc;
@@ -188,7 +199,7 @@ function goToGenerator() {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-  width: 100%; /* Adjust button width to fit within form group */
+  width: 65%; /* Adjust button width to fit within form group */
   font-size: 13px;
 }
 
