@@ -22,6 +22,13 @@ function handleLogin() {
  }
 }
 
+function handleKeydown(event) {
+  // Trigger login if the Enter key is pressed
+  if (event.key === 'Enter') {
+    handleLogin()
+  }
+}
+
 function goToGenerator() {
  router.push('/Generator') // Navigate to the Generator page
 }
@@ -29,48 +36,48 @@ function goToGenerator() {
 
 
 <template>
- <div class="header">
-  <img src="/logo.png" alt="Logo" class="logo1" />
-  <div class="company-name">Learnr</div>
-</div>
-<div class="login-frame">
-  <div class="main-content">
-    <img src="/logo.png" alt="Logo" class="logo2" />
-    <div class="title">Admin Login</div>
-    <div class="login-form">
-      <div class="form-group">
-        <div class="subtitle">Username</div>
-        <input
-          v-model="email"
-          type="text"
-          class="login-input"
-          placeholder="Enter your Username"
-        />
-      </div>
-      <div class="form-group">
-        <div class="subtitle">Password</div>
-        <input
-          v-model="password"
-          type="password"
-          class="login-input"
-          placeholder="Enter your Password"
-        />
+  <div class="header">
+    <img src="/logo.png" alt="Logo" class="logo1" />
+    <div class="company-name">Learnr</div>
+  </div>
+  <div class="login-frame">
+    <div class="main-content">
+      <img src="/logo.png" alt="Logo" class="logo2" />
+      <div class="title">Admin Login</div>
+      <div class="login-form">
+        <div class="form-group">
+          <div class="subtitle">Username</div>
+          <input
+            v-model="email"
+            type="text"
+            class="login-input"
+            placeholder="Enter your Username"
+          />
+        </div>
+        <div class="form-group">
+          <div class="subtitle">Password</div>
+          <input
+            v-model="password"
+            type="password"
+            class="login-input"
+            placeholder="Enter your Password"
+            @keydown="handleKeydown" 
+          />
+        </div>
       </div>
       <button @click="handleLogin" class="login-button">Login</button>
-      <div class="warning-container">
-        <div class="warning1">Not Admin?</div>
-        <div class="warning2" @click="goToGenerator">Go Back to Home</div>
-      </div>
+    </div>
+    <div class="warning-container">
+      <div class="warning1">Not Admin?</div>
+      <div class="warning2" @click="goToGenerator">Go Back to Home</div>
     </div>
   </div>
-</div>
 </template>
 
 <style scoped>
 .login-frame {
   box-sizing: border-box;
-  margin: 5% auto; /* Center the login frame horizontally and add margin at the top */
-  padding-top: 50px;
+  margin: 4% auto; /* Center the login frame horizontally and add margin at the top */
   width: 90%; /* Adjust width relative to the viewport */
   max-width: 480px; /* Set a maximum width to prevent it from becoming too large */
   min-height: 50vh; /* Ensure the frame doesn't shrink below a reasonable size */
@@ -82,19 +89,11 @@ function goToGenerator() {
   position: relative; /* Make this a reference for absolute positioning */
 }
 
-/* Media query for medium screens (768px and above) */
-@media (min-width: 768px) {
-  .login-frame {
-    min-height: 60vh; /* Adjust for medium-sized screens */
-    max-height: 85vh;
-  }
-}
-
 /* Media query for larger screens (1024px and above) */
 @media (min-width: 1024px) {
   .login-frame {
     min-height: 65vh; /* Adjust for larger screens */
-    max-height: 90vh;
+    max-height: 65vh; /* set for testing in different size screen */
   }
 }
 
@@ -109,7 +108,6 @@ function goToGenerator() {
   line-height: 0.5; /* Set line-height to 1 to minimize any extra space */
   text-align: left; /* Ensure subtitles are aligned to the left */
   width: 100%; /* Ensure subtitle takes full width */
-  margin-right: 50px;
 }
 
 .header {
@@ -137,7 +135,7 @@ function goToGenerator() {
   display: flex; /* Align items in a row */
   justify-content: center; /* Center the items horizontally */
   gap: 8px; /* Adjust the gap between warnings */
-  bottom: 5px; /* Position the container at the bottom */
+  bottom: 3%; /* Position the container at the bottom */
   width: 100%; /* Full width of the parent container */
   padding: 0 20px; /* Optional: add padding for better spacing */
   box-sizing: border-box; /* Ensure padding is included in width calculation */
@@ -165,27 +163,27 @@ function goToGenerator() {
   font-weight: 500;
   line-height: 230%;
   word-wrap: break-word;
-  margin-bottom: 20%;
-  gap: 5px; /* Space between all children */
+  margin-bottom: 15%;
+  gap: auto; /* Space between all children */
   overflow: auto;
+  padding-top: 40px;
 }
 
 .login-form {
-  width: 90%;
+  width: 65%;
   max-width: 350px;
-  margin: 0 auto; /* Center the form horizontally */
-  gap: auto;
   padding-top: 15px;
 }
 
 .form-group {
-  width: 100%; /* Ensures input and subtitle take full width */
+  position: relative;
+  width: 85%; /* Ensures input and subtitle take full width */
   margin-bottom: 8%; /* Space between form groups */
   text-align: center; /* Center the content within form group */
 }
 
 .login-input {
-  width: 90%; /* Adjust width to fit within form group */
+  width: 110%; /* Adjust width to fit within form group */
   padding: 10px; /* Adjust padding for better appearance */
   border-radius: 3px;
   border: 1px solid #ccc;
@@ -199,7 +197,7 @@ function goToGenerator() {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-  width: 65%; /* Adjust button width to fit within form group */
+  width: 45%; /* Adjust button width to fit within form group */
   font-size: 13px;
 }
 
