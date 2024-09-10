@@ -1,29 +1,36 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'  // Import Vue Router for navigation
+import { useRouter } from 'vue-router'  // Import Vue Router for navigation
 
 const email = ref('')
 const password = ref('')
-const router = useRouter()  // Initialize the router
+const router = useRouter()  // Initialize the router
 
 function handleLogin() {
-  // Hardcoded admin credentials
-  const adminUsername = 'admin'
-  const adminPassword = 'admin123'
+ // Hardcoded admin credentials
+ const adminUsername = 'admin'
+ const adminPassword = 'admin123'
 
-  // Check if entered email and password match the admin credentials
-  if (email.value === adminUsername && password.value === adminPassword) {
-    console.log('Login successful!')
-    // Navigate to the AdminProfile page
-    router.push('/AdminProfile')
-  } else {
-    console.log('Invalid login credentials.')
-    alert('Invalid Username or Password')  // Display an error message
+ // Check if entered email and password match the admin credentials
+ if (email.value === adminUsername && password.value === adminPassword) {
+   console.log('Login successful!')
+  // Navigate to the AdminProfile page
+   router.push('/AdminProfile')
+ } else {
+ console.log('Invalid login credentials.')
+ alert('Invalid Username or Password') // Display an error message
+ }
+}
+
+function handleKeydown(event) {
+  // Trigger login if the Enter key is pressed
+  if (event.key === 'Enter') {
+    handleLogin()
   }
 }
 
 function goToGenerator() {
-  router.push('/Generator')  // Navigate to the Generator page
+ router.push('/Generator') // Navigate to the Generator page
 }
 </script>
 
@@ -54,14 +61,15 @@ function goToGenerator() {
             type="password"
             class="login-input"
             placeholder="Enter your Password"
+            @keydown="handleKeydown" 
           />
         </div>
-        <button @click="handleLogin" class="login-button">Login</button>
-        <div class="warning-container">
-          <div class="warning1">Not Admin?</div>
-          <div class="warning2" @click="goToGenerator">Go Back to Home</div>
-        </div>
       </div>
+      <button @click="handleLogin" class="login-button">Login</button>
+    </div>
+    <div class="warning-container">
+      <div class="warning1">Not Admin?</div>
+      <div class="warning2" @click="goToGenerator">Go Back to Home</div>
     </div>
   </div>
 </template>
@@ -69,29 +77,23 @@ function goToGenerator() {
 <style scoped>
 .login-frame {
   box-sizing: border-box;
-  margin: 5% auto; /* Center the login frame horizontally and add margin at the top */
-  padding-top: 30px;
+  margin: 4% auto; /* Center the login frame horizontally and add margin at the top */
   width: 90%; /* Adjust width relative to the viewport */
-  max-width: 550px; /* Set a maximum width to prevent it from becoming too large */
-  height: auto; /* Allow height to adjust based on content */
-  max-height: 90vh; /* Set maximum height relative to the viewport */
-  background: #F6F4F4;
+  max-width: 480px; /* Set a maximum width to prevent it from becoming too large */
+  min-height: 50vh; /* Ensure the frame doesn't shrink below a reasonable size */
+  max-height: 80vh; /* Prevent it from growing too large */
+  background: rgba(246, 244, 244, 0.6); /* Semi-transparent background */
+  backdrop-filter: blur(30px); /* Apply blur effect */
   border-radius: 30px;
   display: flex;
-  align-items: center; /* Center all items horizontally */
-  flex-direction: column; /* Ensure children are stacked vertically */
   position: relative; /* Make this a reference for absolute positioning */
 }
 
-@media (min-width: 768px) {
-  .login-frame {
-    width: 60%; /* Adjust for medium to large screens */
-  }
-}
-
+/* Media query for larger screens (1024px and above) */
 @media (min-width: 1024px) {
   .login-frame {
-    width: 40%; /* Adjust for larger screens */
+    min-height: 65vh; /* Adjust for larger screens */
+    max-height: 65vh; /* set for testing in different size screen */
   }
 }
 
@@ -133,7 +135,7 @@ function goToGenerator() {
   display: flex; /* Align items in a row */
   justify-content: center; /* Center the items horizontally */
   gap: 8px; /* Adjust the gap between warnings */
-  bottom: 5px; /* Position the container at the bottom */
+  bottom: 3%; /* Position the container at the bottom */
   width: 100%; /* Full width of the parent container */
   padding: 0 20px; /* Optional: add padding for better spacing */
   box-sizing: border-box; /* Ensure padding is included in width calculation */
@@ -146,6 +148,7 @@ function goToGenerator() {
 .warning2 {
   font-size: 10px;
   font-weight: bold;
+  cursor: pointer;
 }
 .main-content {
   flex: 1;
@@ -160,24 +163,27 @@ function goToGenerator() {
   font-weight: 500;
   line-height: 230%;
   word-wrap: break-word;
-  margin-bottom: 20%;
-  gap: 30px; /* Space between all children */
+  margin-bottom: 15%;
+  gap: auto; /* Space between all children */
+  overflow: auto;
+  padding-top: 40px;
 }
 
 .login-form {
-  width: 90%;
+  width: 65%;
   max-width: 350px;
-  margin: 0 auto; /* Center the form horizontally */
+  padding-top: 15px;
 }
 
 .form-group {
-  width: 100%; /* Ensures input and subtitle take full width */
+  position: relative;
+  width: 85%; /* Ensures input and subtitle take full width */
   margin-bottom: 8%; /* Space between form groups */
   text-align: center; /* Center the content within form group */
 }
 
 .login-input {
-  width: 100%; /* Adjust width to fit within form group */
+  width: 110%; /* Adjust width to fit within form group */
   padding: 10px; /* Adjust padding for better appearance */
   border-radius: 3px;
   border: 1px solid #ccc;
@@ -191,7 +197,7 @@ function goToGenerator() {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-  width: 100%; /* Adjust button width to fit within form group */
+  width: 45%; /* Adjust button width to fit within form group */
   font-size: 13px;
 }
 
