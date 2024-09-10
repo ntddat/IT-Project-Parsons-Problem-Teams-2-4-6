@@ -9,7 +9,6 @@
 # linters to use for neovim
 eslint.config.mjs
 
-
 # testing outputs
 runs/
 
@@ -18,3 +17,6 @@ node_modules/
 
 # Ignore database scripts
 databaseScripts/*.js
+
+# Ignore script generated for PythonShell
+script.py
