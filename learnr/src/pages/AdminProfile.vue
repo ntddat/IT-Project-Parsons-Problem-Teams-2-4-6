@@ -208,6 +208,7 @@ export default {
     padding: 20px;
     border-top: 1px solid #777777;
     padding-top: 30px;
+    overflow: auto; 
 }
 
 .history-list {

@@ -169,8 +169,8 @@ export default {
   justify-content: space-between;
   position: fixed;
   bottom: 0;
-  width: 100%;
-  padding: 10px;
+  width: 98%;
+  padding: 13px;
 }
 
 .dropdown {
