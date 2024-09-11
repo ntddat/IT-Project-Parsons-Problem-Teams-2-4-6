@@ -8,7 +8,7 @@
             </div>
             <div class="nav-links">
                 <router-link to="/history" class="nav-link">History</router-link>
-                <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
+                <router-link to="/AdminLogin" class="nav-link">Logout</router-link>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
             </div>
         </nav>
