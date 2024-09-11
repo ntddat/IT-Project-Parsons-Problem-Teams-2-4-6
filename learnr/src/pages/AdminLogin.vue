@@ -77,24 +77,24 @@ function goToGenerator() {
 <style scoped>
 .login-frame {
   box-sizing: border-box;
-  margin: 4% auto; /* Center the login frame horizontally and add margin at the top */
+  margin: 3% auto; /* Center the login frame horizontally and add margin at the top */
   width: 90%; /* Adjust width relative to the viewport */
-  max-width: 480px; /* Set a maximum width to prevent it from becoming too large */
-  min-height: 50vh; /* Ensure the frame doesn't shrink below a reasonable size */
-  max-height: 80vh; /* Prevent it from growing too large */
+  max-width: 400px; /* Set a maximum width to prevent it from becoming too large */
+  min-height: 65vh; /* Ensure the frame doesn't shrink below a reasonable size */
+  max-height: 73vh; /* Prevent it from growing too large */
   background: rgba(246, 244, 244, 0.6); /* Semi-transparent background */
   backdrop-filter: blur(30px); /* Apply blur effect */
   border-radius: 30px;
   display: flex;
-  position: relative; /* Make this a reference for absolute positioning */
+  flex-direction: column;
 }
 
 /* Media query for larger screens (1024px and above) */
-@media (min-width: 1024px) {
+@media (min-height: 1964px) {
   .login-frame {
-    min-height: 65vh; /* Adjust for larger screens */
-    max-height: 65vh; /* set for testing in different size screen */
-  }
+    min-height: 50vh; /* Adjust for larger screens */
+    max-height: 80vh; /* set for testing in different size screen */
+  }  
 }
 
 .title {
@@ -166,8 +166,7 @@ function goToGenerator() {
   word-wrap: break-word;
   margin-bottom: 15%;
   gap: auto; /* Space between all children */
-  overflow: auto;
-  padding-top: 40px;
+  padding-top: 30px;
 }
 
 .login-form {
