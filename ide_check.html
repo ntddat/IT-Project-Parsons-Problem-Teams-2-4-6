@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Compiler Example</title>
+    <style>
+        #editor {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #ddd;
+        }
+        #output {
+            width: 100%;
+            height: 150px;
+            border: 1px solid #333;
+            padding: 10px;
+            background-color: #f0f0f0;
+            white-space: pre-wrap; /* Preserve whitespace */
+        }
+    </style>
+</head>
+<body>
+    <!-- Code Editor -->
+    <textarea id="editor">print("Hello, World!")</textarea>
+
+    <!-- Run Button -->
+    <button onclick="runCode()">Run Code</button>
+
+    <!-- Output Area -->
+    <div id="output">Output will appear here...</div>
+
+    <script>
+        async function runCode() {
+            // const code = document.getElementById('editor').value; // Get code from the editor
+            var code = "print 'Hello'\n" +
+                      "print 'Parsons\n" +
+                      "print 'problems!";
+            const outputElement = document.getElementById('output');
+
+            // Send the code to the Judge0 API for execution
+            try {
+                // Make a POST request to the Judge0 API
+                const response = await fetch('https://python-code-compiler.p.rapidapi.com/compile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                        'X-RapidAPI-Key': 'a049464516msh0e7cc0897a082f0p19e4d0jsne39e0fb32884', // Replace with your API key
+                        'X-RapidAPI-Host': 'python-code-compiler.p.rapidapi.com'
+                        
+                    },
+                    body: JSON.stringify({
+                        source_code: code,
+                        language_id: 71, // Python (change this ID for other languages)
+                    }),               
+                });
+
+                const result = await response.json();
+                console.log(result);
+                console.log(code);
+                // Display the output or error
+                if (result.stdout) {
+                    outputElement.textContent = result.stdout;
+                } else if (result.stderr) {
+                    outputElement.textContent = result.stderr;
+                } else if (result.compile_output) {
+                    outputElement.textContent = result.compile_output;
+                } else {
+                    outputElement.textContent = "No output or error message available.";
+                }
+            } catch (error) {
+                outputElement.textContent = "Error running code: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
