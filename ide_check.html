@@ -33,6 +33,10 @@
     <script>
         async function runCode() {
             // const code = document.getElementById('editor').value; // Get code from the editor
+            var code = "print ('Hello')\n"
+            var outputElement = document.getElementById('output');
+
+            // Send the code to the Judge0 API for execution
             const url = 'https://python-code-compiler.p.rapidapi.com/compile';
             const options = {
                 method: 'POST',
@@ -44,25 +48,14 @@
                 body: 'print("w3badi")'
             };
 
-
-            // Send the code to the Judge0 API for execution
             try {
-                // Make a POST request to the Judge0 API
                 const response = await fetch(url, options);
-                const result = await response.text();
+                const resultText = await response.text();
+                const result = JSON.parse(resultText);
                 console.log(result);
-                // Display the output or error
-                if (result.stdout) {
-                    outputElement.textContent = result.stdout;
-                } else if (result.stderr) {
-                    outputElement.textContent = result.stderr;
-                } else if (result.compile_output) {
-                    outputElement.textContent = result.compile_output;
-                } else {
-                    outputElement.textContent = "No output or error message available.";
-                }
+                outputElement.textContent = result.stdout;
             } catch (error) {
-                outputElement.textContent = "Error running code: " + error.message;
+                console.error(error);
             }
         }
     </script>
