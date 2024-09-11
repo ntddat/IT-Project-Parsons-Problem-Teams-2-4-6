@@ -10,7 +10,6 @@ import messages from "../utils/constants/messages.js";
   * will throw an "Invalid output format" exception.
   */
 
-
 export function outputParserJson(output) {
   const regexJsonParser = /```json\n([\s\S]*?)```/g;
   let doParse = regexJsonParser.exec(output);
