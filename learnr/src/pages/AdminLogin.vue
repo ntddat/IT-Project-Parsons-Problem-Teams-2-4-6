@@ -75,6 +75,19 @@ function goToGenerator() {
 </template>
 
 <style scoped>
+.header {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+}
+.logo1 {
+  height: 25px; /* Adjust as needed */
+  margin-right: 10px;
+}
+.company-name {
+  font-size: 21px;
+  font-weight: bold;
+}
 .login-frame {
   box-sizing: border-box;
   margin: 3% auto; /* Center the login frame horizontally and add margin at the top */
@@ -88,7 +101,6 @@ function goToGenerator() {
   display: flex;
   flex-direction: column;
 }
-
 /* Media query for larger screens (1024px and above) */
 @media (min-height: 1964px) {
   .login-frame {
@@ -96,12 +108,42 @@ function goToGenerator() {
     max-height: 80vh; /* set for testing in different size screen */
   }  
 }
-
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: black;
+  font-size: 24px;
+  font-family: Lexend, sans-serif;
+  font-weight: 500;
+  line-height: 230%;
+  word-wrap: break-word;
+  margin-bottom: 15%;
+  gap: auto; /* Space between all children */
+  padding-top: 30px;
+}
+.logo2 {
+  height: 50px; /* Adjust as needed */
+  margin-right: 10px;
+}
 .title {
   font-size: 30px;
   font-weight: bold;
 }
-
+.login-form {
+  width: 65%;
+  max-width: 350px;
+  padding-top: 15px;
+}
+.form-group {
+  position: relative;
+  width: 85%; /* Ensures input and subtitle take full width */
+  margin-bottom: 8%; /* Space between form groups */
+  text-align: center; /* Center the content within form group */
+}
 .subtitle {
   font-size: 12px;
   font-weight: bold;
@@ -110,26 +152,22 @@ function goToGenerator() {
   width: 100%; /* Ensure subtitle takes full width */
   margin-right: 50px;
 }
-
-.header {
-  display: flex;
-  align-items: center;
-  padding: 15px;
+.login-input {
+  width: 110%; /* Adjust width to fit within form group */
+  padding: 10px; /* Adjust padding for better appearance */
+  border-radius: 3px;
+  border: 1px solid #ccc;
+  outline: none;
 }
-
-.logo1 {
-  height: 25px; /* Adjust as needed */
-  margin-right: 10px;
-}
-
-.logo2 {
-  height: 50px; /* Adjust as needed */
-  margin-right: 10px;
-}
-
-.company-name {
-  font-size: 21px;
-  font-weight: bold;
+.login-button {
+  background-color: #030403;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 45%; /* Adjust button width to fit within form group */
+  font-size: 13px;
 }
 .warning-container {
   position: absolute; /* Position relative to login-frame */
@@ -150,55 +188,6 @@ function goToGenerator() {
   font-size: 10px;
   font-weight: bold;
   cursor: pointer;
-}
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: black;
-  font-size: 24px;
-  font-family: Lexend, sans-serif;
-  font-weight: 500;
-  line-height: 230%;
-  word-wrap: break-word;
-  margin-bottom: 15%;
-  gap: auto; /* Space between all children */
-  padding-top: 30px;
-}
-
-.login-form {
-  width: 65%;
-  max-width: 350px;
-  padding-top: 15px;
-}
-
-.form-group {
-  position: relative;
-  width: 85%; /* Ensures input and subtitle take full width */
-  margin-bottom: 8%; /* Space between form groups */
-  text-align: center; /* Center the content within form group */
-}
-
-.login-input {
-  width: 110%; /* Adjust width to fit within form group */
-  padding: 10px; /* Adjust padding for better appearance */
-  border-radius: 3px;
-  border: 1px solid #ccc;
-  outline: none;
-}
-
-.login-button {
-  background-color: #030403;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 45%; /* Adjust button width to fit within form group */
-  font-size: 13px;
 }
 
 </style>
