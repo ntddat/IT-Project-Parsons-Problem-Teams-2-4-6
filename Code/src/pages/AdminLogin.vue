@@ -1,42 +1,5 @@
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'  // Import Vue Router for navigation
-
-const email = ref('')
-const password = ref('')
-const router = useRouter()  // Initialize the router
-
-function handleLogin() {
- // Hardcoded admin credentials
- const adminUsername = 'admin'
- const adminPassword = 'admin123'
-
- // Check if entered email and password match the admin credentials
- if (email.value === adminUsername && password.value === adminPassword) {
-   console.log('Login successful!')
-  // Navigate to the AdminProfile page
-   router.push('/AdminProfile')
- } else {
- console.log('Invalid login credentials.')
- alert('Invalid Username or Password') // Display an error message
- }
-}
-
-function handleKeydown(event) {
-  // Trigger login if the Enter key is pressed
-  if (event.key === 'Enter') {
-    handleLogin()
-  }
-}
-
-function goToGenerator() {
- router.push('/Generator') // Navigate to the Generator page
-}
-</script>
-
-
 <template>
-  <div class="header">
+  <div class="header" onload="checkAdminState">
     <img src="/logo.png" alt="Logo" class="logo1" />
     <div class="company-name">Learnr</div>
   </div>
@@ -73,6 +36,87 @@ function goToGenerator() {
     </div>
   </div>
 </template>
+
+
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'  // Import Vue Router for navigation
+import { onMounted } from 'vue';
+
+const email = ref('')
+const password = ref('')
+const router = useRouter()  // Initialize the router
+
+
+
+function handleLogin() {
+  // Hardcoded admin credentials
+  const adminUsername = 'admin'
+  const adminPassword = 'admin123'
+
+  // Check if entered email and password match the admin credentials
+  if (email.value === adminUsername && password.value === adminPassword) {
+    console.log('Login successful!')
+
+    // record login state to cookie
+    setCookie("Admin", true, 5) // for test use, only save cookie for 5 seconds
+
+    // Navigate to the AdminProfile page
+    router.push('/AdminProfile')
+  } else {
+    console.log('Invalid login credentials.')
+    alert('Invalid Username or Password') // Display an error message
+  }
+}
+
+function handleKeydown(event) {
+  // Trigger login if the Enter key is pressed
+  if (event.key === 'Enter') {
+    handleLogin()
+  }
+}
+
+function goToGenerator() {
+ router.push('/Generator') // Navigate to the Generator page
+}
+
+function setCookie(name, value, time) {
+    let expires = "";
+    if (time) {
+        let date = new Date();
+        date.setTime(date.getTime() + (time * 1000)); // in seconds
+        expires = "; expires=" + date.toUTCString();
+    }
+    let cookie = name + "=" + (value || "") + expires + "; path=/";
+    console.log("Cookie updatesuccess: " + cookie);
+    document.cookie = cookie
+}
+
+function getCookie(cname) {
+      const name = cname + "=";
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+}
+
+function checkAdminState() {
+  const admin = getCookie("Admin")
+  console.log("getCookie: "+ admin)
+  if (admin) {
+    router.push('/AdminProfile')
+  }
+}
+
+onMounted(() => {
+  checkAdminState() // <div>
+})
+</script>
+
 
 <style scoped>
 .header {
