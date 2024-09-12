@@ -13,23 +13,27 @@ const questionsDetailsCollection = process.env.QUESTION_DETAILS_COLLECTION;
 async function establishConnection() {
 
     const mongoUri = `mongodb+srv://${mongoUsername}:${mongoPassword}@${mongoClusterUrl}/${mongoOptions}&appName=${mongoClusterName}`;
+    mongoose.set('strictQuery', true);
     try {
         await mongoose.connect(mongoUri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000,
         });
-        mongoose.set('strictQuery', true);
 
-        const { connection } = mongoose;
+        const { connection } = mongoose;    
         console.log(`MongoDB connected : ${connection.host}`);
     } catch (e) {
         console.error(e);
     }
 }
 
+async function getDatabaseConnection(dbName) {
+    return mongoose.connection.useDb(dbName);
+}
+
 async function close() {
     await mongoose.disconnect();
 }
 
-export { establishConnection, close };
+export { establishConnection, getDatabaseConnection, close };

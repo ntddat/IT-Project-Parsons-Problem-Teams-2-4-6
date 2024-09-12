@@ -15,7 +15,6 @@ export default AttemptSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  answer: String,
   correct: {
     type: Boolean,
     default: false

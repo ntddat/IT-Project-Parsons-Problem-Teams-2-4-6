@@ -1,4 +1,4 @@
-export default QuestionDetailsSchema = {
+const QuestionDetailsSchema = {
   questionID: {
     type: Number,
     required: true,
@@ -9,10 +9,6 @@ export default QuestionDetailsSchema = {
     required: true
   },
   context: {
-    type: String,
-    required: true
-  },
-  question: {
     type: String,
     required: true
   },
@@ -30,3 +26,4 @@ export default QuestionDetailsSchema = {
   },
 }
 
+export default QuestionDetailsSchema;

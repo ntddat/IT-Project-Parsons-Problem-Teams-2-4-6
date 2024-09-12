@@ -1,7 +1,8 @@
-import { QuestionDetailsSchema } from "../../models/questionDetailsModel.js";
-import { getDatabaseConnection } from "../../index.js";
-import { messages } from "../../utils/constants/messages.js";
-require('dotenv').config();
+import QuestionDetailsSchema from "../../model/questions/questionDetailsModel.js";
+import { establishConnection, getDatabaseConnection } from "../../connection.js";
+import messages from "../../../utils/constants/messages.js";
+import dotenv from 'dotenv'
+dotenv.config();
 
 
 const getQuestionDetailsModel = (dbName) => {
@@ -9,6 +10,7 @@ const getQuestionDetailsModel = (dbName) => {
   if (!questionDetailsCollection) {
     throw new Error(messages.QUESTION_DETAILS_COLLECTION_UNDEFINED);
   }
+  console.log(dbName)
   const dbConnection = getDatabaseConnection(dbName);
   return dbConnection.model(questionDetailsCollection, QuestionDetailsSchema);
 }
@@ -34,8 +36,13 @@ export const questionDetailsRepo = {
 
   // Saves a new question to the collection
   saveApprovedQuestion: async (questionDetails, dbName) => {
+    // Sets a new questionID
     const questionDetailsModel = getQuestionDetailsModel(dbName);
-    const approvedQuestion = new questionDetailsModel(questionDetails);
+    const questionCount = await questionDetailsModel.countDocuments();
+    const approvedQuestion = new questionDetailsModel({
+      questionID: questionCount + 1,
+      ...questionDetails,
+  });
     try {
       return await approvedQuestion.save();
     } catch (e) {
