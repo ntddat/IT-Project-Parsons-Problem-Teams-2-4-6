@@ -4,23 +4,268 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parsons Problem Interface</title>
-    <link rel="stylesheet" href="libs/js-parsons-master/parsons.css">
+    <link rel="stylesheet" href="libs/js-parsons-master/parsons.css"> <!-- 记得更改这个文件，要变成设计的样子 -->
+    <!-- <link rel="stylesheet" href="problem.css">  -->
+    <!-- probelm.css是我的css文件，可以用来更改背景 -->
+     <!-- 更新：决定把css集成在html里面 -->
+    <style>
+        /* 整体的大小 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            height: 100vh;
+            background: linear-gradient(to top right, #e7fcc8, #ffffff);    /* Light gray background color */
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            display: flex;
+            justify-content: space-between;
+            padding: 0; /* Remove padding */
+            margin: 0; /* Remove margin */
+            height: 100%;
+            position: relative;
+            margin-top: 0;
+        }
+
+        #top-panel{
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        /* 右边的结果和按钮区域 */
+        #right-panel {
+            width: 50%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f9fcfd00;
+            /* border-radius: 10px;
+            padding: 20px; */
+            /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+            margin-top: 10px;
+        }
+
+        /* CSS for the square display area */
+        #calculated-value {
+            width: 80%;     /* 宽度 */
+            padding: 20px;
+            margin-bottom: 0;    /* Center the square horizontally on the page */
+            background-color: #efefef;
+            border-radius: 8px;     /* Optional: Rounded corners */
+            text-align: center;     /*圆角设置*/
+            border: 2px solid #dcdcdc;      /* Border around the square */
+        }
+        
+        /* 分割线 */
+        #divider {
+            width: 10px;
+            height: 100%;
+            background-color: #ccc;
+            cursor: ew-resize;  /* 调整鼠标指针形状 */
+            position: absolute;
+            text-align: center;
+            top: 0;
+            bottom: 0;
+            left: 47.5%;
+            z-index: 1;
+            display: flex;                
+            justify-content: center;       /* 水平居中 */
+            align-items: center;           /* 垂直居中 */
+            color: #606060;
+        }
+
+        #divider:hover{
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);   /* 阴影变大 */
+        }
+
+
+        /* 左边的拖动区域 */
+        #left-panel{
+            width: 48%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f9fcfd00;
+            margin-top: 10px;
+            position: relative;
+        }
+        
+        #sortableTrash {
+            width: 75%;
+            background: #f0f8f7;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(131, 40, 40, 0.1);
+        }
+
+        button {
+            width: 150px;
+            background: linear-gradient(to right, #28a745, #218838);  /* 渐变绿色按钮 */
+            border: none;
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        /* 鼠标悬停时的效果 */
+        button:hover {
+            transform: translateY(-3px);     /* 悬浮效果 */
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);   /* 阴影变大 */
+        }
+
+
+        #button-group {
+            display: flex;
+            justify-content: center; /* Center buttons horizontally */
+            flex-wrap: wrap;  /* Wrap buttons if needed */
+            width: 100%;
+        }
+
+        /* 进度条容器 */
+        #progress-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            margin: 0px auto;  /* 居中 */
+            margin-top: 80px;
+            padding: 15px;
+            background: linear-gradient(to top right, #6C8C81, #8E9D96);
+            /* border-radius: 5px; */
+            width: calc(100% - 30px);  /* 左右的间距 */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            position: relative;
+            height: auto;
+        }
+
+        #progress-percent {
+            position: relative;
+            top: 0;
+            left: 0;
+            color: #333;
+            font-size: 15px;
+            padding: 0;
+            font-weight: bold;
+            margin-bottom: 10px; /* 添加与进度条的间隔 */
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 5px; /* 添加与时间文本的间隔 */
+        }
+
+        #progress {
+            height: 100%;
+            background-color: #F0A554; /* 设置进度条颜色 */
+            width: 0%; /* 初始宽度 */
+        }
+
+        
+        #time-elapsed {
+            position: relative; /* Use absolute positioning */
+            bottom: 0; /* Align to the bottom of the container */
+            left: 0; /* Align to the left of the container */
+            font-size: 15px;
+            color: #fdffec;
+            padding-left: 0; /* Add padding for spacing from left edge */
+            padding-top: 5px; /* Add padding for spacing from bottom edge */
+            margin-top: 1px; /* 添加与进度条的间隔 */
+        }
+
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #sortableTrash, #right-panel {
+                width: 100%;
+            }
+
+            #button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                width: 95%;
+            }
+        }
+    </style>
 </head>
+
+
 <body>
-    <header>
-        <h1>Parsons Problem Challenge</h1>
-        <p>Arrange the code blocks in the correct order to solve the problem.</p>
-    </header>
-    <main>
-        <div id="sortableTrash" class="sortable-code"></div>
-        <div id="sortable" class="sortable-code">
+
+    <div id=" top-panel">
+        <!-- 导航栏 -->
+        <div data-include="menu-test.html"></div>
+
+        <!-- 进度条 -->
+        <div id="progress-container">
+            <div id="progress-percent">0%</div>
+            <div id="progress-bar">
+                <div id="progress"></div>
+            </div>
+            <div id="time-elapsed">0 mins 0 seconds</div>
         </div>
 
-        <button id="submit-btn">Submit</button>
-        <button id="reset-btn">Reset</button>
+    </div>
+    
+
+    <!-- <header>
+        <h1>Parsons Problem Challenge</h1>
+        <p>Arrange the code blocks in the correct order to solve the problem.</p>
+    </header> -->
+
+    <main>
+        <!-- 左侧面板，问题和拖动代码块的区域 -->
+        <div id="left-panel">
+            <h1>Parsons Problem Challenge</h1> <!-- 问题数：Question1之类的但是不打算做在这个地方，先放着吧 -->
+            <p>Arrange the code blocks in the correct order to solve the problem.</p> <!-- 问题描述 -->
+            <div id="sortableTrash" class="sortable-code"> </div>
+            <a id="regenerate" href="regen_demo_page.html"> 
+                <button id="regenerate-btn">Regenerate</button>
+            </a>
+         </div>
+        
+        <!-- 可拖动的中分线 -->
+        <div id="divider">⫴</div>
+
+        <!-- 右侧面板，用户构建解决方案的区域 -->
+        <div id="right-panel">
+            <div id="sortable" class="sortable-code"></div>
+            <div id="calculated-value">Result Output<span id="feedback"></span></div>
+            <div id="button-group">
+                <button id="run-btn">Run</button>
+                <button id="reset-btn">Reset</button>
+                <button id="submit-btn">Submit</button>
+            </div>
+        </div>
     </main>
 
-    
     <script src="libs/js-parsons-master/lib/jquery.min.js"></script>
     <script src="libs/js-parsons-master/lib/jquery-ui.min.js"></script>
     <script src="libs/js-parsons-master/lib/jquery.ui.touch-punch.min.js"></script>
@@ -29,5 +274,79 @@
     <script src="libs/js-parsons-master/parsons.js"></script>
     <script src="libs/js-parsons-master/parsons.js"></script>
     <script src="script.js"></script>
+    <script src="load_menu.js"></script>
+
+    <!-- 瞎写的，记得让lyh来写，主要问题是跟的不紧，分割线会和其两个分面板分开，以及在特定位置的时候会选中文本框，这个不要有 -->
+    <script>
+        const divider = document.getElementById('divider');
+        const leftPanel = document.getElementById('left-panel');
+        const rightPanel = document.getElementById('right-panel');
+
+        let isDragging = false;
+
+        divider.addEventListener('mousedown', function(e) {
+            isDragging = true;
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                let offsetX = e.clientX;
+
+                // 计算新的宽度比例
+                let leftWidth = offsetX / window.innerWidth * 100;
+                let rightWidth = 100 - leftWidth;
+
+                // 限制最小和最大宽度
+                if (leftWidth < 10) leftWidth = 100;
+                if (rightWidth < 10) rightWidth = 100;
+
+                leftPanel.style.width = leftWidth + '%';
+                rightPanel.style.width = rightWidth + '%';
+                divider.style.left = leftWidth + '%';
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+    </script>
+
+    <!-- 进度条 -->
+    <script>
+        // 更新进度条和百分比
+        function updateProgressBar(progress) {
+            const progressBar = document.getElementById('progress');
+            const progressPercent = document.getElementById('progress-percent');
+            
+            progressBar.style.width = progress + '%'; // 设置进度条宽度
+            progressPercent.textContent = progress + '%'; // 显示百分比
+        }
+    
+        // 模拟进度更新
+        let progress = 0;
+        const interval = setInterval(() => {
+            if (progress < 100) {
+                progress += 1; 
+                updateProgressBar(progress); // 更新进度条和百分比
+            } else {
+                clearInterval(interval); // 停止递增
+            }
+        }, 1000); // 每秒递增
+    
+        // 计算页面上的已用时间
+        let secondsElapsed = 0;
+        const timeDisplay = document.getElementById('time-elapsed');
+    
+        setInterval(() => {
+            secondsElapsed++;
+            
+            // 计算分钟和秒数
+            const minutes = Math.floor(secondsElapsed / 60);
+            const seconds = secondsElapsed % 60;
+            
+            // 更新显示为 xx mins xx seconds
+            timeDisplay.textContent = minutes + ' mins ' + seconds + ' seconds';
+        }, 1000); // 每秒更新时间
+    </script> 
 </body>
 </html>
