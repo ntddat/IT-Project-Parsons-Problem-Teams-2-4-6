@@ -7,8 +7,8 @@
                 <div class="web-name">Learnr</div>
             </div>
             <div class="nav-links">
+                <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
-                <!-- <router-link to="/AdminLogin" class="nav-link">Logout</router-link> -->
             </div>
         </nav>
         <div id="cont_box">

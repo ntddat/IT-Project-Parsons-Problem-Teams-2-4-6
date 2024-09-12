@@ -6,8 +6,8 @@
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
-        <router-link to="/history" class="nav-link">History</router-link>
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
+        <router-link to="/history" class="nav-link">History</router-link>
       </div>
     </nav>
     <div class="main-content">
