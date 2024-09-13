@@ -26,32 +26,71 @@ var answer = "Haven't queried yet";
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Choosing Gemini model
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
-
-// DataFrames, Normalized Mutual Information, Sentence splitting using NLTK
-// Correlation, Linear Regression, Decision Tree Classifier, Read/Write CSV files
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: {temperature: 1.0 }});
 
 async function askGemini(topic, context) {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
-  
-  // another prompt using the original one 
-  let prompt = generatePrompt(topic, context);
-  let result = await chat.sendMessage(prompt);
-  let resp = result.response.text();
-  console.log(resp);
-  let fixed_resp = outputParserJson(resp);
+  let syntaxPassed = false;
+  let prompt, result, resp, fixed_resp;
 
-  console.log(fixed_resp);
-  console.log("\n");
-  console.log(fixed_resp.Code);
+  while (!syntaxPassed) {
+    // Generating a new prompt based on the given topic and context
+    prompt = generatePrompt(topic, context);
+    result = await chat.sendMessage(prompt);
+    resp = result.response.text();
+    console.log(resp);
 
+    // Parsing the JSON response from Gemini
+    fixed_resp = outputParserJson(resp);
+
+    console.log(fixed_resp);
+    console.log(fixed_resp.Code);
+    
+    // Checking if the generated code is syntactically correct
+    syntaxPassed = await syntaxCheck(fixed_resp);
+    console.log("Syntax check success?: " + syntaxPassed + "\n");
+  }
+}
+
+function syntaxCheck(fixed_resp) {
   createCSV(fixed_resp.CSV, fixed_resp.CSVName);
 
+  // Writing the generated code snippet to a Python script (to run through interpreter)
+  writeFile("script.py", fixed_resp.Code, 'utf-8', function(err) {
+    if (err) {
+      console.log("\nCreating python script failed!\n");
+    }
+    else {
+      console.log("\nCreating python script succeeded!\n");
+    }
+  });
+
   // Running the response through python interpreter
-  PythonShell.runString(fixed_resp.Code, null).then(messages=>{
+  let pyShell = new PythonShell("script.py", { mode: 'text' });
+
+  // Printing the output
+  pyShell.on('message', function(message) {
     console.log("Output:\n");
-    console.log(messages);
+    console.log(message);
+  });
+  
+  return new Promise(function(resolve, reject) {
+    // End the input stream and allow the process to exit
+    pyShell.end(function(err, code, signal) {
+      //if (err) throw err;
+      if (err) {
+        console.log("The error is:\n" + err + "\n");
+        resolve(false);
+      }
+      else {
+        console.log("yo\n");
+        resolve(true);
+      }
+      console.log('The exit code was: ' + code);
+      console.log('The exit signal was: ' + signal);
+      console.log('finished');
+    });
   });
   let questionDetails = formQuestionDetails(fixed_resp, topic, context);
   console.log(`Question details: ${questionDetails}`);
@@ -78,6 +117,7 @@ app.post('/', (req,res) => {
     let context = arr[0]
     
     askGemini(topic, context)
+
     if (!parcel) {
         res.status(400).send({status: "failed"})
     }

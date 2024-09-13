@@ -1,3 +1,7 @@
+# Ignore generated CSV files
+*.csv
+.csv
+
 # Ignoring .env files (for the API key)
 .env
 .env.test
@@ -11,8 +15,8 @@ runs/
 # Ignore node_modules
 node_modules/
 
-# Ignore generated CSV files
-*.csv
-
 # Ignore database scripts
 databaseScripts/*.js
+
+# Ignore script generated for PythonShell
+script.py

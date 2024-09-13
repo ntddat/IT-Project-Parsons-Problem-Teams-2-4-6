@@ -18,7 +18,7 @@
             <option value="Correlation">Correlation</option>
             <option value="Linear Regression">Linear Regression</option>
             <option value="Decision Tree Classifier">Decision Tree Classifier</option>
-            <option value="Reading/Writing CSV files">Reading/Writing CSV files</option>
+            <option value="Reading/Writing CSV files using Pandas">Reading/Writing CSV files</option>
         </select>
     </form>
     <script>
@@ -40,7 +40,6 @@
             console.log("Used get info")
             const data = await res.json()
             console.log(data)
-            answer.value = data.info
         }
 
         async function postInfo(e) {
