@@ -25,8 +25,8 @@
   box-sizing: content-box;
 }
 ul.output {
-    background-color: #f9f7ea47;
-    border: 1px solid #0808312b;;
+    background-color: #f9f7ea00;
+    border: 1px solid #08083100;;
     min-height: 80%;
     width: calc(100% - 10px); 
 }
