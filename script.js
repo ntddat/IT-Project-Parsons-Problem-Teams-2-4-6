@@ -1,12 +1,16 @@
-var initial = "print 'Hello'\n" +
-                      "print 'Parsons\n" +
-                      "print 'problems!";
+var initial = "print('Hello')\n" +
+      "print('Parsons')\n" +
+      "print('problems!')";
+
 
 function displayErrors(fb) {
     if(fb.errors.length > 0) {
         alert(fb.errors[0]);
     }
 } 
+
+
+
 
 // place to get the code strings
 async function fetchStrings() {
@@ -28,8 +32,8 @@ async function fetchStrings() {
     }
 }
 
-
-
+//sending the result back to server
+function sendResult(){}
 
 
 
@@ -96,11 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {   //make sure script is lo
 
 
 
+
+
+
 var outputElement = document.getElementById('output');
 
-var initial = "print('Hello')\n" +
-      "print('Parsons')\n" +
-      "print('problems!')";
 
 var pdsample = 'import pandas as pd\nd = pd.DataFrame.from_dict({\'X\' : [1000,2500,3000,5000,6000,9000,11000,14000,18000,19000,19500,22000],\'Y\' :[100,105,80,77,74,70,65,63,62,61,60,55]})\nprint(d)';
 
@@ -117,7 +121,7 @@ async function runCode(studentCode) {
             "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com"
         },
         body: JSON.stringify({
-            "source_code": "print('Hello, World!')", // Replace with user input
+            "source_code": studentCode, // Replace with user input
             "language_id": 71, // Python 3 ID in Judge0
             "stdin": "", // Optional input data
             "base64_encoded": false,
