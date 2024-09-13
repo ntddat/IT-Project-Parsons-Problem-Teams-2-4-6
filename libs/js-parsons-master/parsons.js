@@ -41,8 +41,8 @@
        }
      },
      en: {
-       trash_label: 'Drag from here',
-       solution_label: 'Construct your solution here',
+       ///trash_label: 'Drag from here', //这个是左面版的代码块上的注释
+       ///solution_label: 'Construct your solution here',  //这个是右面版的代码块上的注释
        order: function() {
          return "Code fragments in your program are wrong, or in wrong order. This can be fixed by moving, removing, or replacing highlighted fragments.";},
        lines_missing: function() {

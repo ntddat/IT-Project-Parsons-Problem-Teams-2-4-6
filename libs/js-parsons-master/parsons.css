@@ -6,17 +6,17 @@
     margin-left: 2%;
     float: left;
 }
-#sortableTrash { width: 38%; }
-#sortable { width: 56%; }
+#sortableTrash { width: 85%; }
+#sortable { width: 90%;}
 .sortable-code ul {
     font-size: 120%;
     font-family: monospace;
     list-style: none;
-    background-color: #efefff;
+    background-color: #0a0ad400;
     padding-bottom: 10px;
     padding-left: 0;
     margin-left: 0;
-    border: 1px solid #efefff;;
+    border: 1px solid #28289900;;
 }
 .sortable-code ul:empty {
   padding-bottom: 30px;
@@ -25,22 +25,29 @@
   box-sizing: content-box;
 }
 ul.output {
-    background-color: #FFA;
+    background-color: #f9f7ea47;
+    border: 1px solid #0808312b;;
+    min-height: 80%;
+    width: calc(100% - 10px); 
 }
 .sortable-code li {
+    width: 80%;
     -moz-border-radius:10px;
     -webkit-border-radius:10px;
-    border-radius: 10px;
-    background-color:#EFEFEF;
-    border:1px solid lightgray;
-    padding:10px;
+    border-radius: 5px;
+    background-color:#f9f7ea;
+    border:1px solid rgb(193, 193, 193);
+    padding:15px;
     margin-top: 5px;
     white-space: nowrap;
     overflow: hidden;
     cursor: move;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1); /* 阴影 */
 }
 .sortable-code li:hover {
     overflow: visible;
+    transform: translateY(-3px); /* 悬浮效果 */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* 阴影变大 */
 }
 
 ul.incorrect {
@@ -85,7 +92,7 @@ li.correctPosition, .testcase.pass {
     display: block; 
     white-space: pre; 
     background-color: #555555;
-    color: white;
+    color: rgba(255, 255, 255, 0.651);
     font-size: 12px;
     line-height: 15px;
     margin: 5px;
