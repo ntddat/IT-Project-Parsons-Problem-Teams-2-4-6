@@ -115,7 +115,8 @@ function createCSV(csvStr, csvName) {
 
 
 //Allows the server to see the index.html page in the public folder
-app.use(expressStatic('public'))
+//IN MERGING PROCESS CHANGED FROM PUBLIC TO SRC SO index.html can be in the same folder as main.js
+app.use(expressStatic('src'))
 //Expects to receive json in the app.post method
 app.use(json())
 

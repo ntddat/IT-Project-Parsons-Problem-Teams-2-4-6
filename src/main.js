@@ -8,6 +8,8 @@ import AdminLogin from './pages/AdminLogin.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import './assets/icon/iconfont.css'
 
+console.log("LINKED TO MAIN");
+
 const app = createApp(App);
 
 
