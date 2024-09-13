@@ -3,7 +3,7 @@
 import dotenv from 'dotenv';
 import { PythonShell } from 'python-shell';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { writeFile } from 'fs';
+import { createCSV } from './utils/functions/createCSV.js';
 import express, { static as expressStatic, json } from 'express';
 import format from 'string-format';
 import { establishConnection } from './database/connection.js';
@@ -13,6 +13,8 @@ const app = express()
 // Importing our modules
 import { outputParserJson } from "./service/OutputParser.js";
 import { generatePrompt } from "./utils/constants/TopicsContexts.js";
+import { formQuestionDetails } from './service/questions/questionService.js';
+import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
 
 // Establishing connection to the database
 establishConnection();
@@ -48,9 +50,7 @@ async function askGemini(topic, context) {
     // Checking if the generated code is syntactically correct
     syntaxPassed = await syntaxCheck(fixed_resp);
     console.log("Syntax check success?: " + syntaxPassed + "\n");
-    
   }
-  
 }
 
 function syntaxCheck(fixed_resp) {
@@ -92,25 +92,11 @@ function syntaxCheck(fixed_resp) {
       console.log('finished');
     });
   });
-}
-
-function createCSV(csvStr, csvName) {
-  // If no CSV files are used by the generated code
-  if ((typeof csvStr == "string" && csvStr.length == 0) || 
-    (csvStr == null) || (csvStr == 'null') || (csvStr == 'Null') ||
-    (csvStr == 'none') || (csvStr == 'None')) {
-    return;
-  }
-
-  // Creating the CSV file used by the code
-  writeFile(csvName, csvStr, 'utf8', function (err) {
-    if (err) {
-      console.log("\nCreating CSV file failed!\n");
-    }
-    else {
-      console.log("\nCreating CSV file succeeded!\n");
-    }
-  });
+  let questionDetails = formQuestionDetails(fixed_resp, topic, context);
+  console.log(`Question details: ${questionDetails}`);
+  
+  await questionDetailsRepo.saveApprovedQuestion(questionDetails, "questions");
+  console.log("\n>>>>>>>>>> Question saved to the database\n");
 }
 
 
