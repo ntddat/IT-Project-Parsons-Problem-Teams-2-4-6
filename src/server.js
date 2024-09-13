@@ -57,6 +57,7 @@ async function askGemini(topic, context) {
   console.log(`Question details: ${questionDetails}`);
   
   await questionDetailsRepo.saveApprovedQuestion(questionDetails, "questions");
+  console.log("\n>>>>>>>>>> Question saved to the database\n");
 }
 
 

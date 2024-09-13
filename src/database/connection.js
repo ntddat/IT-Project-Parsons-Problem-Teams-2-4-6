@@ -21,7 +21,7 @@ async function establishConnection() {
             serverSelectionTimeoutMS: 5000,
         });
 
-        const { connection } = mongoose;    
+        const { connection } = mongoose;
         console.log(`MongoDB connected : ${connection.host}`);
     } catch (e) {
         console.error(e);
