@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'Generator',
   data() {
@@ -131,9 +132,13 @@ export default {
       console.log('Sending data to backend:', payload);
 
       // Data is sent to the back end via HTTP requests
-      // axios.post('/api/sendData', payload)
-      //   .then(response => console.log('Data sent successfully:', response.data))
-      //   .catch(error => console.error('Error sending data:', error));
+      axios.post('http://localhost:8383/api/sendData', payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => console.log('Data sent successfully:', response.data))
+      .catch(error => console.error('Error sending data:', error));
     }
   }
 };

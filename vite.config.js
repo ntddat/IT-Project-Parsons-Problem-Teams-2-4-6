@@ -13,9 +13,8 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  build: {
-    rollupOptions: {
-      input: fileURLToPath(new URL('./src/index.html', import.meta.url))
-    }
+  outputDir: 'public',
+  devServer: {
+    proxy: 'http://localhost:3000',
   }
 })

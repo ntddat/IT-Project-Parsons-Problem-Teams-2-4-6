@@ -7,8 +7,13 @@ import { writeFile } from 'fs';
 import express, { static as expressStatic, json } from 'express';
 import format from 'string-format';
 import { establishConnection } from './database/connection.js';
+import cors from 'cors';
+
 dotenv.config();
 const app = express()
+
+app.use(express.json());
+app.use(cors());
 
 // Importing our modules
 import { outputParserJson } from "./service/OutputParser.js";
@@ -125,19 +130,19 @@ app.get('/info', (req, res) => {
 })
 
 
-app.post('/', (req,res) => {
-    const {parcel} = req.body
-    const arr = parcel.split("|")
-    let topic = arr[1]
-    let context = arr[0]
+app.post('/api/sendData', (req,res) => {
+    console.log("POST request received"); 
+    const { topic, context } = req.body; // Destructure the topic and context from req.body
+
+    console.log("Received topic:", topic);
+    console.log("Received context:", context);
     
     askGemini(topic, context)
 
-    if (!parcel) {
+    if (!topic && !context) {
         res.status(400).send({status: "failed"})
     }
     res.status(200).send({status: "received"})
-
 })
 
 app.listen(port, () => console.log(format("server has started on port: {}", port)))
