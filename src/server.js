@@ -51,6 +51,8 @@ async function askGemini(topic, context) {
     console.log("Syntax check success?: " + syntaxPassed + "\n");
     
   }
+
+  answer = fixed_resp;
   
 }
 
@@ -125,13 +127,13 @@ app.get('/info', (req, res) => {
 })
 
 
-app.post('/', (req,res) => {
+app.post('/', async (req,res) => {
     const {parcel} = req.body
     const arr = parcel.split("|")
     let topic = arr[1]
     let context = arr[0]
     
-    askGemini(topic, context)
+    await askGemini(topic, context)
 
     if (!parcel) {
         res.status(400).send({status: "failed"})
