@@ -52,12 +52,12 @@ ul.output {
 
 ul.incorrect {
     border: 1px solid red;
-    background-color: #ffefef;
+    background-color: #ffefef00;
 }
 
 ul.correct {
     background-color: #efffef;
-    background-color: #DFF2BF;
+    background-color: #dff2bf00;
 }
 
 li.incorrectIndent {
