@@ -85,7 +85,6 @@ export default {
 <style scoped>
 * {
     box-sizing: border-box;
-    font-family: "Helvetica Neue", Arial, sans-serif; /* Added font stack for consistency */
 }
 
 .admin-profile {
