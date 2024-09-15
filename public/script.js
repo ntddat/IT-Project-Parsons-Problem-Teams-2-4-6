@@ -94,36 +94,26 @@ var pdsample = 'import pandas as pd\nd = pd.DataFrame.from_dict({\'X\' : [1000,2
 
 var studentAnswer;
 async function runCode(studentCode) {
-    // const code = document.getElementById('editor').value; // Get code from the editor
-   
-    const url = 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=false&fields=*';
+    // The URL for your backend server endpoint
+    const url = 'http://localhost:8383/run-python'; // Replace with your actual backend URL if deployed
+
     const options = {
         method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-RapidAPI-Key": "a049464516msh0e7cc0897a082f0p19e4d0jsne39e0fb32884",
-            "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com"
+            "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "source_code": studentCode, // Replace with user input
-            "language_id": 71, // Python 3 ID in Judge0
-            "stdin": "", // Optional input data
-            "base64_encoded": false,
-            "wait": true
+            pythonCode: studentCode  // Send the Python code to the backend
         })
     };
-    
+
     try {
         const response = await fetch(url, options);
         const result = await response.json(); // Convert the response to JSON
         console.log(result); // Output the response to the console
 
-        if (result.token) {
-            // Fetch the results using the token
-            await fetchResult(result.token);
-        } else {
-            console.error('Error: No token received');
-        }
+        // Display the output or errors from the Python code execution
+        document.getElementById('output').textContent = result.output || result.error;
     } catch (error) {
         console.error('Error:', error);
     }
