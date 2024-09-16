@@ -51,6 +51,7 @@ async function askGemini(topic, context) {
     console.log(fixed_resp.Code);
     
     // Checking if the generated code is syntactically correct
+    fixed_resp.Code = fixed_resp.Code.join('\n');
     syntaxPassed = await syntaxCheck(fixed_resp);
     console.log("Syntax check success?: " + syntaxPassed + "\n");
     
