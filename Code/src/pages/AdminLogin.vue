@@ -59,7 +59,7 @@ function handleLogin() {
     console.log('Login successful!')
 
     // record login state to cookie
-    setCookie("Admin", true, 5) // for test use, only save cookie for 5 seconds
+    setCookie("Admin", true, 1000) // for test use, only save cookie for 1000 seconds
 
     // Navigate to the AdminProfile page
     router.push('/AdminProfile')

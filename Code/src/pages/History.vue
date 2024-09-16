@@ -195,8 +195,8 @@ export default {
 .profile-container {
     background-color: #ffffff00;
     border-radius: 10px;
-    padding: 30px;
-    margin-bottom: 20px;
+    padding: 15px;
+    margin-bottom: 10px;
 }
 
 .profile-header {
@@ -205,30 +205,28 @@ export default {
 }
 
 .profile-pic {
-    width: 120px;
-    height: 120px;
-    background-color: #FF8A8A;
+    width: 80px;
+    height: 80px;
+    background-color: #e61b0c;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #ffffff;
-    font-size: 48px;
+    font-size: 36px;
 }
 
 .profile-info {
-    display: flex;           /* 使用 Flexbox 布局 */
-    align-items: bottom;      /* 垂直方向上居中对齐 */
-    gap: 30px;   
-    margin-left: 30px;
+    margin-left: 20px;
 }
 
 .profile-info h1 {
     margin: 0;
-    font-size: 36px;
+    font-size: 28px;
     font-weight: bold;
     color: #333333;
 }
+
 
 .profile-info h3 {
     font-weight: bold;
@@ -237,7 +235,7 @@ export default {
 
 .stats {
     display: flex;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .stat {
@@ -245,26 +243,25 @@ export default {
     border: 1px solid #777777;
     border-radius: 10px;
     text-align: center;
-    padding: 10px 0px;
+    padding: 5px 0px;
 }
 
 .stat1 {
-    width: 20px;
+    width: 10px;
 }
 
 .stat h2 {
     margin: 0;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
     color: #333333;
-
 }
 
 .stat p {
     margin: 0;
-    font-size: 18px;
+    font-size: 14px;
     color: #777777;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .history-container {
@@ -304,6 +301,7 @@ export default {
     padding: 15px 0;
     align-items: center;
     /* Center items vertically */
+    cursor: pointer;
 }
 .tubiao{
     width: 34px;
@@ -351,7 +349,7 @@ export default {
     color: #3e3e3e;
     overflow-y: auto;
     max-height: 350px; 
-    margin-top: 20px
+    margin-top: 20px;
 }
 
 /* scroll bar style */
