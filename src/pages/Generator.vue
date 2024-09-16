@@ -2,7 +2,7 @@
   <div class="generator" @click="closeDropdowns">
     <nav class="top">
       <div class="header">
-        <img src="/logo.png" alt="Logo" class="top-logo" />
+        <img src="/public/logo.png" alt="Logo" class="top-logo" />
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
@@ -137,7 +137,9 @@ export default {
           'Content-Type': 'application/json'
         }
       })
-      .then(response => console.log('Data sent successfully:', response.data))
+        .then(response => {console.log('Data sent successfully:', response.data)
+      window.location.href = "/problem.html"})
+
       .catch(error => console.error('Error sending data:', error));
     }
   }

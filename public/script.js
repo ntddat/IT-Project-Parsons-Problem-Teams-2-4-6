@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {   //make sure script
         trashId: 'sortableTrash',
         max_wrong_lines: 1,
         feedback_cb : displayErrors,
-        can_indent: false
+        can_indent: true
     });
     parson.init(initial);
     parson.shuffleLines();
