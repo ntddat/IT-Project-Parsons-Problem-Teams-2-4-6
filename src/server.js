@@ -5,8 +5,13 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PythonShell } from 'python-shell';
 import express, { static as expressStatic, json } from 'express';
 import format from 'string-format';
+import cors from 'cors';
+
 dotenv.config();
 const app = express()
+
+app.use(express.json());
+app.use(cors());
 
 // Importing our modules
 import { establishConnection } from './database/connection.js';
@@ -59,7 +64,8 @@ async function askGemini(topic, context) {
 }
 
 //Allows the server to see the index.html page in the public folder
-app.use(expressStatic('public'))
+//IN MERGING PROCESS CHANGED FROM PUBLIC TO SRC SO index.html can be in the same folder as main.js
+app.use(expressStatic('src'))
 //Expects to receive json in the app.post method
 app.use(json())
 
@@ -95,19 +101,19 @@ app.post('/run-python', async (req, res) => {
     });
 });
 
-app.post('/', async (req,res) => {
-    const {parcel} = req.body
-    const arr = parcel.split("|")
-    let topic = arr[1]
-    let context = arr[0]
+app.post('/api/sendData', async (req,res) => {
+    console.log("POST request received"); 
+    const { topic, context } = req.body; // Destructure the topic and context from req.body
+
+    console.log("Received topic:", topic);
+    console.log("Received context:", context);
     
     await askGemini(topic, context)
 
-    if (!parcel) {
+    if (!topic && !context) {
         res.status(400).send({status: "failed"})
     }
     res.status(200).send({status: "received"})
-
 })
 
 app.listen(port, () => console.log(format("server has started on port: {}", port)))
