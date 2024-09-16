@@ -7,9 +7,9 @@
                 <div class="web-name">Learnr</div>
             </div>
             <div class="nav-links">
+                <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
                 <router-link to="/history" class="nav-link">History</router-link>
                 <router-link to="/Summary" class="nav-link">Summary</router-link>
-                <router-link to="/AdminLogin" class="nav-link">Logout</router-link>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
             </div>
         </nav>
@@ -80,6 +80,26 @@ export default {
                 { title: "Reading/Writing CSV files", practice: 50, accuracy: 82 }
             ]
         };
+    },
+    methods: {
+        handleLogout() {
+            console.log("loging out...");
+            this.setCookie("Admin", false, 0)
+            console.log("Admin cookie Terminated")
+            this.$router.push('/Generator')
+        },
+
+        setCookie(name, value, time) {
+            let expires = "";
+            if (time) {
+                let date = new Date();
+                date.setTime(date.getTime() + (time * 1000)); // in seconds
+                expires = "; expires=" + date.toUTCString();
+            }
+            let cookie = name + "=" + (value || "") + expires + "; path=/";
+            console.log("Cookie updatesuccess: " + cookie);
+            document.cookie = cookie
+        }
     }
 };
 </script>
