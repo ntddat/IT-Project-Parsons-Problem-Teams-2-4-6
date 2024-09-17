@@ -8,8 +8,6 @@
             </div>
             <div class="nav-links">
                 <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
-                <router-link to="/history" class="nav-link">History</router-link>
-                <router-link to="/Summary" class="nav-link">Summary</router-link>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
             </div>
         </nav>
@@ -48,12 +46,31 @@
 
                 <div class="scrolling-wrapper">
                     <ul class="history-list">
-                        <li v-for="(item, index) in history" :key="index" class="history-item">
+                        <li @click="toggleDropdown(index)" v-for="(item, index) in history" :key="index" class="history-item">
                             <div class="history-topic">
                                 <img class="tubiao" src="/tubiao.png" /> {{ item.title }}
                             </div>
                             <div class="history-practice">{{ item.practice }}</div>
                             <div class="history-accuracy">{{ item.accuracy }}%</div>
+                            <!--Student Summary-->
+                            <div v-show="item.isExpanded" class="dropdown-content">
+                                <div class="summary-header">
+                                    <span class="header-ID">ID</span>
+                                    <span class="header-Answer">Total Answer</span>
+                                    <span class="header-Accuracy">Accuracy</span>
+                                    <span class="header-Time">Total Time</span>
+                                </div>
+                                <div class="scrolling-wrapper">
+                                    <ul class="summary-list">
+                                        <li v-for="(item, index) in summary" :key="index" class="summary-item" @click="gotoHistory()">
+                                            <div class="item-id">{{item.index}}-{{item.studentID}}</div>
+                                            <div class="item-answered">{{item.answered}}</div>
+                                            <div class="item-accuracy">{{item.accuracy}}%</div>
+                                            <div class="item-time">{{item.hour}} hours {{item.min}} min</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -78,6 +95,23 @@ export default {
                 { title: "DataFrame", practice: 45, accuracy: 88 },
                 { title: "Sentence splitting using nltk", practice: 75, accuracy: 85 },
                 { title: "Reading/Writing CSV files", practice: 50, accuracy: 82 }
+            ],
+            summary: [
+                {index: "1", studentID:"xxxx", answered:50, accuracy:66, hour:3, min:15},
+                {index: "2", studentID:"xxxx", answered:100, accuracy:55, hour:5, min:17},
+                {index: "3", studentID:"xxxx", answered:67, accuracy:80, hour:4, min:34},
+                {index: "4", studentID:"xxxx", answered:45, accuracy:100, hour:2, min:8},
+                {index: "5", studentID:"xxxx", answered:25, accuracy:70, hour:1, min:30},
+                {index: "6", studentID:"xxxx", answered:66, accuracy:88, hour:5, min:10},
+                {index: "8", studentID:"xxxx", answered:110, accuracy:78, hour:11, min:23},
+                {index: "9", studentID:"xxxx", answered:44, accuracy:33, hour:2, min:48},
+                {index: "10", studentID:"xxxx", answered:78, accuracy:66, hour:3, min:22},
+                {index: "11", studentID:"xxxx", answered:45, accuracy:55, hour:2, min:34},
+                {index: "12", studentID:"xxxx", answered:56, accuracy:48, hour:2, min:57},
+                {index: "13", studentID:"xxxx", answered:25, accuracy:75, hour:1, min:13},
+                {index: "14", studentID:"xxxx", answered:10, accuracy:50, hour:0, min:22},
+                {index: "15", studentID:"xxxx", answered:0, accuracy:0, hour:0, min:0},
+                {index: "16", studentID:"xxxx", answered:4, accuracy:100, hour:0, min:35},
             ]
         };
     },
@@ -99,6 +133,12 @@ export default {
             let cookie = name + "=" + (value || "") + expires + "; path=/";
             console.log("Cookie updatesuccess: " + cookie);
             document.cookie = cookie
+        },
+        toggleDropdown(index){
+            this.history[index].isExpanded = !this.history[index].isExpanded;
+        },
+        gotoHistory(){
+            this.$router.push('/History');
         }
     }
 };
@@ -264,6 +304,7 @@ export default {
     grid-template-columns: 2fr 1fr 1fr;
     padding: 15px 0;
     align-items: center;
+    cursor: pointer;
 }
 
 .tubiao {
@@ -280,7 +321,6 @@ export default {
     font-size: 18px;
     color: #3e3e3e;
 }
-
 .history-practice,
 .history-accuracy {
     display: flex;
@@ -303,4 +343,43 @@ export default {
     background-color: #A8BA99;
     border-radius: 10px;
 }
+.dropdown-content {
+    /* position: absolute; */
+    grid-column: span 3;
+    background-color: transparent;
+    border: solid #777777;
+    list-style-type: none;
+    padding: 20;
+    margin: 20;
+    width: 100%;
+    align-items: center;
+    border-width: 1px 0 1px;
+    color: #3e3e3e;
+    max-height: 350px; 
+    margin-top: 20px;
+}
+.summary-header{
+    display: grid;
+    color: #333;
+    grid-template-columns: 1.5fr 2.4fr 2.4fr 2.9fr;;
+    text-align: center;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+.header-ID,.header-Answer,.header-Accuracy,.header-Time {padding: 10px; }
+.summary-list{
+    list-style-type: none;
+    padding-left: 40px;
+    max-height: 300px;
+    cursor: pointer;
+    min-width: 700px;
+}
+.summary-item {
+    display: grid;
+    grid-template-columns: 1.1fr 1.5fr 1.4fr 1.4fr;
+    gap: 60px;
+    padding: 10px 0;
+    border-bottom: 1px solid #a6a4a4;
+}
+.summary-item:hover {background-color: #94f0a9;border-radius: 5px}
 </style>

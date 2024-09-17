@@ -6,7 +6,6 @@ import Generator from './pages/Generator.vue'
 import AdminProfile from './pages/AdminProfile.vue'
 import AdminLogin from './pages/AdminLogin.vue'
 import History from './pages/History.vue'
-import Summary from './pages/Summary.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import './assets/icon/iconfont.css'
 
@@ -39,12 +38,7 @@ const router = createRouter({
             path: "/History",
             name: "History",
             component: History,
-          },
-          {
-            path: "/Summary",
-            name: "Summary",
-            component: Summary,
-            }        
+          }
     ]
   });
 
