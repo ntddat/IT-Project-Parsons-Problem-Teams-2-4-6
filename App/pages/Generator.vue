@@ -138,7 +138,7 @@ export default {
         }
       })
         .then(response => {console.log('Data sent successfully:', response.data)
-      window.location.href = "/problem.html"})
+      window.location.href = "/App/problem.html"})
 
       .catch(error => console.error('Error sending data:', error));
     }

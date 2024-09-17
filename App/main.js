@@ -33,10 +33,6 @@ const router = createRouter({
             name: "AdminLogin",
             component: AdminLogin,
           },  
-        {
-          path: "/problem.html",
-          name: "problem",
-        },
     ]
   });
 
