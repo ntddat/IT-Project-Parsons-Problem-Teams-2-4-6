@@ -65,7 +65,7 @@ async function askGemini(topic, context) {
 
 //Allows the server to see the index.html page in the public folder
 //IN MERGING PROCESS CHANGED FROM PUBLIC TO SRC SO index.html can be in the same folder as main.js
-app.use(expressStatic('src'))
+app.use(expressStatic('App'))
 //Expects to receive json in the app.post method
 app.use(json())
 
