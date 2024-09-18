@@ -61,7 +61,7 @@ export function generatePrompt(topic, context) {
     prompt += "Format the response in JSON format with the following attributes:";
 
     // response requirements
-    prompt += "- Code: The generated piece of code\n";
+    prompt += "- Code: The generated piece of code, ensuring you include the necessary tab characters\n";
     prompt += "- Description: a brief description on what the code does, if the code has multiple print statements, the description should specify the order in which they are printed\n";
     prompt += "- ExpectedOutput: a brief description on what the code should output\n";
     prompt += "- CSVName: If the code involves opening and reading a file, generate the name of the file\n";
