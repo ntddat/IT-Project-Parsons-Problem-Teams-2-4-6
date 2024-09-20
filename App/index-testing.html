@@ -33,13 +33,15 @@
         postBtn.addEventListener('click', postInfo)
         async function getInfo(e) {
             e.preventDefault()
-            const res = await fetch(baseURL + "info/", {
+            /*const res = await fetch(baseURL + "info/", {
                 method: 'GET'
             })
             console.log(res)
             console.log("Used get info")
             const data = await res.json()
             console.log(data)
+            */
+            window.location.href = "/problem.html"
         }
 
         async function postInfo(e) {
@@ -59,6 +61,7 @@
             })
             console.log(res)
             console.log("Used post")
+            window.location.href = "/problem.html"
 
         }
 
