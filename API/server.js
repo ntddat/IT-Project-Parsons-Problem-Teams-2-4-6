@@ -17,7 +17,6 @@ app.use(cors());
 import { establishConnection } from './database/connection.js';
 import { outputParserJson } from "./service/OutputParser.js";
 import { generatePrompt } from "./utils/constants/TopicsContexts.js";
-import { formQuestionDetails } from './service/questions/questionService.js';
 import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
 import { createCSV, syntaxCheck } from "./utils/compiler.js";
 
