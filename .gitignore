@@ -1,3 +1,28 @@
+#TEAM 6 GITIGNORE
+# Ignore generated CSV files
+*.csv
+.csv
+
+# Ignoring .env files (for the API key)
+.env
+.env.test
+
+# linters to use for neovim
+eslint.config.mjs
+
+# testing outputs
+runs/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore database scripts
+databaseScripts/*.js
+
+# Ignore script generated for PythonShell
+script.py
+
+#TEAM 2's GITIGNORE
 # Logs
 logs
 *.log

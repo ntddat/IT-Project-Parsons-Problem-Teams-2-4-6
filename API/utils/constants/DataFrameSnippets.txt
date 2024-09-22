@@ -1,0 +1,306 @@
+- Example 1:
+```
+dictDF = {"A": ["308 Negra Arroyo Lane", "6353 Juan Tabo Blvd", "161 Barry St", "102 Dunbar St."],
+          "B": ["this is <b>important</b>", "this is not important", "no info<i></i>", this is <br>a new line"],
+          "C": ["Walter White ww@gmail.com", "Harry Potter hp@gmail.com", "Luke Skywalker ls@gmail.com", "Saul Goodman"],
+          "D": ["Abcd","EFGF", "zefsalf", "sdfslew", "zekfsdf"]}
+df = pd.DataFrame(dictDF)
+def search_words(text):
+    result = re.findall(r'\b[^\d\W]+\b', text)
+    return " ".join(result)
+df["A"] = df["A"].apply(lambda x : search_words(x))
+def remove_tags(string):
+    result = re.sub('<.*?>','', string)
+    return result
+df["B"]=df["B"].apply(lambda cw : remove_tags(cw))
+def find_email(text):
+    email = re.findall(r'[\w\.-]+@[\w\.-]+',str(text))
+    return ",".join(email)
+df["C"] = df["C"].apply(lambda x: find_email(x))
+df["D"] = list(map(lambda x: x.title(), df["D"]))
+print(df)",
+"Description": "The code creates a dictionary and uses it to create a Pandas DataFrame. Then, it creates a function to find all words in a given string using regular expression, and uses the function on the first column of the DataFrame. After this, it creates another function to remove any markdown or html tags from a given string, and uses the function on the second column of the DataFrame. It also creates a function to extract email addresses from a given string, and uses the function on the third column of the DataFrame. Finally, it converts all entries of the fourth column of the DataFrame into title case, and prints the DataFrame.,
+```
+
+- Example 2:
+```
+dictA = {"A": ["A1", "A2", "A3"],
+         "B": ["B1", "B2", "B3"],
+         "C": ["C1", "C2", "C3"]}
+dfA = pd.DataFrame(dictA, index=[1, 2, 3])
+dictB = {"B": ["B2", "B3", "B4", "B5"],
+         "C": ["C2", "C3", "C4", "C5"]}
+dfB = pd.DataFrame(dictB, index=[2, 3, 4, 5])
+result = pd.concat([dfA, dfB], axis=1, join="inner") 
+dictC = {"D": ["D4", "D5", "D6", "D7"],
+         "E": ["E4", "E5", "E6", "E7"],
+         "F": ["F4", "F5", "F6", "F7"]}
+dfC = pd.DataFrame(dictC, index=[4, 5, 6, 7])
+result = pd.concat([result, dfC], axis=1)
+dictDdictD = {"E": ["E6", "E7", "E8", "E9"],
+         "F": ["F6", "F7", "F8", "F9"],
+         "G": ["G6", "G7", "G8", "G9"],
+         "H": ["H6", "H7", "H8", "H9"]}
+dfD = pd.DataFrame({dictD, index=[6, 7, 8, 9]})
+result = pd.concat([result, dfD], ignore_index=True, sort=False)
+print(result)",
+"Description": "The code creates two Pandas DataFrames (A and B) from two dictionaries and perform a left join on them. Then, it creates another DataFrame (C), and join it with the previous DataFrame (A and B), handling any values that don't exist in it. Finally, it creates another DataFrame, and join it with the joined DataFrame (A, B and C), ignoring any overlapping indexes. At then end, it prints the joined DataFrame.",
+"ExpectedOutput": "A joined DataFrame containing all information from the four DataFrames.
+```
+
+- Example 3:
+The code should have None values in DataFrames
+```
+dictDF = {"A": [2, None, 3, 1, 3, 1, 4, None, 8, 4, 9, 5, 3, 4, 5, 2, 1, 4, None, 8],
+         "B": [4, 1, 1611, 5, None, 2, 4, 2, 5, 6, 8, 6, 3, 9, 7, None, None, 9, 1, 2],
+         "C": [3, 4, 5, 1, 2, 7, 8, "five", 3, 7, 9, "five", 1, 2, 6, 2, 1, "five", "four", 2, 3]}
+df = pd.DataFrame(dictDF)
+colAMean = df["A"].mean()
+df["A"] = df["A"].fillna(colAMean)
+colBMedian = df["B"].median()
+df["B"] = df["B"].fillna(colBMedian)
+df["C"].replace(to_replace="five", value=5)
+df["C"].replace(to_replace="four", value=4)",
+print(df)
+```
+
+- Example 4:
+```
+ticketsSoldDict =  {'Movie 1': 107512,
+                        'Movie 2': 103208,
+                        'Movie 3': 99388,
+                        'Movie 4': 103838,
+                        'Movie 5': 104631} 
+ticketsSold = pd.Series(ticketsSoldDict)
+maxCapacityDict = {'Movie 1': 427725,
+                      'Movie 2': 427300,
+                      'Movie 3': 429350,
+                      'Movie 4': 424325,
+                     'Movie 5': 423375}
+maxCapacity = pd.Series(maxCapacityDict)
+classificationDict = {'Movie 1': 'M',
+                      'Movie 2': 'PG',
+                      'Movie 3': 'M',
+                      'Movie 4': 'G',
+                      'Movie 5': 'G'}
+classification = pd.Series(classificationDict)
+salesDF = pd.DataFrame({'tickets sold': ticketsSold, 'max capacity': maxCapacity, 'classification': classification})
+salesDF["occupancy"] = round(salesDF["tickets sold"]/salesDF["max capacity"], 2)
+salesDF.rename(columns={"occupancy": "occupancy rate"})
+salesDF.sort_values(by="occupancy rate")
+groupedDF = salesDF.groupby('classification').agg({'max capacity': 'max', 'tickets sold': 'mean', 'occupancy rate': 'mean'})
+print(groupedDF)
+print(salesDF.points.describe())
+print(salesDF)
+```
+
+- Example 5:
+```
+import pandas as pd
+df = pd.DataFrame({
+    'company_code': ['Company','Company a001', '2055', 'abcd', '123345'],
+    'date_of_sale ': ['12/05/2002','16/02/1999','25/09/1998','12/02/2022','15/09/1997'],
+    'sale_amount': [12348.5, 233331.2, 22.5, 2566552.0, 23.0]})
+	
+print("Original DataFrame:")
+print(df)
+print("\nNumeric values present in company_code column:")
+df['company_code_is_digit'] = list(map(lambda x: x.isdigit(), df['company_code']))
+print(df)
+```
+
+- Example 6:
+```
+import pandas as pd
+df = pd.DataFrame({
+    'company_code': ['Abcd','EFGF', 'skfsalf', 'sdfslew', 'safsdf'],
+    'date_of_sale ': ['12/05/2002','16/02/1999','25/09/1998','12/02/2022','15/09/1997'],
+    'sale_amount': [12348.5, 233331.2, 22.5, 2566552.0, 23.0]})
+print("Original DataFrame:")
+print(df)
+print("\nLength of the string in a column:")
+df['company_code_length'] = df['company_code'].apply(len)
+print(df)
+```
+
+- Example 7:
+```
+import pandas as pd
+df = pd.DataFrame({
+    'company_code': ['Abcd','EFGF', 'zefsalf', 'sdfslew', 'zekfsdf'],
+    'date_of_sale': ['12/05/2002','16/02/1999','25/09/1998','12/02/2022','15/09/1997'],
+    'sale_amount': [12348.5, 233331.2, 22.5, 2566552.0, 23.0]
+})
+print("Original DataFrame:")
+print(df)
+print("\nIf a specified column starts with a specified string?")
+df['company_code_starts_with'] = list(
+    map(lambda x: x.startswith('ze'), df['company_code']))
+print(df)
+```
+
+- Example 8:
+```
+import pandas as pd
+df = pd.DataFrame({
+    'name': ['Alberto  Franco','Gino Ann Mcneill','Ryan  Parkes', 'Eesha Artur Hinton', 'Syed  Wharton'],
+    'date_of_birth ': ['17/05/2002','16/02/1999','25/09/1998','11/05/2002','15/09/1997'],
+    'age': [18.5, 21.2, 22.5, 22, 23]
+})
+print("Original DataFrame:")
+print(df)
+df[["first", "middle", "last"]] = df["name"].str.split(" ", expand = True)
+print("\nNew DataFrame:")
+print(df)
+```
+
+- Example 9:
+```
+import pandas as pd
+import re as re
+pd.set_option('display.max_columns', 10)
+df = pd.DataFrame({
+    'company_code': ['c0001','c0002','c0003', 'c0003', 'c0004'],
+    'company_phone_no': ['Company1-Phone no. 4695168357','Company2-Phone no. 8088729013','Company3-Phone no. 6204658086', 'Company4-Phone no. 5159530096', 'Company5-Phone no. 9037952371']
+    })
+print("Original DataFrame:")
+print(df)
+def find_phone_number(text):
+    ph_no = re.findall(r"\b\d{10}\b",text)
+    return "".join(ph_no)
+df['number']=df['company_phone_no'].apply(lambda x: find_phone_number(x))
+print("\Extracting numbers from dataframe columns:")
+print(df)
+```
+
+- Example 10:
+```
+import pandas as pd
+data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
+        'Value': [5, 15, 25, 35, 45, 55]}
+
+df = pd.DataFrame(data)
+print("Sample DataFrame:")
+print(df)
+def custom_agg(x):
+    return x.max() - x.min()
+print("\nGroup by 'Category' and apply custom aggregation:")
+grouped = df.groupby('Category').agg(custom_agg)
+
+print(grouped)
+```
+
+- Example 11:
+```
+import pandas as pd
+data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
+        'Value': [5, 15, 25, 35, 45, 55]}
+
+df = pd.DataFrame(data)
+print("Sample DataFrame:")
+print(df)
+print("\nGroup by 'Category' and apply lambda function:")
+grouped = df.groupby('Category').agg(lambda x: x.max() - x.min())
+print(grouped)
+```
+
+- Example 12:
+```
+import pandas as pd
+data = {'Category': ['A', 'A', 'B', 'B', 'C', 'C'],
+        'Value1': [10, 20, 30, 40, 50, 60],
+        'Value2': [100, 200, 300, 400, 500, 600]}
+
+df = pd.DataFrame(data)
+print("Sample DataFrame:")
+print(df)
+print("\nGroup by 'Category' and apply different functions:")
+grouped = df.groupby('Category').agg({'Value1': 'mean', 'Value2': 'sum'})
+print(grouped)
+```
+
+- Example 13:
+```
+import pandas as pd
+import numpy as np
+pd.set_option('display.max_rows', None)
+df = pd.DataFrame({
+'ord_no':[70001,np.nan,70002,70004,np.nan,70005,np.nan,70010,70003,70012,np.nan,70013],
+'purch_amt':[150.5,np.nan,65.26,110.5,948.5,np.nan,5760,1983.43,np.nan,250.45, 75.29,3045.6],
+'sale_amt':[10.5,20.65,np.nan,11.5,98.5,np.nan,57,19.43,np.nan,25.45, 75.29,35.6],
+'ord_date': ['2012-10-05','2012-09-10',np.nan,'2012-08-17','2012-09-10','2012-07-27','2012-09-10','2012-10-10','2012-10-10','2012-06-27','2012-08-17','2012-04-25'],
+'customer_id':[3002,3001,3001,3003,3002,3001,3001,3004,3003,3002,3001,3001],
+'salesman_id':[5002,5003,5001,np.nan,5002,5001,5001,np.nan,5003,5002,5003,np.nan]})
+print("Original Orders DataFrame:")
+print(df)
+print("\nReplacing NaNs with the value from the previous row (purch_amt):")
+df['purch_amt'] = df['purch_amt'].fillna(method='pad', inplace=True)
+print(df)
+print("\nReplacing NaNs with the value from the next row (sale_amt):")
+df['sale_amt'] = df['sale_amt'].fillna(method='bfill', inplace=True)
+print(df)
+```
+
+- Example 14:
+```
+import pandas as pd
+import numpy as np
+pd.set_option('display.max_rows', None)
+df = pd.DataFrame({
+'ord_no':[70001,np.nan,70002,70004,np.nan,70005,np.nan,70010,70003,70012,np.nan,70013],
+'purch_amt':[150.5,np.nan,65.26,110.5,948.5,np.nan,5760,1983.43,np.nan,250.45, 75.29,3045.6],
+'sale_amt':[10.5,20.65,np.nan,11.5,98.5,np.nan,57,19.43,np.nan,25.45, 75.29,35.6],
+'ord_date': ['2012-10-05','2012-09-10',np.nan,'2012-08-17','2012-09-10','2012-07-27','2012-09-10','2012-10-10','2012-10-10','2012-06-27','2012-08-17','2012-04-25'],
+'customer_id':[3002,3001,3001,3003,3002,3001,3001,3004,3003,3002,3001,3001],
+'salesman_id':[5002,5003,5001,np.nan,5002,5001,5001,np.nan,5003,5002,5003,np.nan]})
+print("Original Orders DataFrame:")
+print(df)
+print("Using median in purch_amt to replace NaN:")
+df['purch_amt'] = df['purch_amt'].fillna(df['purch_amt'].median(), inplace=True)
+print(df)
+print("Using mean to replace NaN:")
+df['sale_amt'] = df['sale_amt'].fillna(int(df['sale_amt'].mean()), inplace=True)
+print(df)
+```
+
+- Example 15:
+```
+import pandas as pd
+import numpy as np
+pd.set_option('display.max_rows', None)
+df = pd.DataFrame({
+'ord_no':[70001,np.nan,70002,70004,np.nan,70005,np.nan,70010,70003,70012,np.nan,70013],
+'purch_amt':[150.5,np.nan,65.26,110.5,948.5,np.nan,5760,1983.43,np.nan,250.45, 75.29,3045.6],
+'sale_amt':[10.5,20.65,np.nan,11.5,98.5,np.nan,57,19.43,np.nan,25.45, 75.29,35.6],
+'ord_date': ['2012-10-05','2012-09-10',np.nan,'2012-08-17','2012-09-10','2012-07-27','2012-09-10','2012-10-10','2012-10-10','2012-06-27','2012-08-17','2012-04-25'],
+'customer_id':[3002,3001,3001,3003,3002,3001,3001,3004,3003,3002,3001,3001],
+'salesman_id':[5002,5003,5001,np.nan,5002,5001,5001,np.nan,5003,5002,5003,np.nan]})
+print("Original Orders DataFrame:")
+print(df) 
+print("\nMissing values in purch_amt column:")
+result = df['purch_amt'].value_counts(dropna=False).loc[np.nan]
+print(result)
+```
+
+- Example 16:
+```
+import pandas as pd
+df = pd.DataFrame({
+    'X': [1, 6, 8, 3, 7],
+    'Y': [5, 2, 9, 4, 1],
+    'Z': [7, 8, 9, 1, 2]
+})
+result = df.loc[1:3, ['X', 'Z']]
+print(result)
+```
+
+- Example 17:
+```
+import pandas as pd
+df = pd.DataFrame({
+    'X': [1, 6, 8, 3, 7],
+    'Y': [5, 2, 9, 4, 1]
+})
+result = df[(df['X'] > 5) & (df['Y'] < 5)]
+print(result)
+```
