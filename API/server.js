@@ -15,7 +15,7 @@ app.use(cors());
 
 // Importing our modules
 import { establishConnection } from './database/connection.js';
-import { outputParserJson } from "./service/OutputParser.js";
+import { outputParserJson } from "./service/outputParser.js";
 import { generatePrompt } from "./utils/constants/TopicsContexts.js";
 import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
 import { createCSV, syntaxCheck } from "./utils/compiler.js";
