@@ -148,10 +148,6 @@ export default {
     box-sizing: border-box;
 }
 
-.admin-profile {
-    /* max-width: 1000px; */
-}
-
 .top {
   display: flex;
   justify-content: space-between;
