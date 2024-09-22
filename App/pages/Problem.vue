@@ -78,15 +78,19 @@
     
     
     <script>
+    let initial = "print('Hello')\n" +
+                "print('Parsons')\n" +
+                "print('problems!')";
+
     export default {
         data() {
-            return {
-            }
+            return {};
         },
     
         mounted() {
             this.midDragControllerDiv();
             this.horDragControllerDiv();
+            this.fetchStrings(); // Fetch initial strings on mount
         },
     
         methods: {
@@ -98,7 +102,7 @@
     
                 let isDragging = false;
     
-                divider.addEventListener('mousedown', function(e) {
+                divider.addEventListener('mousedown', function() {
                     isDragging = true;
                 });
     
@@ -129,38 +133,149 @@
             horDragControllerDiv() {
                 const horizontalDivider = document.getElementById('horizontal-divider');
                 const topSection = document.getElementById('right-top');
-                const bottomSection = document.getElementById('right-bottom');
-                const righTpanel = document.getElementById('right-panel');  
+                const bottomSection = document.getElementById('calculated-value');
+                const rightPanel = document.getElementById('right-panel');
     
-                let iSdragging = false;
-                let startY = 0;  
-                let startHeight = 0;  
+                let isDragging = false;
+                let startY = 0;
+                let startHeight = 0;
     
                 horizontalDivider.addEventListener('mousedown', function(e) {
-                    iSdragging = true;
+                    isDragging = true;
                     startY = e.clientY;
                     startHeight = topSection.offsetHeight;
                     document.body.style.cursor = 'ns-resize';
                 });
     
                 document.addEventListener('mousemove', function(e) {
-                    if (iSdragging) {
+                    if (isDragging) {
                         const diffY = e.clientY - startY;
                         const newHeight = startHeight + diffY;
     
-                        if (newHeight > 50 && newHeight < righTpanel.offsetHeight - 50) {
+                        if (newHeight > 50 && newHeight < rightPanel.offsetHeight - 50) {
                             topSection.style.height = `${newHeight}px`;
-                            bottomSection.style.height = `${righTpanel.offsetHeight - newHeight - horizontalDivider.offsetHeight}px`;
+                            bottomSection.style.height = `${rightPanel.offsetHeight - newHeight - horizontalDivider.offsetHeight}px`;
                         }
                     }
                 });
     
                 document.addEventListener('mouseup', function() {
-                    iSdragging = false;
+                    isDragging = false;
                     document.body.style.cursor = 'default';
                 });
             },
-      }
+    
+            async fetchStrings() {
+                const outputElement = document.getElementById('output');
+    
+                try {
+                    const response = await fetch('http://localhost:8383/info/');
+    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+    
+                    const data = await response.json();
+                    initial = data.info.Code; // Update initial code
+                    this.initializeParsonsWidget(); // Initialize Parsons widget with fetched code
+                } catch (error) {
+                    console.error('Error fetching strings:', error);
+                    outputElement.textContent = 'Error fetching strings: ' + error.message;
+                }
+            },
+    
+            initializeParsonsWidget() {
+                var parson = new ParsonsWidget({
+                    sortableId: 'sortable',
+                    trashId: 'sortableTrash',
+                    max_wrong_lines: 1,
+                    feedback_cb: this.displayErrors,
+                    can_indent: true
+                });
+                parson.init(initial);
+                parson.shuffleLines();
+    
+                document.getElementById('run-btn').addEventListener('click', () => {
+                    const codeLines = [];
+                    $('#sortable li').each(function() {
+                        codeLines.push($(this).text());
+                    });
+    
+                    const studentCode = codeLines.join('\n');
+                    this.runCode(studentCode);
+                });
+    
+                document.getElementById('submit-btn').addEventListener('click', () => {
+                    var result = parson.getFeedback();
+                    if (result == []) {
+                        result = "Congratulations, correct";
+                    }
+                    document.getElementById('feedback').textContent = result;
+                });
+    
+                document.getElementById('reset-btn').addEventListener('click', () => {
+                    parson.shuffleLines();
+                });
+            },
+    
+            displayErrors(fb) {
+                if (fb.errors.length > 0) {
+                    alert(fb.errors[0]);
+                }
+            },
+    
+            async runCode(studentCode) {
+                const url = 'http://localhost:8383/run-python';
+    
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        pythonCode: studentCode
+                    })
+                };
+    
+                try {
+                    const response = await fetch(url, options);
+                    const result = await response.json();
+                    document.getElementById('output').textContent = result.output || result.error;
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+
+            async fetchResult(token) {
+                const resultUrl = `https://judge0-ce.p.rapidapi.com/submissions/${token}?base64_encoded=false&fields=*`;
+
+                const resultOptions = {
+                    method: 'GET',
+                    headers: {
+                        'x-rapidapi-key': 'a049464516msh0e7cc0897a082f0p19e4d0jsne39e0fb32884',
+                        'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
+                    }
+                };
+
+                try {
+                    let isPending = true;
+                    while (isPending) {
+                        const resultResponse = await fetch(resultUrl, resultOptions);
+                        const resultData = await resultResponse.json();
+
+                        if (resultData.status.description === "In Queue" || resultData.status.description === "Processing") {
+                            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+                        } else {
+                            isPending = false;
+                            console.log(resultData);
+                            document.getElementById('output').textContent = resultData.stdout || resultData.stderr;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching result:', error);
+                }
+            }
+        }
     };
     </script>
     
