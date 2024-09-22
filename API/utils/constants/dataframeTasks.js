@@ -29,7 +29,6 @@ taskDFJoin.push(" create a new DataFrame and perform a merge on it and the origi
 let taskDFRegex = [];
 taskDFRegex.push(" capitalize all string values of a column in the original DataFrame using regular expression.\n");
 taskDFRegex.push(" count the number of occurrence of a specified substring in a column in the original DataFrame using regular expression.\n");
-taskDFRegex.push(" remove all HTML tags in a column in the original DataFrame using regular expression.\n");
 taskDFRegex.push(" extract date from a column in the original DataFrame using regular expression.\n");
 
 let taskDFMissing = [];
@@ -68,9 +67,6 @@ export function promptDataFrame() {
   let taskOneArr = tasksDF.get(taskOne);
   let taskTwoArr = tasksDF.get(taskTwo);
   let taskThreeArr = tasksDF.get(taskThree);
-  console.log(taskOne);
-  console.log(taskTwo);
-  console.log(taskThree);
   str += "- It should then";
   str += taskOneArr[Math.floor(Math.random() * taskOneArr.length)];
   str += "- It should then";

@@ -1,6 +1,7 @@
 import { PythonShell } from 'python-shell';
 import { writeFile } from 'fs';
 
+/*
 export function syntaxCheck(code) {
 
   // Writing the generated code snippet to a Python script (to run through interpreter)
@@ -39,6 +40,20 @@ export function syntaxCheck(code) {
       console.log('finished');
     });
   });
+}
+*/
+
+export function syntaxCheck(code) {
+
+  return new Promise(function(resolve, reject) {
+    PythonShell.runString(code, null).then(messages=>{
+      resolve(true);
+    })
+    .catch(err=>{
+      resolve(false);
+    });
+  });
+
 }
 
 export function createCSV(csvStr, csvName) {

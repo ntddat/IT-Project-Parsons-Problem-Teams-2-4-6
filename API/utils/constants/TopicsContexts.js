@@ -29,7 +29,7 @@ export const TOPICS = {
 * or just plain response 
 */
 export function generatePrompt(topic, context) {
-    let prompt = "Generate a piece of Python code with the following specifications, and give the 3 drafts answers as well:\n";
+    let prompt = "Generate a piece of Python code with the following specifications:\n";
     
     if (topic == "DataFrame") {
       //prompt += "- It should be similar to the following code snippets:\n";
@@ -46,7 +46,7 @@ export function generatePrompt(topic, context) {
       //prompt += "Slicing and indexing using .loc[] and .iloc[].\n";
       //prompt += "How to work with Series and DataFrames using methods and attributes.\n";
       //prompt += "Number Summary Statistics.\n";
-      prompt += "Sorting, Filtering, and Grouping DataFrames.\n";
+      //prompt += "Sorting, Filtering, and Grouping DataFrames.\n";
       //prompt += "Problem Solving using a given dataset.\n";
     }
     else {
@@ -56,7 +56,7 @@ export function generatePrompt(topic, context) {
     
     // code formatting requirements
     prompt += "- The code must not contain any lines of comments or explanations in the code\n"; 
-    prompt += "- The code must be at least 40 lines long, excluding any empty lines\n";
+    prompt += "- The code must be at least 20 lines long, excluding any empty lines\n";
 
     prompt += "Format the response in JSON format with the following attributes:";
 
