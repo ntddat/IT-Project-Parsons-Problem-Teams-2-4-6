@@ -50,7 +50,6 @@ const questionDetailsRepo = {
       ...questionDetails,
   });
     try {
-      console.log("\nSaving the question to the database...\n");
       return await approvedQuestion.save();
     } catch (e) {
       console.error("Error saving the question:", e);

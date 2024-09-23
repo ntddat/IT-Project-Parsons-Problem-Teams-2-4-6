@@ -26,6 +26,10 @@ const attemptRepo = {
     const attemptModel = await getAttemptModel(dbName);
     return await attemptModel.find({cookieID: cookieID});
   },
+  getAllAttempts: async (dbName) => {
+    const attemptModel = await getAttemptModel(dbName);
+    return await attemptModel.find({});
+  }
 } 
 
 export default attemptRepo;

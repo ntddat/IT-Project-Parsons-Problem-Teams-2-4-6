@@ -10,35 +10,60 @@ function getDbName() {
   return dbName;
 }
 
-async function getAttemptsQuestionID(res, req) {
-  const { questionID } = req.body;
-  const dbName = getDbName();
-  const attempts = await attemptService.getAttemptsFromQuestion(questionID, dbName);
-  if (!attempts.success) {
-    res.status(BAD_REQUEST).send({
-      success: false,
-      message: "Cannot find any attempts for this question"
+const attemptController = {
+  getAttemptsQuestionID: async (res, req) => {
+    const { questionID } = req.body;
+    const dbName = getDbName();
+    const result = await attemptService.getAttemptsFromQuestion(questionID, dbName);
+    if (!result.success) {
+      res.status(httpCodes.BAD_REQUEST).send({
+        success: false,
+        message: result.message
+      });
+      return;
+    }
+    res.status(httpCodes.OK).send({
+      success: true,
+      message: result.message,
+      attempts: result.attempts
+    });
+  },
+
+  getAttemptsCookieID: async (res, req) => {
+    const { cookieID } = req.body;
+    const dbName = getDbName();
+    const result = await attemptService.getAttemptsFromCookie(cookieID, dbName);
+    if (!result.success) {
+      res.status(httpCodes.BAD_REQUEST).send({
+        success: false,
+        message: result.message
+      });
+      return;
+    }
+    res.status(httpCodes.OK).send({
+      success: true,
+      message: result.message,
+      attempts: result.attempts
+    });
+  },
+
+  getNumAttemptsQuestion: async (res, req) => {
+    const { questionID } = req.body;
+    const dbName = getDbName();
+    const result = await attemptService.getNumAttemptsOfQuestion(questionID, dbName);
+    if (!result.success) {
+      res.status(httpCodes.BAD_REQUEST).send({
+        success: false,
+        message: result.message
+      });
+      return;
+    }
+    res.status(httpCodes.OK).send({
+      success: true,
+      message: result.message,
+      numAttempts: result.numAttempts
     });
   }
 }
 
-async function getAttemptsCookieID(res, req) {
-  const { cookieID } = req.body;
-  const dbName = getDbName();
-  const attempts = await attemptService.getAttemptsFromCookie(cookieID, dbName);
-  if (!attempts.success) {
-    res.status(BAD_REQUEST).send({
-      success: false,
-      message: "Cannot find any attempts for this cookie"
-    });
-  }
-}
-
-async function getNumAttemptsQuestion(res, req) {
-  const { questionID } = req.body;
-  const dbName = getDbName();
-  const numAttempts = await attemptService.getNumAttemptsOfQuestion(questionID, dbName);
-  if (!numAttempts) {
-    res.status(BAD_REQUEST).send({status: "Cannot find any attempts for this question"});
-  }
-}
+export default attemptController;
