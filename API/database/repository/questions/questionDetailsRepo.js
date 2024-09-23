@@ -15,7 +15,14 @@ const getQuestionDetailsModel = async (dbName) => {
 }
 
 // Contains all methods communicating with the questionDetails collection
-export const questionDetailsRepo = {
+const questionDetailsRepo = {
+  // finds all questionID with the given topic
+  getQuestionsWithTopic: async (topic, dbName) => {
+    const questionDetailsModel = await getQuestionDetailsModel(dbName);
+    return await questionDetailsModel.find({
+      topic: topic,
+    });
+  },
   // Finds and returns the question with this questionID
   getQuestionDetails: async (questionID, dbName) => {
     const questionDetailsModel = await getQuestionDetailsModel(dbName);
@@ -58,3 +65,5 @@ export const questionDetailsRepo = {
     });
   }
 }
+
+export default questionDetailsRepo;

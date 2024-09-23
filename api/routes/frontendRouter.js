@@ -2,12 +2,9 @@ import express from 'express';
 import generateQuestion from '../controller/questionController.js';
 
 // Routes posts and get requests
-const backendRouter = express.Router();
-
+const frontendRouter = express.Router();
 
 // send answers to the problems page
-backendRouter.post('/sendData', generateQuestion);
-
-
+backendRouter.get('/problem', generateQuestion);
 
 export default backendRouter;

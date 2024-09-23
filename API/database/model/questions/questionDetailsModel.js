@@ -12,18 +12,6 @@ const QuestionDetailsSchema = {
     type: String,
     required: true
   },
-  answer: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  expectedOutput: {
-    type: String,
-    required: true
-  },
 }
 
 export default QuestionDetailsSchema;

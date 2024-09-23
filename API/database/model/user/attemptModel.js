@@ -1,4 +1,4 @@
-export default AttemptSchema = new mongoose.Schema({
+const AttemptSchema = new mongoose.Schema({
   attemptID: {
     type: Number, 
     required: true
@@ -7,7 +7,7 @@ export default AttemptSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  userID: {
+  cookieID: {
     type: Number,
     required: true
   },
@@ -20,3 +20,5 @@ export default AttemptSchema = new mongoose.Schema({
     default: false
   },
 });
+
+export default AttemptSchema; 

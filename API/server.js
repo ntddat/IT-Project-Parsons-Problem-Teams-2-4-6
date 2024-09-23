@@ -29,7 +29,7 @@ app.use(expressStatic('App'))
 //Expects to receive json in the app.post method
 app.use(json())
 
-app.get('/info', (req, res) => {
+app.get('app/problem', (req, res) => {
     res.status(200).json({info: answer})
 })
 
@@ -62,5 +62,7 @@ app.post('/run-python', async (req, res) => {
 });
 
 app.use('/api', backendRouter);
+
+app.use('/app', )
 
 app.listen(port, () => console.log(format("server has started on port: {}", port)))
