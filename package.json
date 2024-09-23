@@ -15,7 +15,8 @@
     "string-format": "^2.0.0",
     "mongoose": "^7.0.0",
     "vue": "^3.4.29",
-    "vue-router": "^4.4.3"
+    "vue-router": "^4.4.3",
+    "mime-types": "^2.1.33"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
