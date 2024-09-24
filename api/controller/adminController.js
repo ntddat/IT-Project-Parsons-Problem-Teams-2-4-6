@@ -18,7 +18,7 @@ const adminController = {
       res.status(httpCodes.BAD_REQUEST).send({
         success: false,
         message: result.message
-        
+
       });
       return;
     }
@@ -29,3 +29,5 @@ const adminController = {
     });
   },
 }
+
+export default adminController;

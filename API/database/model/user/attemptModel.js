@@ -19,6 +19,7 @@ const AttemptSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  
 });
 
 export default AttemptSchema; 

@@ -17,10 +17,20 @@ async function calculateTotalAccuracy(dbName) {
 
 async function calculateTotalAttempts(dbName) {
   try {
-    const attempts = await attemptRepo.getAllAttempts(dbName);
-    return attempts.length;
+    const attempts = await attemptRepo.getTotalNumAttempts(dbName);
+    return attempts;
   } catch (error) {
     console.error("Error calculating total attempts:", error);
+    return 0;
+  }
+}
+
+async function calculateAverageTime(dbName) {
+  try {
+    const averageTime = await attemptRepo.getAverageTime(dbName);
+    return averageTime;
+  } catch (error) {
+    console.error("Error calculating average time:", error);
     return 0;
   }
 }
@@ -30,12 +40,13 @@ const adminService = {
     try {
       const accuracy = await calculateTotalAccuracy(dbName);
       const totalAttempts = await calculateTotalAttempts(dbName);
+      const averageTime = await calculateAverageTime(dbName);
       return {
         success: true,
         message: "Successfully summarised information",
         accuracy: accuracy,
         totalAttempts: totalAttempts,
-
+        averageTime: averageTime,
       };
     } catch (error) {
       return {
@@ -44,6 +55,7 @@ const adminService = {
       };
     }
   },
+
 };
 
 export default adminService;

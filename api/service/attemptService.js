@@ -46,7 +46,31 @@ const attemptService = {
       };
     }
   },
-  
+
+  getAttemptsFromCookieByTopic: async (userId, topic) => {
+    try {
+      const attempts = await attemptRepo.getAttemptsDetailsFromCookieIDByTopic(userId, dbName);
+      if (!attempts) {
+        return {
+          success: false,
+          message: "Cannot find any attempts for this cookie",
+        };
+      }
+      const attemptsByTopic = attempts.filter((attempt) => attempt.topic === topic);
+      return {
+        success: true,
+        message: "Attempts retrieved successfully",
+        attempts: attemptsByTopic,
+      };
+    } catch (e) {
+      console.error("Error getting attempts from cookie by topic:", e);
+      return {
+        success: false,
+        message: "Error getting attempts from cookie by topic",
+      };
+    }
+  },
+
   getNumAttemptsOfQuestion: async (questionId) => {
     try {
       const numAttempts = await attemptRepo.getNumAttemptsQuestion(questionId, dbName);

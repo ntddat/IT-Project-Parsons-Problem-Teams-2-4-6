@@ -47,6 +47,13 @@ const attemptController = {
     });
   },
 
+  getAttemptsCookieIDByTopic: async (res, req) => {
+    const {cookieID, topic} = req.body;
+    const dbName = getDbName();
+    
+  },
+
+
   getNumAttemptsQuestion: async (res, req) => {
     const { questionID } = req.body;
     const dbName = getDbName();
