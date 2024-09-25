@@ -584,6 +584,7 @@
         /* box-shadow: 0 2px 8px rgba(131, 40, 40, 0.1); */
         flex-shrink: 0;
         overflow-y: auto;
+        max-height: 500px;
     }
     
     #regenerate-btn button{
