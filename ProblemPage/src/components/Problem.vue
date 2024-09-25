@@ -11,6 +11,7 @@
         <div class="nav-links">
             <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
             <router-link to="/history" class="nav-link">History</router-link>
+            <router-link to="/Generator" class="nav-link">Home</router-link>
         </div>
         </nav>
 
@@ -28,11 +29,20 @@
     <main id = "main-box">
         <!-- 左侧面板，问题和拖动代码块的区域 -->
         <div id="left-panel">
-            <h2 id="topicdescription">Parsons Problem Topic</h2> <!-- 问题数：Question1之类的但是不打算做在这个地方，先放着吧 -->
-            <p id="questiondescription">Question description</p> <!-- 问题描述 -->
+            <div id="left-content">
+                <h2 id="topicdescription">Parsons Problem Topic</h2> <!-- 问题数：Question1之类的但是不打算做在这个地方，先放着吧 -->
+                <p id="questiondescription">Questiondescriptiondewjiodewjioewjidowjdoewjiodewjiodewj</p> <!-- 问题描述 -->
+                
+                <!--<a id="regenerate-btn" href="regen_demo_page.html"> -->
+                <!--    <button>Regenerate</button>-->
+                <!--</a>-->
+                
+            </div>
+            
             <div id="sortableTrash" class="sortable-code"> </div>
-            <a id="regenerate-btn" href="regen_demo_page.html"> 
-                <button>Regenerate</button>
+
+            <a id="regenerate-btn" href="index.html"> 
+                    <button>Regenerate</button>
             </a>
         </div>
         
@@ -167,25 +177,44 @@ export default {
 
 <style scoped>
 /* Overall Layout */
-template, body {
+
+html {
     height: 100%;
+}
+template, body {
+    height: 100vh;
     margin: 0;
     padding: 0;
+    display: flex;
 }
+
+/* #app {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+} */
+
 body{
-    height: 100vh;
+    /* height: 100vh; */
+    /* flex-grow: 1; */
     background: linear-gradient(to top right, #e7fcc8, #ffffff);
     display: flex;
     flex-direction: column;
 }
+
 main {
     display: flex;
     justify-content: space-between;
     padding: 0; /* Remove padding */
     margin: 0; /* Remove margin */
-    height: 100%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-direction: row;
     position: relative;
     margin-top: 0;
+    max-height: 84%;
 }
 #top-panel{
     width: 100%;
@@ -194,6 +223,8 @@ main {
     flex-direction: column;
     margin: 0;
     padding: 0;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 /* menu */
@@ -286,7 +317,7 @@ main {
 /* 右边的结果和按钮区域 */
 /* 这两个中间再做一个分割线 */
 #right-panel {
-    width: 60%;
+    /*width: 60%;
     height: 80.8vh;
     display: flex;
     flex-direction: column;
@@ -295,8 +326,20 @@ main {
     /* border-radius: 10px;
     padding: 20px; */
     /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
+    /*margin-top: 0px;
+    overflow: auto;*/
+    width: 60%;
+    /* height: auto; */
+    /* max-height: 83vh; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f9f7eace;
+    /* border-radius: 10px;
+    padding: 20px; */
+    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
     margin-top: 0px;
-    overflow: auto;
+    overflow: hidden;
 }
 
 /* 顶部区域样式 */
@@ -309,14 +352,20 @@ main {
     overflow: auto; /* 如果内容超出，则添加滚动条 */
     display: flex;
     flex-direction: column; /* 确保内部的内容竖直排列 */
-    justify-content: space-between; /* Push the button-group to the bottom */
+    justify-content: flex-start; /* Push the button-group to the bottom */
+    margin-top: 0; /* 移除不必要的顶部间距 */
+    margin-bottom: 0; /* 确保和#sortable之间的间距 */
 }
 
 #sortable{
-    margin-left: 40px;
-    margin-right: 30px;
+    flex-grow: 1;
+    margin-left: 20px;
+    margin-right: 15px;
+    margin-top: 0; /* 移除顶部不必要的间距 */
+    padding: 0; /* 确保padding不会影响间距 */
     width: auto;
-    
+    /* overflow-y: auto;
+    max-height: 500px; */
 }
 
 
@@ -324,12 +373,12 @@ main {
 #horizontal-divider {
     width: 100%;
     height: 10px;
-    background-color: #ccc;
-    cursor: ns-resize; /* 当鼠标悬停在分割线上时变成上下拖动的箭头 */
+    background-color: #f1edb96c;
+    cursor: ns-resize;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #606060;
+    color: #52543b86;
 }
 
 #horizontal-divider:hover {
@@ -353,12 +402,19 @@ main {
 
 #output{
     /* overflow-y: auto; */
+    /* padding-left: 5px; */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 750;
+    /* overflow-y: auto; */
     padding-left: 5px;
+    white-space: pre-line;
+    flex-shrink: 0;
 }
 
 #feedback{
     /* overflow-y: auto; */
     padding-left: 5px;
+    flex-shrink: 0;
 }
 /* CSS for the square display area */
 #calculated-value {
@@ -370,15 +426,15 @@ main {
     display: flex;
     align-items: flex-start; */
     width: 100%;
-    height: auto;
-    /*flex-grow: 1; /* 占据剩余的垂直空间 */
+    /* height: auto; */
+    flex-grow: 1; /* 占据剩余的垂直空间 */
     /* padding: 5px; */
     background-color: #f9f7eace;
     text-align: flex-start;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /*box-sizing: border-box; /* 包括 padding 和 border 在元素总尺寸内 */
+    box-sizing: border-box; /* 包括 padding 和 border 在元素总尺寸内 */
     font-size: 24px;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     overflow-y: auto;
@@ -388,7 +444,7 @@ main {
 #divider {
     width: 10px;
     height: 100%;
-    background-color: #ccc;
+    background-color: #76ad9aac;
     cursor: ew-resize;  /* 调整鼠标指针形状 */
     position: relative;
     text-align: center;
@@ -398,7 +454,7 @@ main {
     display: flex;                
     justify-content: center;       /* 水平居中 */
     align-items: center;           /* 垂直居中 */
-    color: #606060;
+    color: #6c8c8186;
 }
 
 #divider:hover{
@@ -408,16 +464,25 @@ main {
 /* 左边的拖动区域 */
 #left-panel{
     width: 40%;
-    height: auto;
+    /* height: auto; */
     display: flex;
     flex-direction: column; /* 垂直方向排列 */
-    align-items: flex-start;
-    justify-content: flex-start;
-    background: #f9f7eace;
+    align-items: stretch;
+    /* justify-content: flex-start; */
+    background: #f4f2e2;
     margin-top: 0px;
     position: relative;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    overflow: visible;
 }   
+
+#left-content{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow:auto;
+    flex-shrink: 0;
+}
 
 #topicdescription, #questiondescription{
     margin-left: 30px;
@@ -426,22 +491,30 @@ main {
 #sortableTrash {
     width: calc(80% - 20px);
     background: #37b0a200;
+    max-height: 20%;
     /* border: 1px solid #dcdcdc; */
     border-radius: 10px;
     padding: 20px;
     /* box-shadow: 0 2px 8px rgba(131, 40, 40, 0.1); */
+    flex-shrink: 0;
+    overflow-y: auto;
 }
 
-#regenerate-btn button{
+#regenerate-btn{
     position: absolute;
     left: 5px;
     bottom: 5px;
+}
+
+#regenerate-btn button{
+    border: none;
+    border-radius: 5px;
     background: linear-gradient(to right, #d7b50d, #e9a004e2); 
     
 }
 
 button i {
-    font-size: 20px;
+    font-size: 16px;
     padding-right: 5px;
 }
 
@@ -453,7 +526,7 @@ button {
     color: rgb(0, 0, 0);
     padding: 10px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
     border-radius: 17.5px;
     cursor: pointer;
@@ -464,14 +537,13 @@ button {
 
 /* 鼠标悬停时的效果 */
 button:hover {
-            border:2px solid #e2b00e;
-            transform: translateY(-3px);     /* 悬浮效果 */
-            /*box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);   /* 阴影变大 */
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2); /* Convex effect */
+    border:2px solid #e2b00e;
+    transform: translateY(-3px);     /* 悬浮效果 */
+    /*box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);   /* 阴影变大 */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2); /* Convex effect */
 }
 
 #button-group {
-    
     display: flex;
     justify-content: center;
     gap: 20%;
@@ -499,27 +571,53 @@ button:hover {
     }
 } */
 @media (max-width: 768px) {
+    .top{
+        height: 40px;
+    }
     /* 设置左侧和右侧面板垂直排列 */
     main {
         flex-direction: column;
+        overflow-y: hidden;
     }
 
     /* 设置左侧面板和右侧面板的宽度为100% */
     #left-panel, #right-panel {
-        width: 100%;
+        width: auto;
     }
 
     /* 调整左侧和右侧面板的高度以适应小屏幕 */
     #left-panel {
-        height: auto;
+        height: 52.5%;
+        overflow: visible;
+        z-index: 2;
+    }
+
+    #left-content{
+        width: auto;
+        height: 35.5%;
+        display: block;
+        /* flex-shrink: 0; */
+    }
+    #sortableTrash {
+        height: 15%;
+        margin-bottom: 45px;
+    }
+
+    /* 调整按钮宽度 */
+    #regenerate-btn button {
+        width: 100px;
+        font-size: 14px;
+        padding: 3px;
     }
 
     #right-panel {
         flex-grow: 1;
+        z-index: 1;
+        overflow-y: visible;
     }
 
     /* 减少字体大小和按钮的宽度 */
-    h2, p, button {
+    h2, p {
         font-size: 14px;
     }
 
@@ -527,6 +625,18 @@ button:hover {
         width: 30%;
     }
 
+    #button-group button {
+        width: 80px; 
+        font-size: 12px;
+        padding: 5px;
+        margin-top: 50px;
+    }
+    
+    /* 调整按钮内部的图标大小 */
+    #button-group button i {
+        font-size: 16px;
+    }
+    
     /* 隐藏或调整分割线 */
     #divider {
         display: none;
@@ -534,14 +644,20 @@ button:hover {
 
     /* 调整进度条容器在小屏幕上的样式 */
     #progress-container {
-        width: 100%;
+        width: auto;
         margin: 5px 0;
         margin-top: 40px;
     }
 
+    #progress-percent,
+    #progress-bar {
+        display: none;
+    }
+
     #time-elapsed {
         font-size: 12px;
-        margin-top: 5px;
+        margin: 0 auto;
+        text-align: center;
     }
 }
 
