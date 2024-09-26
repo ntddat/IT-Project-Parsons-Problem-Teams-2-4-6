@@ -12,6 +12,22 @@ const QuestionDetailsSchema = {
     type: String,
     required: true
   },
+  correct: {
+    type: Boolean,
+    required: true
+  },
+  totalTime: {
+    type: Number,
+    required: true
+  },
+  averageTime: {
+    type: Number,
+    required: true
+  },
+  numAttempts: {
+    type: Number,
+    required: true
+  },
 }
 
 export default QuestionDetailsSchema;

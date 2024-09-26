@@ -19,31 +19,43 @@ const userDataRepo = {
     const userDataModel = await getUserDataModel(dbName);
     return await userDataModel.findOne({cookieID: cookieID});
   },
-  
-  getUserSummaryOfTopic: async (cookieID, topic, dbName) => {
+
+  //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
+
+  // Uses the mongodb aggregation pipeline to get the data for each user according to topic
+  getUserSummaryOfTopic: async (topic, dbName) => {
     try {
       const userDataModel = await getUserDataModel(dbName);
-      const userData = await userDataModel.findOne(
-        {cookieID: cookieID},
+      const result = await userDataModel.aggregate([
         {
-          cookieID: 1,
-          attemptsSummary: { $elemMatch: { topic: topic } },
+          // splits the attemptsSummary array into separate documents
+          $unwind: "$attemptsSummary"
+        },
+        {
+          $match: {
+            // user's topic matches what is given
+            "attemptsSummary.topic": topic,
+            "attemptsSummary.numAttempts": { $gt: 0 } // greater than 0 (they have attempted at least one question)
+          }
+        },
+        {
+          $project: {
+            cookieID: 1,
+            "attemptsSummary.numAttempts": 1,
+            "attemptsSummary.accuracy": 1,
+            "attemptsSummary.averageTime": 1
+          }
+        },
+        {
+          // sort so the top users are at the top
+          $sort: { "attemptsSummary.numAttempts": -1 }
         }
-      );
-      if (!userData || !userData.attemptsSummary || !userData.attemptsSummary.length) {
-        console.log(`No data found for topic "${topic}"`);
-        return null;
-      }
-      const topicData = {
-        cookieID: userData.cookieID, // Include the cookieID
-        ...userData.attemptsSummary[0], // Spread the matched topic object
-      };
-      return topicData;
-    } catch (error) {
-      console.error("Error getting user summary of topic:", error);
-      return
+      ])
+      return result;
+    } catch (e) {
+      console.error("Error getting user summary of topic:", e);
     }
-  }
+  },
 }
 
 export default userDataRepo;

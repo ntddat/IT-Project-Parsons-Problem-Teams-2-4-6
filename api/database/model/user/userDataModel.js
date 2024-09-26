@@ -12,11 +12,12 @@ const UserDataSchema = new Schema({
       accuracy: { type: Number, required: true },
       totalTime: { type: Number, required: true },
       averageTime: { type: Number, required: true },
+      attemptedQuestions: [
+        { questionID: { type: Number, required: true }, },
+      ]
     },
   ],
-  attemptedQuestions: [
-    { questionID: { type: Number, required: true }, },
-  ]
+  
 });
 
 export default UserDataSchema;

@@ -11,6 +11,10 @@ const AttemptSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  topic: {
+    type: String,
+    required: true
+  },
   time: {
     type: Number,
     default: 0
