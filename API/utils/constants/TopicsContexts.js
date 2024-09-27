@@ -3,7 +3,10 @@
 // TODO: create specific contexts for topics 
 
 import { readFileSync } from 'fs';
-import { promptDataFrame } from "./dataframeTasks.js";
+import { promptDataFrame } from "./tasks/dataframeTasks.js";
+import { promptNMI } from "./tasks/nmiTasks.js";
+import { promptCorr } from "./tasks/corrTasks.js";
+import { promptCSV } from "./tasks/csvTasks.js";
 
 export const TOPICS = {
   DataFrames: "Data Frames",
@@ -27,38 +30,55 @@ export const TOPICS = {
 * 
 * TODO: discuss whether the prompt should ask for JSON formatted response
 * or just plain response 
+'DataFrame',
+'NMI (Normalised Mutual Information)',
+'Sentence splitting using nltk (i.e. nltk.sent_tokenize())',
+'Correlation',
+'Linear Regression',
+'Decision Tree Classifier',
+'Reading/Writing CSV files'
 */
 export function generatePrompt(topic, context) {
     let prompt = "Generate a piece of Python code with the following specifications:\n";
+
+    switch (topic) {
+      case "DataFrame":
+        prompt += "The DataFrames in the code should contain some None values\n";
+        prompt += promptDataFrame(); 
+        break;
+      case "NMI (Normalised Mutual Information)":
+        prompt += promptNMI();
+        break;
+      case "Correlation":
+        prompt += promptCorr();
+        break;
+      case "Reading/Writing CSV files":
+        prompt += promptCSV();
+        break;
+      default:
+        prompt += "- The code must be about " + topic + "\n";
+    }
     
+    /*
     if (topic == "DataFrame") {
       //prompt += "- It should be similar to the following code snippets:\n";
-      //let data = readFileSync("./src/utils/constants/DataFrameSnippets.txt", "utf-8");
-      //prompt += "- Your response should be similar to the following examples:\n";
       //prompt += data;
       //prompt += "\n";
       //prompt += "- If the code uses fillna(), the DataFrames must contain None values\n";
       prompt += "The DataFrames in the code should contain some None values\n";
       prompt += promptDataFrame(); 
-      //prompt += "- The code must be about this topics:\n";
-      //prompt += "Understand the data structures in the Pandas library: Series, DataFrame.\n";
-      //prompt += "Construct or load a Series or DataFrame using Pandas.\n";
-      //prompt += "Slicing and indexing using .loc[] and .iloc[].\n";
-      //prompt += "How to work with Series and DataFrames using methods and attributes.\n";
-      //prompt += "Number Summary Statistics.\n";
-      //prompt += "Sorting, Filtering, and Grouping DataFrames.\n";
-      //prompt += "Problem Solving using a given dataset.\n";
     }
     else {
       prompt += "- The code must be about " + topic + "\n";
     }
+    */
     prompt += "- The code must also have the context of " + context + "\n";
     
     // code formatting requirements
     prompt += "- The code must not contain any lines of comments or explanations in the code\n"; 
     prompt += "- The code must be at least 20 lines long, excluding any empty lines\n";
 
-    prompt += "Format the response in JSON format with the following attributes:";
+    prompt += "Format the response in JSON format with the following attributes:\n";
 
     // response requirements
     prompt += "- Code: The generated piece of code\n";

@@ -37,10 +37,11 @@ async function askGemini(topic, context) {
   const chat = model.startChat({ history: [] })
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
+  prompt = generatePrompt(topic, context);
+  console.log(prompt);
 
   while (!syntaxPassed) {
     // Generating a new prompt based on the given topic and context
-    prompt = generatePrompt(topic, context);
     result = await chat.sendMessage(prompt);
     resp = result.response.text();
 

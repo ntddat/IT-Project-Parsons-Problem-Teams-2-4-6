@@ -50,6 +50,7 @@ export function syntaxCheck(code) {
       resolve(true);
     })
     .catch(err=>{
+      console.log(err);
       resolve(false);
     });
   });
