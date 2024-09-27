@@ -78,7 +78,7 @@
                                 {{ formatTime(attempt.time)  }}
                             </div>
                             <div class="correct">
-                                <img :src="attempt.correctness ? '/true.png' : '/false.png'" alt="Correctness">
+                                <img :src="attempt.correctness ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
                             </div>
                         </li>
                         </ul>
@@ -141,10 +141,6 @@ export default {
 <style scoped>
 * {
     box-sizing: border-box;
-}
-
-.admin-profile {
-    /* max-width: 1000px; */
 }
 
 .top {

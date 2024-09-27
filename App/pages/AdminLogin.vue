@@ -19,13 +19,21 @@
         </div>
         <div class="form-group">
           <div class="subtitle">Password</div>
-          <input
-            v-model="password"
-            type="password"
-            class="login-input"
-            placeholder="Enter your Password"
-            @keydown="handleKeydown" 
-          />
+          <div class="password-input-container">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              class="login-input"
+              placeholder="Enter your Password"
+              @keydown="handleKeydown" 
+            />
+            <!-- Eye icon for toggling password visibility -->
+            <i 
+              class="fas" 
+              :class="showPassword ? 'fa-eye' : 'fa-eye-slash'"
+              @click="togglePasswordVisibility"
+            ></i>
+          </div>
         </div>
       </div>
       <button @click="handleLogin" class="login-button">Login</button>
@@ -45,6 +53,7 @@ import { onMounted } from 'vue';
 
 const email = ref('')
 const password = ref('')
+const showPassword = ref(false)  // This will toggle password visibility
 const router = useRouter()  // Initialize the router
 
 
@@ -74,6 +83,10 @@ function handleKeydown(event) {
   if (event.key === 'Enter') {
     handleLogin()
   }
+}
+
+function togglePasswordVisibility() {
+  showPassword.value = !showPassword.value
 }
 
 function goToGenerator() {
@@ -202,6 +215,23 @@ onMounted(() => {
   border-radius: 3px;
   border: 1px solid #ccc;
   outline: none;
+}
+.password-input-container {
+  position: relative;
+  width: 114%;
+}
+.password-input-container input {
+  width: 100%;
+  padding-right: 1px;
+}
+.password-input-container i {
+  position: absolute;
+  right: 1%;
+  top: 55%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #333;
+  font-size: 16px;
 }
 .login-button {
   background-color: #030403;
