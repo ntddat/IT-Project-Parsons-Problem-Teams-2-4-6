@@ -17,7 +17,7 @@
             <div class="profile-container">
                 <div class="profile-header">
                     <div class="profile-pic">
-                        <span class="profile-initial">J</span>
+                        <span class="profile-initial">A</span>
                     </div>
                     <div class="profile-info">
                         <h1>{{ userName }}</h1>
@@ -82,7 +82,7 @@
 export default {
     data() {
         return {
-            userName: "Jane",
+            userName: "Admin",
             accuracy: 60,
             exercises: 8,
             // Sample data with more rows to demonstrate scrolling
