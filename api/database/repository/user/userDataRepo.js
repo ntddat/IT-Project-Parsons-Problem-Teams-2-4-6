@@ -15,14 +15,43 @@ const getUserDataModel = async (dbName) => {
 }
 
 const userDataRepo = {
-  getUserData: async (cookieID, dbName) => {
+  getUserAnalytics: async (cookieID, dbName) => {
     const userDataModel = await getUserDataModel(dbName);
     return await userDataModel.findOne({cookieID: cookieID});
   },
 
+  getTop5RecentQuestions: async (cookieID, topic, dbName) => {
+    try {
+      const userDataModel = await getUserDataModel(dbName);
+      // returns the list of the 5 most recent questions the user has attempted for every topic
+      const result = await userDataModel.aggregate([
+        {
+          $match: {
+            cookieID: cookieID,
+          }
+        },
+        {
+          $unwind: "$attemptsSummary"
+        },
+        {
+          $project: {
+            topic: "$attemptsSummary.topic",
+            top5recent: {
+              $slice: ["$attemptsSummary.questions", -5] // return up to 5 most recent questions
+            }
+          }
+        }
+      ]);
+      return result;
+    } catch (e) {
+      console.error("Error getting top 5 recent questions:", e);
+      throw e;
+    }
+  },
+
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
 
-  // Uses the mongodb aggregation pipeline to get the data for each user according to topic
+  // Uses the mongodb aggregation pipeline to get the data for all users according to topic
   getUserSummaryOfTopic: async (topic, dbName) => {
     try {
       const userDataModel = await getUserDataModel(dbName);
@@ -41,9 +70,9 @@ const userDataRepo = {
         {
           $project: {
             cookieID: 1,
-            "attemptsSummary.numAttempts": 1,
-            "attemptsSummary.accuracy": 1,
-            "attemptsSummary.averageTime": 1
+            numAttempts: "$attemptsSummary.numAttempts",
+            accuracy: "$attemptsSummary.accuracy",
+            averageTime: "$attemptsSummary.averageTime"
           }
         },
         {
@@ -54,6 +83,7 @@ const userDataRepo = {
       return result;
     } catch (e) {
       console.error("Error getting user summary of topic:", e);
+      throw e;
     }
   },
 }

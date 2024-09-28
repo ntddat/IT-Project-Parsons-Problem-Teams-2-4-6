@@ -98,23 +98,33 @@ const attemptRepo = {
       attemptModel = await getAttemptModel(dbName);
       const result = await attemptModel.aggregate([{
           $group: {
+            // group attempts by topic
             _id: "$topic",
-            totalAttempts: { $sum: 1 },
-            totalTime: { $sum: "$time" },
+            totalAttempts: { $sum: 1 }, // num of documents
+            totalTime: { $sum: "$time" }, // sum of time
             correctAttempts: {
               $sum: {
-                $cond: [{ $eq: ["$correct", true] }, 1, 0]
+                $cond: [{ $eq: ["$correct", true] }, 1, 0] // counts how many correct attempts there are
               }
             }
           }
         },
         {
+          // project is what we want to show / return, here: topic, totalAttempts, averageTime, accuracy
           $project: {
             topic: "$_id",
             totalAttempts: 1,
-            averageTime: { $divide: ["$totalTime", "$totalAttempts"] },
+            averageTime: { 
+              $cond: [
+                { $eq: ["$totalAttempts", 0] }, 0, // if no attempts, average time is 0
+                { $round: [{ $divide: ["$totalTime", "$totalAttempts"] }, 2] } // else, average time is total time / total attempts, 2 decimal places
+              ]
+            },
             accuracy: {
-              $multiply: [{ $divide: ["$correctAttempts", "$totalAttempts"] }, 100] // percentage
+              $cond: [
+                { $eq: ["$totalAttempts", 0] }, 0,
+                { $round: [{$multiply: [{ $divide: ["$correctAttempts", "$totalAttempts"] }, 100] }]} // percentage
+              ]
             }
           }
         }
@@ -122,6 +132,7 @@ const attemptRepo = {
       return result;
     } catch (e) {
       console.error("Error getting topics analytics:", e);
+      throw e;
     }
   },
 } 
