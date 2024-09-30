@@ -27,6 +27,8 @@ establishConnection();
 const port = 8383
 var answer = "Haven't queried yet";
 
+/**Should I try catch these initial setup functions ## */
+
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Choosing Gemini model
@@ -42,18 +44,49 @@ async function askGemini(topic, context) {
   console.log(prompt);
 
   while (!syntaxPassed) {
+    /**Do we need to generate a new prompt every iteration? ## */
     // Generating a new prompt based on the given topic and context
-    result = await chat.sendMessage(prompt);
-    resp = result.response.text();
+    prompt = generatePrompt(topic, context);
+    /**Is this an unsafe way to handle errors? ## */
+    //Attempt to prompt gemini, if it fails prompt again
+    try {
+      result = await chat.sendMessage(prompt);
+      resp = result.response.text();
+      console.log(resp);
+    } catch (error) {
+      console.error(error);
+      continue;
+    }
+    
 
     // Parsing the JSON response from Gemini
-    fixed_resp = outputParserJson(resp);
-    console.log(fixed_resp.Code);
-      
+    try {
+      fixed_resp = outputParserJson(resp);
+    } catch (error) {
+      console.error(error);
+      continue;
+    }
+    
+
+    console.log(fixed_resp);
+    
     // Checking if the generated code is syntactically correct
-    //fixed_resp.Code = fixed_resp.Code.join('\n');
-    createCSV(fixed_resp.CSV, fixed_resp.CSVName);
-    syntaxPassed = await syntaxCheck(fixed_resp.Code);
+    try {
+      fixed_resp.Code = fixed_resp.Code.join('\n');
+      createCSV(fixed_resp.CSV, fixed_resp.CSVName);
+    } catch (error) {
+      console.error(error);
+      continue;
+    }
+    
+    try {
+      syntaxPassed = await syntaxCheck(fixed_resp.Code);
+    } catch (error) {
+      syntaxPassed = false;
+      console.error("Failed to perform syntax check: ", error);
+    }
+    
+    console.log("Syntax check success?: " + syntaxPassed + "\n");
 
   }
 
@@ -62,8 +95,8 @@ async function askGemini(topic, context) {
   fixed_resp.Code = fixed_resp.Code.join('\n');
   answer = fixed_resp;
 }
-//Allows the server to see the index.html page in the public folder
-//IN MERGING PROCESS CHANGED FROM PUBLIC TO SRC SO index.html can be in the same folder as main.js
+
+//Allows the server to see the pages in the App public folder
 app.use(expressStatic('App'))
 //Expects to receive json in the app.post method
 app.use(json())
@@ -104,14 +137,15 @@ app.post('/api/sendData', async (req,res) => {
     console.log("POST request received"); 
     const { topic, context } = req.body; // Destructure the topic and context from req.body
 
-    console.log("Received topic:", topic);
-    console.log("Received context:", context);
-    
-    await askGemini(topic, context)
-
-    if (!topic && !context) {
-        res.status(400).send({status: "failed"})
+    /**Could expand on this to ensure topic and context lie within acceptable inputs ## */
+    if (!topic) {
+      res.status(400).send({status: "Topic not received"});
     }
+    if (!context) {
+      res.status(400).send({status: "Context not received"});
+    }
+
+    await askGemini(topic, context);
     res.status(200).send({status: "received"})
 })
 

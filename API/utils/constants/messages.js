@@ -7,7 +7,10 @@
   ATTEMPT_COLLECTION_UNDEFINED: "Attempt Collection is not defined",
 
   // INVALID DATA
-  INVALID_OUTPUT_FORMAT: "Invalid output format"
+  INVALID_OUTPUT_FORMAT: "Invalid output format",
+
+  // Unexpected gemini behaviour
+  FAILED_TO_CONVERT: "Failed to convert gemini code string to array of instructions, array is null"
 };
 
 export default messages;
