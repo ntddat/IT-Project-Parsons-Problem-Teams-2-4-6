@@ -15,7 +15,7 @@ app.use(cors());
 
 // Importing our modules
 import { establishConnection } from './database/connection.js';
-import { outputParserJson } from "./service/OutputParser.js";
+import { outputParserJson, replaceSpacesWithTabs, processString } from "./service/OutputParser.js";
 import { generatePrompt } from "./utils/constants/TopicsContexts.js";
 import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
 import { createCSV, syntaxCheck } from "./utils/compiler.js";
@@ -38,27 +38,28 @@ async function askGemini(topic, context) {
   const chat = model.startChat({ history: [] })
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
+  prompt = generatePrompt(topic, context);
+  console.log(prompt);
 
   while (!syntaxPassed) {
     // Generating a new prompt based on the given topic and context
-    prompt = generatePrompt(topic, context);
     result = await chat.sendMessage(prompt);
     resp = result.response.text();
-    console.log(resp);
 
     // Parsing the JSON response from Gemini
     fixed_resp = outputParserJson(resp);
-
-    console.log(fixed_resp);
     console.log(fixed_resp.Code);
-    
+      
     // Checking if the generated code is syntactically correct
-    fixed_resp.Code = fixed_resp.Code.join('\n');
+    //fixed_resp.Code = fixed_resp.Code.join('\n');
     createCSV(fixed_resp.CSV, fixed_resp.CSVName);
     syntaxPassed = await syntaxCheck(fixed_resp.Code);
-    console.log("Syntax check success?: " + syntaxPassed + "\n");
+
   }
 
+  fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
+  fixed_resp.Code = processString(fixed_resp.Code); 
+  fixed_resp.Code = fixed_resp.Code.join('\n');
   answer = fixed_resp;
 }
 //Allows the server to see the index.html page in the public folder
