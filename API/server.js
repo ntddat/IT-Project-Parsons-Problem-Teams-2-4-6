@@ -15,8 +15,9 @@ app.use(cors());
 
 // Importing our modules
 import { establishConnection } from './database/connection.js';
-import { outputParserJson } from "./service/OutputParser.js";
+import { outputParserJson, replaceSpacesWithTabs, processString } from "./service/OutputParser.js";
 import { generatePrompt } from "./utils/constants/TopicsContexts.js";
+import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
 import { createCSV, syntaxCheck } from "./utils/compiler.js";
 
 // Establishing connection to the database
@@ -39,6 +40,8 @@ async function askGemini(topic, context) {
   const chat = model.startChat({ history: [] })
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
+  prompt = generatePrompt(topic, context);
+  console.log(prompt);
 
   while (!syntaxPassed) {
     /**Do we need to generate a new prompt every iteration? ## */
@@ -84,11 +87,13 @@ async function askGemini(topic, context) {
     }
     
     console.log("Syntax check success?: " + syntaxPassed + "\n");
-    
+
   }
 
+  fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
+  fixed_resp.Code = processString(fixed_resp.Code); 
+  fixed_resp.Code = fixed_resp.Code.join('\n');
   answer = fixed_resp;
-  
 }
 
 //Allows the server to see the pages in the App public folder

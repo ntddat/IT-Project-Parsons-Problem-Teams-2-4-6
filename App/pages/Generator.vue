@@ -1,18 +1,18 @@
 <template>
   <div class="generator" @click="closeDropdowns">
-    <nav class="top">
+    <nav class="top" v-if="!loading">
       <div class="header">
         <img src="/App/logo.png" alt="Logo" class="top-logo" />
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
-        <router-link to="/history" class="nav-link">History</router-link>
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
+        <router-link to="/history" class="nav-link">History</router-link>
       </div>
     </nav>
-    <div class="main-content">
+    <div class="main-content" v-if="!loading">
       <div class="descript">
-        <img src="../assets/icon/logo.png" alt="Logo" class="logo" />
+        <img src="/App/logo.png" alt="Logo" class="logo" />
         <h1>Question Generator</h1>
         <div>
           Get Started by selecting a topic and context from the dropdown menus below!
@@ -54,16 +54,20 @@
           </div>
         </div>
 
-        <button class="send-button" @click="sendData">
+        <button class="send-button" @click="sendData" :disabled="loading">
           <span class="iconfont icon-fasong"></span>
         </button>
       </div>
+    </div>
+    <div v-if="loading" class="loading-overlay">
+      <h2>Loading...</h2>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+
 export default {
   name: 'Generator',
   data() {
@@ -95,7 +99,8 @@ export default {
         'Traffic Flow Analysis',
         'Sales Forecasting',
         'Inventory Management'
-      ]
+      ],
+      loading: false
     };
   },
   methods: {
@@ -118,7 +123,6 @@ export default {
       this.isContextDropdownVisible = false;
     },
     closeDropdowns(event) {
-      // Close all drop-down boxes when clicking on other parts of the page
       if (!event.target.closest('.dropdown')) {
         this.isTopicDropdownVisible = false;
         this.isContextDropdownVisible = false;
@@ -131,17 +135,26 @@ export default {
       };
       console.log('Sending data to backend:', payload);
 
-      // Data is sent to the back end via HTTP requests
+      this.loading = true;
+
       axios.post('http://localhost:8383/api/sendData', payload, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-        .then(response => {
-          console.log('Data sent successfully:', response.data)
-          window.location.href = "/App/problem.html"
+      .then(response => {
+        console.log('Data sent successfully:', response.data);
+        this.$router.push({ 
+          path: '/Problem', 
+          query: { topic: this.selectedTopic, context: this.selectedContext }
+        });
       })
-      .catch(error => console.error('Error sending data:', error));
+      .catch(error => {
+        console.error('Error sending data:', error);
+      })
+      .finally(() => {
+        this.loading = false; 
+      });
     }
   }
 };
@@ -177,8 +190,8 @@ export default {
   justify-content: space-between;
   position: fixed;
   bottom: 0;
-  width: 100%;
-  padding: 10px;
+  width: 97%;
+  padding: 13px;
 }
 
 .dropdown {
@@ -232,6 +245,18 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; 
 }
 
 .top {
