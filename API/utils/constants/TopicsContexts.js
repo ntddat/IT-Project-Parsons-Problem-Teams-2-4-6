@@ -1,0 +1,130 @@
+
+// containing all the relevant topics 
+// TODO: create specific contexts for topics 
+
+import { readFileSync } from 'fs';
+import { promptDataFrame } from "./tasks/dataframeTasks.js";
+import { promptNMI } from "./tasks/nmiTasks.js";
+import { promptCorr } from "./tasks/corrTasks.js";
+import { promptCSV } from "./tasks/csvTasks.js";
+
+export const TOPICS = {
+  DataFrames: "DataFrame",
+  NMI: "Normalized Mutual Information",
+  NLTK: "Sentence splitting using nltk",
+  Correlation: "Correlation",
+  LinearRegression: "Linear Regression",
+  DecisionTree: "Decision Tree Classifier",
+  CSV: "Reading/Writing CSV files using Pandas"
+};
+
+export const SUBTOPICS = new Map([
+  [TOPICS.DataFrames, [ 
+    "Creating/Reading/Writing data frames", 
+    "Indexing/Selecting/Assigning rows and columns", 
+    "Summary Functions and Maps", 
+    "Grouping and Sorting", 
+    "Data Types and Missing Values", 
+    "Renaming and Combining"
+  ]],
+  [TOPICS.CSV, [
+    "Creating/Reading/Writing CSV files", 
+    "Indexing/Selecting/Assigning rows and columns"
+  ]], 
+  [TOPICS.Correlation, [
+    "Correlation matrix creation", 
+    "Selecting n-most relevant labels"
+  ]], 
+  [TOPICS.LinearRegression, [
+    "Predicting values using Linear Regression Model", 
+    "Model Evaluation with Mean Squared Error", 
+    "Model Evaluation with Root Mean Squared Error", 
+    "Model Evaluation with Mean Absolute Error"
+  ]], 
+  [TOPICS.DecisionTree, [
+    "Predicting values using Decision Tree Classifier Model",
+    "Model evaluation with Accuracy", 
+    "Model evaluation with Precision", 
+    "Model evaluation with Recall", 
+    "Model evaluation with F1-score" 
+  ]], 
+  [TOPICS.NMI, [
+    "Measuring clusterings' mutual information using normalized_info_score"
+  ]], 
+  [TOPICS.NLTK, [
+    "Lemmatization", 
+    "Stemming", "Tokenization"
+  ]]
+]);
+
+/**
+* @function generatePrompt
+* This function generates a prompt based on the topic  
+* passed as the parameter. The prompt will then be sent to 
+* the Gemini API to generate a piece of code, along with the 
+* description and the example dataset if applicable
+*
+* The context of the prompt should be randomly generated based 
+* on each individual context 
+* 
+* TODO: discuss whether the prompt should ask for JSON formatted response
+* or just plain response 
+'DataFrame',
+'NMI (Normalised Mutual Information)',
+'Sentence splitting using nltk (i.e. nltk.sent_tokenize())',
+'Correlation',
+'Linear Regression',
+'Decision Tree Classifier',
+'Reading/Writing CSV files'
+*/
+export function generatePrompt(topic, context) {
+    let prompt = "Generate a piece of Python code with the following specifications:\n";
+
+    switch (topic) {
+      case "DataFrame":
+        prompt += "The DataFrames in the code should contain some None values\n";
+        prompt += promptDataFrame(); 
+        break;
+      case "NMI (Normalised Mutual Information)":
+        prompt += promptNMI();
+        break;
+      case "Correlation":
+        prompt += promptCorr();
+        break;
+      case "Reading/Writing CSV files":
+        prompt += promptCSV();
+        break;
+      default:
+        prompt += "- The code must be about " + topic + "\n";
+    }
+    
+    /*
+    if (topic == "DataFrame") {
+      //prompt += "- It should be similar to the following code snippets:\n";
+      //prompt += data;
+      //prompt += "\n";
+      //prompt += "- If the code uses fillna(), the DataFrames must contain None values\n";
+      prompt += "The DataFrames in the code should contain some None values\n";
+      prompt += promptDataFrame(); 
+    }
+    else {
+      prompt += "- The code must be about " + topic + "\n";
+    }
+    */
+    prompt += "- The code must also have the context of " + context + "\n";
+    
+    // code formatting requirements
+    prompt += "- The code must not contain any lines of comments or explanations in the code\n"; 
+    prompt += "- The code must be at least 20 lines long, excluding any empty lines\n";
+
+    prompt += "Format the response in JSON format with the following attributes:\n";
+
+    // response requirements
+    prompt += "- Code: The generated piece of code\n";
+    prompt += "- Description: a brief description on what the code does, if the code has multiple print statements, the description should specify the order in which they are printed\n";
+    prompt += "- ExpectedOutput: a brief description on what the code should output\n";
+    prompt += "- CSVName: If the code involves opening and reading a file, generate the name of the file\n";
+    prompt += "- CSV: If the code involves opening and reading a file, generate an example of the file content\n";
+
+    return prompt;
+}

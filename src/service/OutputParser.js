@@ -20,19 +20,8 @@ export function outputParserJson(output) {
   parsedData = JSON.parse(parsedData); 
   console.log(parsedData.Code);
   console.log(parsedData)
-  parsedData.Code = trimWhitespace(parsedData.Code);
-  // parsedData.Code = processString(parsedData.Code);
   console.log(parsedData.Code);
   return parsedData;
-}
-
-/**
- * Given a piece of code, trim all the unnecessary whitespace characters in between 2 pair of newline characters
- * @param {string} code 
- * @returns the trimmed code
- */
-export function trimWhitespace(code) {
-  return code.replace(/\n\s*\n/, "\n");
 }
 
 /**
