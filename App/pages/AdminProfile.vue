@@ -55,9 +55,9 @@
                             <!--Student Summary-->
                             <div v-show="item.isExpanded" class="dropdown-content">
                                 <div class="summary-header">
-                                    <span class="header-ID">ID</span>
-                                    <span class="header-Answer">Total Answer</span>
-                                    <span class="header-Accuracy">Accuracy</span>
+                                    <span class="header-ID">Question</span>
+                                    <span class="header-Answer">Attempts</span>
+                                    <span class="header-Accuracy">Correctness of Last Attempt</span>
                                     <span class="header-Time">Total Time</span>
                                 </div>
                                 <div class="scrolling-wrapper">
