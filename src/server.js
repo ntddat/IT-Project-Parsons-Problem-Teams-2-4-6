@@ -11,7 +11,7 @@ dotenv.config();
 const app = express()
 
 // Importing our modules
-import { outputParserJson } from "./service/OutputParser.js";
+import { outputParserJson, processString } from "./service/OutputParser.js";
 // import { generatePrompt } from "./utils/constants/TopicsContexts.js";
 import { generatePrompt } from './prompts/prompts.js';
 import { formQuestionDetails } from './service/questions/questionService.js';
@@ -48,10 +48,15 @@ async function askGemini(topic, context) {
 
     console.log(fixed_resp);
     console.log(fixed_resp.Code);
-    
+
     // Checking if the generated code is syntactically correct
+    // misleading name; runtime check as a side effect
     syntaxPassed = await syntaxCheck(fixed_resp);
     console.log("Syntax check success?: " + syntaxPassed + "\n");
+
+    // transform to array<string>
+    fixed_resp.Code = processString(fixed_resp.Code);
+    console.log(fixed_resp.Code);
   }
 }
 

@@ -15,15 +15,24 @@ export function outputParserJson(output) {
   let doParse = regexJsonParser.exec(output);
   if (doParse === null) {
     throw messages.INVALID_OUTPUT_FORMAT;
-    
   }
   let parsedData = doParse[1];
   parsedData = JSON.parse(parsedData); 
   console.log(parsedData.Code);
   console.log(parsedData)
-  parsedData.Code = processString(parsedData.Code);
+  parsedData.Code = trimWhitespace(parsedData.Code);
+  // parsedData.Code = processString(parsedData.Code);
   console.log(parsedData.Code);
   return parsedData;
+}
+
+/**
+ * Given a piece of code, trim all the unnecessary whitespace characters in between 2 pair of newline characters
+ * @param {string} code 
+ * @returns the trimmed code
+ */
+export function trimWhitespace(code) {
+  return code.replace(/\n\s*\n/, "\n");
 }
 
 /**
@@ -35,8 +44,7 @@ export function outputParserJson(output) {
  * @returns An array of strings where each string corresponds to a line of python
  * code to be parsed to the interactive problem
  */
-
-function processString(string) {
+export function processString(string) {
   let commentFlag = false;
   let acceptNewLinesFlag1 = false;
   let acceptNewLinesFlag2 = false;
