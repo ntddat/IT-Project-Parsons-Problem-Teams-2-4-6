@@ -12,9 +12,11 @@ const app = express()
 
 // Importing our modules
 import { outputParserJson } from "./service/OutputParser.js";
-import { generatePrompt } from "./utils/constants/TopicsContexts.js";
+// import { generatePrompt } from "./utils/constants/TopicsContexts.js";
+import { generatePrompt } from './prompts/prompts.js';
 import { formQuestionDetails } from './service/questions/questionService.js';
 import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
+import { writeFile } from 'fs';
 
 // Establishing connection to the database
 establishConnection();
@@ -92,11 +94,11 @@ function syntaxCheck(fixed_resp) {
       console.log('finished');
     });
   });
-  let questionDetails = formQuestionDetails(fixed_resp, topic, context);
-  console.log(`Question details: ${questionDetails}`);
+  // let questionDetails = formQuestionDetails(fixed_resp, topic, context);
+  // console.log(`Question details: ${questionDetails}`);
   
-  await questionDetailsRepo.saveApprovedQuestion(questionDetails, "questions");
-  console.log("\n>>>>>>>>>> Question saved to the database\n");
+  // await questionDetailsRepo.saveApprovedQuestion(questionDetails, "questions");
+  // console.log("\n>>>>>>>>>> Question saved to the database\n");
 }
 
 

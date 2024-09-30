@@ -6,14 +6,53 @@ import { readFileSync } from 'fs';
 import { promptDataFrame } from "./dataframeTasks.js";
 
 export const TOPICS = {
-  DataFrames: "Data Frames",
+  DataFrames: "DataFrame",
   NMI: "Normalized Mutual Information",
-  NLTK: "Sentence Splitting using NLTK",
+  NLTK: "Sentence splitting using nltk",
   Correlation: "Correlation",
   LinearRegression: "Linear Regression",
-  DecisionTree: "Decision Tree",
-  CSV: "Read/Write CSV File"
+  DecisionTree: "Decision Tree Classifier",
+  CSV: "Reading/Writing CSV files using Pandas"
 };
+
+export const SUBTOPICS = new Map([
+  [TOPICS.DataFrames, [ 
+    "Creating/Reading/Writing data frames", 
+    "Indexing/Selecting/Assigning rows and columns", 
+    "Summary Functions and Maps", 
+    "Grouping and Sorting", 
+    "Data Types and Missing Values", 
+    "Renaming and Combining"
+  ]],
+  [TOPICS.CSV, [
+    "Creating/Reading/Writing CSV files", 
+    "Indexing/Selecting/Assigning rows and columns"
+  ]], 
+  [TOPICS.Correlation, [
+    "Correlation matrix creation", 
+    "Selecting n-most relevant labels"
+  ]], 
+  [TOPICS.LinearRegression, [
+    "Predicting values using Linear Regression Model", 
+    "Model Evaluation with Mean Squared Error", 
+    "Model Evaluation with Root Mean Squared Error", 
+    "Model Evaluation with Mean Absolute Error"
+  ]], 
+  [TOPICS.DecisionTree, [
+    "Predicting values using Decision Tree Classifier Model",
+    "Model evaluation with Accuracy", 
+    "Model evaluation with Precision", 
+    "Model evaluation with Recall", 
+    "Model evaluation with F1-score" 
+  ]], 
+  [TOPICS.NMI, [
+    "Measuring clusterings' mutual information using normalized_info_score"
+  ]], 
+  [TOPICS.NLTK, [
+    "Lemmatization", 
+    "Stemming", "Tokenization"
+  ]]
+]);
 
 /**
 * @function generatePrompt

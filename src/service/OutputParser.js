@@ -1,7 +1,8 @@
 import messages from "../utils/constants/messages.js";
 
 /**    
-  * @function outputParserJson    
+  * @function outputParserJson
+  * @param {string} output    
   * Takes the response from Gemini API, presumably in the format
   * ```json```, it will return an object of 3 strings, being the code,
   * code description, and the optional example CSV file in text if applicable
