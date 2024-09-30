@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
-import { getDatabaseConnection } from '../../connection.js';
-import messages from '../../../utils/constants/messages.js';
-import UserDataSchema from '../../model/user/userDataModel.js';
+import { getDatabaseConnection } from '../connection.js';
+import messages from '../../utils/constants/messages.js';
+import UserDataSchema from '../model/user/userDataModel.js';
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ const userDataRepo = {
     return await userDataModel.findOne({cookieID: cookieID});
   },
 
-  getTop5RecentQuestions: async (cookieID, topic, dbName) => {
+  getTop5RecentQuestions: async (cookieID, dbName) => {
     try {
       const userDataModel = await getUserDataModel(dbName);
       // returns the list of the 5 most recent questions the user has attempted for every topic
@@ -51,7 +51,18 @@ const userDataRepo = {
 
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
 
-  // Uses the mongodb aggregation pipeline to get the data for all users according to topic
+  /**
+   * Uses the mongodb aggregation pipeline to get the data for all users according to topic
+   * @param {string} topic
+   * @returns an array of Objects. For example, for topic DataFrame, there are users 1234, 1235, 1236 who has attempted: 
+   * [
+   * {
+   * 
+   *  cookieID: 12345,
+   *  numAttempts: 10,
+   * }, 
+   * ]
+   */
   getUserSummaryOfTopic: async (topic, dbName) => {
     try {
       const userDataModel = await getUserDataModel(dbName);

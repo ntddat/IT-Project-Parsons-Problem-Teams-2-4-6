@@ -1,7 +1,7 @@
 import { getDatabaseConnection } from "../../index.js";
-import attemptModel from "../../model/user/attemptModel.js";
+import attemptModel from "../../model/questions/attemptModel.js";
 import { AttemptSchema } from "../../models/attemptModel.js";
-import { messages } from "../../utils/constants/messages.js";
+import { messages } from "../../../utils/constants/messages.js";
 require('dotenv').config();
 
 const getAttemptModel = async (dbName) => {
@@ -14,25 +14,6 @@ const getAttemptModel = async (dbName) => {
 }
 
 const attemptRepo = {
-  getNumAttemptsQuestion: async (questionID, dbName) => {
-    await getAttemptModel(dbName);
-    return await attemptModel.find({questionID: questionID}).count();
-  },
-
-  getAttemptsDetailsFromQuestionID: async (questionID, dbName) => {
-    const attemptModel = await getAttemptModel(dbName);
-    return await attemptModel.find({questionID: questionID});
-  },
-
-  getAttemptsDetailsFromCookieID: async (cookieID, dbName) => {
-    const attemptModel = await getAttemptModel(dbName);
-    return await attemptModel.find({cookieID: cookieID});
-  },
-
-  getAttemptsDetailsFromCookieIDByTopic: async (cookieID, topic, dbName) => {
-    const attemptModel = await getAttemptModel(dbName);
-    return await attemptModel.find({cookieID: cookieID, topic: topic});
-  },
 
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
 
@@ -78,13 +59,13 @@ const attemptRepo = {
                 } 
               } 
             },
-            totalAttempts: { $sum: 1 },
+            numAttempts: { $sum: 1 },
           }
         }
       ]);
       // calculate accuracy as a percentage
       const accuracy = result.length > 0 
-        ? Math.round((result[0].correctAttempts / result[0].totalAttempts) * 100) 
+        ? Math.round((result[0].correctAttempts / result[0].numAttempts) * 100) 
         : 0;
       return accuracy;
     } catch (e) {
@@ -92,7 +73,17 @@ const attemptRepo = {
     }
   },
 
-  // Returns an array of total attempts, average time, and accuracy of each topic
+  /**
+   * Uses the mongodb aggregation pipeline to get the data for all topics
+   * @param String dbName 
+   * @returns an array of total attempts, average time, and accuracy of each topic
+   * [ {
+   *  topic: "abcxyz",
+   * `numAttempts: 90,
+   *  averageTime: 24,
+   *  accuracy: 79
+   * },... ]
+   */
   getTopicsAnalytics: async (dbName) => {
     try {
       attemptModel = await getAttemptModel(dbName);
@@ -100,7 +91,7 @@ const attemptRepo = {
           $group: {
             // group attempts by topic
             _id: "$topic",
-            totalAttempts: { $sum: 1 }, // num of documents
+            numAttempts: { $sum: 1 }, // num of documents
             totalTime: { $sum: "$time" }, // sum of time
             correctAttempts: {
               $sum: {
@@ -110,20 +101,20 @@ const attemptRepo = {
           }
         },
         {
-          // project is what we want to show / return, here: topic, totalAttempts, averageTime, accuracy
+          // project is what we want to show / return, here: topic, numAttempts, averageTime, accuracy
           $project: {
             topic: "$_id",
-            totalAttempts: 1,
+            numAttempts: 1,
             averageTime: { 
               $cond: [
-                { $eq: ["$totalAttempts", 0] }, 0, // if no attempts, average time is 0
-                { $round: [{ $divide: ["$totalTime", "$totalAttempts"] }, 2] } // else, average time is total time / total attempts, 2 decimal places
+                { $eq: ["$numAttempts", 0] }, 0, // if no attempts, average time is 0
+                { $round: [{ $divide: ["$totalTime", "$numAttempts"] }] } // else, average time is total time / total attempts, in seconds maybe
               ]
             },
             accuracy: {
               $cond: [
-                { $eq: ["$totalAttempts", 0] }, 0,
-                { $round: [{$multiply: [{ $divide: ["$correctAttempts", "$totalAttempts"] }, 100] }]} // percentage
+                { $eq: ["$numAttempts", 0] }, 0,
+                { $round: [{$multiply: [{ $divide: ["$correctAttempts", "$numAttempts"] }, 100] }]} // percentage
               ]
             }
           }

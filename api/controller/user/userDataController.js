@@ -30,5 +30,9 @@ const userController = {
       attemptsSummary: result.userData.attemptsSummary
     });
   },
+
+  getTop5RecentQuestionsAllTopics: async (req, res) => {
+    
+  }
 }
 

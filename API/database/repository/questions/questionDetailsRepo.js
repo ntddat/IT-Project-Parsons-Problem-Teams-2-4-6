@@ -1,6 +1,6 @@
-import QuestionDetailsSchema from "../../model/questions/questionDetailsModel.js";
-import { establishConnection, getDatabaseConnection } from "../../connection.js";
-import messages from "../../../utils/constants/messages.js";
+import QuestionDetailsSchema from "../model/questions/questionDetailsModel.js";
+import { establishConnection, getDatabaseConnection } from "../connection.js";
+import messages from "../../utils/constants/messages.js";
 import dotenv from 'dotenv'
 dotenv.config();
 
@@ -16,19 +16,17 @@ const getQuestionDetailsModel = async (dbName) => {
 
 // Contains all methods communicating with the questionDetails collection
 const questionDetailsRepo = {
-  // finds all questionID with the given topic
-  getQuestionsWithTopic: async (topic, dbName) => {
-    const questionDetailsModel = await getQuestionDetailsModel(dbName);
-    return await questionDetailsModel.find({
-      topic: topic,
-    });
-  },
   // Finds and returns the question with this questionID
-  getQuestionDetails: async (questionID, dbName) => {
-    const questionDetailsModel = await getQuestionDetailsModel(dbName);
-    return await questionDetailsModel.findOne({
-      questionID: questionID,
-    });
+  getQuestionDetailsFromArray: async (questionIDArray, dbName) => {
+    try {
+      const questionDetailsModel = await getQuestionDetailsModel(dbName);
+      return await questionDetailsModel.find({
+        questionID: { $in: questionIDArray },
+      });
+    } catch (e) {
+      console.error("Error getting question details:", e);
+      throw e;
+    }
   },
 
   // Updates the details of the question with this questionID

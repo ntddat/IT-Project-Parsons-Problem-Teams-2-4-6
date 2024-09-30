@@ -1,4 +1,4 @@
-import attemptRepo from "../database/repository/user/attemptRepo";
+import attemptRepo from "../../database/repository/questions/attemptRepo";
 
 /**
  * Data to display:
@@ -74,7 +74,7 @@ const adminService = {
     }
   },
 
-  
+
   summariseTopicsInfo: async (dbName) => {
     try {
       const topicsAnalytics = await calculateTopicAnalytics(dbName);
