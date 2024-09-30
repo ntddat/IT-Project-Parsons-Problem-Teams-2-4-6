@@ -1,20 +1,18 @@
 const UserDataSchema = new Schema({
-  cookieID: { type: Number, required: true },
+  cookieID: { type: Number, required: true , unique: true},
   // num attempts and percent correct for each topic
-  accuracy: { type: Number, required: true },
-  numAttempts: { type: Number, required: true },
-  numCorrect: { type: Number, required: true },
+  accuracy: { type: Number, default: 0, required: true },
+  numAttempts: { type: Number, default: 0, required: true },
+  numCorrect: { type: Number, default: 0, required: true },
   attemptsSummary: [
     {
-      topic: { type: String, required: true },
-      numAttempts: { type: Number, required: true },
-      numCorrect: { type: Number, required: true },
-      accuracy: { type: Number, required: true },
-      totalTime: { type: Number, required: true },
-      averageTime: { type: Number, required: true },
-      attemptedQuestions: [
-        { questionID: { type: Number, required: true }, },
-      ]
+      topic: { type: String, required: true},
+      numAttempts: { type: Number, default: 0, required: true },
+      numCorrect: { type: Number, default: 0, required: true },
+      accuracy: { type: Number, default: 0, required: true },
+      totalTime: { type: Number, default: 0, required: true },
+      averageTime: { type: Number, default: 0, required: true },
+      attemptedQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
     },
   ],
   

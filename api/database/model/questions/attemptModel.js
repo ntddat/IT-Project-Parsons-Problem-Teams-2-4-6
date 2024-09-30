@@ -1,7 +1,8 @@
 const AttemptSchema = new mongoose.Schema({
   attemptID: {
     type: Number, 
-    required: true
+    required: true,
+    unique: true
   },
   questionID: {
     type: Number,
@@ -17,11 +18,13 @@ const AttemptSchema = new mongoose.Schema({
   },
   time: {
     type: Number,
-    default: 0
+    default: 0,
+    required: true
   },
   correct: {
     type: Boolean,
-    default: false
+    default: false,
+    required: true
   },
   
 });

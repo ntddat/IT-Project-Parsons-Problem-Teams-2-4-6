@@ -1,4 +1,4 @@
-const QuestionDetailsSchema = {
+const QuestionSchema = {
   questionID: {
     type: Number,
     required: true,
@@ -14,20 +14,24 @@ const QuestionDetailsSchema = {
   },
   correct: {
     type: Boolean,
-    required: true
+    default: false,
+    required: true,
   },
   totalTime: {
     type: Number,
+    default: 0,
     required: true
   },
   averageTime: {
     type: Number,
+    default: 0,
     required: true
   },
   numAttempts: {
     type: Number,
+    default: 0,
     required: true
   },
 }
 
-export default QuestionDetailsSchema;
+export default QuestionSchema;

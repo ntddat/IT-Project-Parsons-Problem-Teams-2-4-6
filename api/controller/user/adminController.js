@@ -11,22 +11,42 @@ function getDbName() {
 }
 
 const adminController = {
-  summariseInfo: async (res, req) => {
-    const dbName = getDbName();
-    const result = await adminService.summariseInfo(dbName);
-    if (!result.success) {
-      res.status(httpCodes.BAD_REQUEST).send({
-        success: false,
-        message: result.message
+  summariseInfo: async (req, res) => {
+    try {
+      const dbName = getDbName();
 
+      const overallInfo = await adminService.summariseInfo(dbName);
+      if (!overallInfo.success) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: overallInfo.message,
+          error: overallInfo.error
+        });
+      }
+
+      const topicsInfo = await adminService.summariseTopicsInfo(dbName);
+      if (!topicsInfo.success) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: topicsInfo.message,
+          error: topicsInfo.error
+        });
+      }
+
+      return res.status(httpCodes.OK).json({
+        success: true,
+        message: "Successfully summarised information",
+        summary: overallInfo.summary,
+        topicsInfo: topicsInfo.topicsAnalytics,
       });
-      return;
+    } catch (e) {
+      console.error("Error summarising OVERALL information:", e);
+      return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: e.message,
+        error: e
+      });
     }
-    res.status(httpCodes.OK).send({
-      success: true,
-      message: result.message,
-      summary: result.summary
-    });
   },
 }
 

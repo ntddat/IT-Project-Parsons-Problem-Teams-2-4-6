@@ -16,8 +16,8 @@ async function calculateTotalAccuracy(dbName) {
   try {
     const accuracy = await attemptRepo.getTotalAccuracy(dbName);
     return accuracy;
-  } catch (error) {
-    console.error("Error calculating total accuracy:", error);
+  } catch (e) {
+    console.error("Error calculating total accuracy:", e);
     return 0;
   }
 }
@@ -26,8 +26,8 @@ async function calculateTotalAttempts(dbName) {
   try {
     const attempts = await attemptRepo.getTotalNumAttempts(dbName);
     return attempts;
-  } catch (error) {
-    console.error("Error calculating total attempts:", error);
+  } catch (e) {
+    console.error("Error calculating total attempts:", e);
     return 0;
   }
 }
@@ -36,8 +36,8 @@ async function calculateAverageTime(dbName) {
   try {
     const averageTime = await attemptRepo.getAverageTime(dbName);
     return averageTime;
-  } catch (error) {
-    console.error("Error calculating average time:", error);
+  } catch (e) {
+    console.error("Error calculating average time:", e);
     return 0;
   }
 }
@@ -46,8 +46,8 @@ async function calculateTopicAnalytics(dbName) {
   try {
     const topicsAnalytics = await attemptRepo.getTopicsAnalytics(dbName);
     return topicsAnalytics;
-  } catch (error) {
-    console.error("Error calculating topic analytics:", error);
+  } catch (e) {
+    console.error("Error calculating topic analytics:", e);
     return [];
   }
 }
@@ -66,14 +66,14 @@ const adminService = {
         totalAttempts: totalAttempts,
         averageTime: averageTime,
       };
-    } catch (error) {
+    } catch (e) {
       return {
         success: false,
-        message: error.message
+        message: e.message,
+        error: e,
       };
     }
   },
-
 
   summariseTopicsInfo: async (dbName) => {
     try {
@@ -83,10 +83,10 @@ const adminService = {
         message: "Successfully summarised topics information",
         topicsAnalytics: topicsAnalytics,
       };
-    } catch (error) {
+    } catch (e) {
       return {
         success: false,
-        message: error.message
+        message: e.message
       };
     }
   },

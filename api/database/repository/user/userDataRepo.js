@@ -15,36 +15,38 @@ const getUserDataModel = async (dbName) => {
 }
 
 const userDataRepo = {
-  getUserAnalytics: async (cookieID, dbName) => {
-    const userDataModel = await getUserDataModel(dbName);
-    return await userDataModel.findOne({cookieID: cookieID});
-  },
-
-  getTop5RecentQuestions: async (cookieID, dbName) => {
+  // -------------------------------------FOR USER ANALYTICS-------------------------------------
+  getUserData: async (cookieID, dbName) => {
     try {
       const userDataModel = await getUserDataModel(dbName);
-      // returns the list of the 5 most recent questions the user has attempted for every topic
       const result = await userDataModel.aggregate([
-        {
-          $match: {
-            cookieID: cookieID,
-          }
-        },
-        {
-          $unwind: "$attemptsSummary"
-        },
+        { $match: { cookieID: cookieID } },
         {
           $project: {
-            topic: "$attemptsSummary.topic",
-            top5recent: {
-              $slice: ["$attemptsSummary.questions", -5] // return up to 5 most recent questions
+            _id: 0,
+            cookieID: 1,
+            accuracy: 1,
+            numAttempts: 1,
+            attemptsSummary: {
+              $map: {
+                input: "$attemptsSummary",
+                as: "summary",
+                in: {
+                  topic: "$$summary.topic",
+                  numAttempts: "$$summary.numAttempts",
+                  accuracy: "$$summary.accuracy",
+                  attemptedQuestions: {
+                    $slice: ["$$summary.attemptedQuestions", -5] // return up to 5 most recent questions
+                  },
+                }
+              }
             }
           }
         }
       ]);
-      return result;
+      return result[0];
     } catch (e) {
-      console.error("Error getting top 5 recent questions:", e);
+      console.error("Error getting user data:", e);
       throw e;
     }
   },
@@ -56,11 +58,13 @@ const userDataRepo = {
    * @param {string} topic
    * @returns an array of Objects. For example, for topic DataFrame, there are users 1234, 1235, 1236 who has attempted: 
    * [
-   * {
-   * 
-   *  cookieID: 12345,
-   *  numAttempts: 10,
-   * }, 
+    * {
+    *  cookieID: 1234,
+    *  numAttempts: 10,
+      * accuracy: 80,
+      * averageTime: 80,
+    * }, 
+   * .....
    * ]
    */
   getUserSummaryOfTopic: async (topic, dbName) => {
@@ -94,6 +98,59 @@ const userDataRepo = {
       return result;
     } catch (e) {
       console.error("Error getting user summary of topic:", e);
+      throw e;
+    }
+  },
+
+  // -------------------------------------UPDATES-------------------------------------
+  updateUserAnalytics: async (cookieID, topic, correct, time, questionID, dbName) => {
+    try {
+      const userDataModel = await getUserDataModel(dbName);
+      return await userDataModel.updateOne(
+        { cookieID: cookieID },
+        {
+          $inc: {
+            numAttempts: 1,
+            numCorrect: correct ? 1 : 0,
+            "$attemptsSummary.$[element].numAttempts": 1,
+            "$attemptsSummary.$[element].numCorrect": correct ? 1 : 0,
+            "$attemptsSummary.$[element].totalTime": time,
+          },
+          $set: {
+            accuracy: {
+              $cond: [
+                { $eq: ["$numAttempts", 0] }, 0,
+                { $round: [{$multiply: [{ $divide: ["$numCorrect", "$numAttempts"] }, 100] }]} // percentage
+              ]
+            },
+            "$attemptsSummary.$[element].averageTime": {
+              $cond: [
+                { $eq: ["$attemptsSummary.$[element].numAttempts", 0] }, 0, // if no attempts, average time is 0
+                { $round: [{ $divide: ["$attemptsSummary.$[element].totalTime", "$attemptsSummary.$[element].numAttempts"] }] } // else, average time is total time / total attempts, in seconds maybe
+              ]
+            },
+            "$attemptsSummary.$[element].accuracy": {
+              $cond: [
+                { $eq: ["$attemptsSummary.$[element].numAttempts", 0] }, 0,
+                { $round: [{$multiply: [{ $divide: ["$attemptsSummary.$[element].numCorrect", "$attemptsSummary.$[element].numAttempts"] }, 100] }]} // percentage
+              ]
+            }
+          },
+          $push: {
+            "$attemptsSummary.$[element].attemptedQuestions": { questionID: questionID }
+          },
+        },
+        {
+          arrayFilters: [
+            // the element has to have the same topic as the one we are updating
+            {
+              "element.topic": topic
+            }
+          ]
+        }
+      );
+    } catch (e) {
+      console.error("Error updating user data:", e);
       throw e;
     }
   },

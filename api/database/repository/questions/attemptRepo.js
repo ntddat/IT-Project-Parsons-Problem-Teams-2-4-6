@@ -14,7 +14,6 @@ const getAttemptModel = async (dbName) => {
 }
 
 const attemptRepo = {
-
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
 
   // Counts total number of attempts
@@ -126,6 +125,22 @@ const attemptRepo = {
       throw e;
     }
   },
+
+  // -------------------------------------UPDATES-------------------------------------
+  saveAttempt: async (attempt, dbName) => {
+    try {
+      const attemptModel = await getAttemptModel(dbName);
+      const attemptsCount = await questionModel.countDocuments();
+      const approvedAttempt = new attemptModel({
+        attemptID: attemptsCount + 1,
+        ...attempt,
+      });
+      return await approvedAttempt.save();
+    } catch (e) {
+      console.error("Error saving attempt:", e);
+      throw e;
+    }
+  }
 } 
 
 export default attemptRepo;
