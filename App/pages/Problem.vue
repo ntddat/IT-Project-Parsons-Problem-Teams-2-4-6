@@ -191,7 +191,7 @@
                     }
     
                     const data = await response.json();
-                    // initial = data.info.Code; // Update initial code
+                    initial = data.info.Code; // Update initial code
                     document.getElementById('questiondescription').textContent = data.info.Description;
                     // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
                     this.initializeParsonsWidget(); // Initialize Parsons widget with fetched code
