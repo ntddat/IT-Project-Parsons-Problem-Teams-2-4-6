@@ -50,6 +50,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'  // Import Vue Router for navigation
 import { onMounted } from 'vue';
+import {getCookie, setCookie} from "../libs/cookie.js"
+
 
 const email = ref('')
 const password = ref('')
@@ -91,30 +93,6 @@ function togglePasswordVisibility() {
 
 function goToGenerator() {
  router.push('/Generator') // Navigate to the Generator page
-}
-
-function setCookie(name, value, time) {
-    let expires = "";
-    if (time) {
-        let date = new Date();
-        date.setTime(date.getTime() + (time * 1000)); // in seconds
-        expires = "; expires=" + date.toUTCString();
-    }
-    let cookie = name + "=" + (value || "") + expires + "; path=/";
-    console.log("Cookie updatesuccess: " + cookie);
-    document.cookie = cookie
-}
-
-function getCookie(cname) {
-      const name = cname + "=";
-      const ca = document.cookie.split(';');
-      for (let i = 0; i < ca.length; i++) {
-        let c = ca[i].trim();
-        if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length);
-        }
-      }
-      return "";
 }
 
 function checkAdminState() {

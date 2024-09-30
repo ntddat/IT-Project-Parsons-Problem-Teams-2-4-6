@@ -55,9 +55,9 @@
                             <!--Student Summary-->
                             <div v-show="item.isExpanded" class="dropdown-content">
                                 <div class="summary-header">
-                                    <span class="header-ID">Question</span>
-                                    <span class="header-Answer">Attempts</span>
-                                    <span class="header-Accuracy">Correctness of Last Attempt</span>
+                                    <span class="header-ID">ID</span>
+                                    <span class="header-Answer">Total Answer</span>
+                                    <span class="header-Accuracy">Accuracy</span>
                                     <span class="header-Time">Total Time</span>
                                 </div>
                                 <div class="scrolling-wrapper">
@@ -79,6 +79,8 @@
     </div>
 </template>
 <script>
+import {getCookie, setCookie} from "../libs/cookie.js"
+
 export default {
     data() {
         return {
@@ -118,22 +120,11 @@ export default {
     methods: {
         handleLogout() {
             console.log("loging out...");
-            this.setCookie("Admin", false, 0)
+            setCookie("Admin", false, 0)
             console.log("Admin cookie Terminated")
             this.$router.push('/Generator')
         },
 
-        setCookie(name, value, time) {
-            let expires = "";
-            if (time) {
-                let date = new Date();
-                date.setTime(date.getTime() + (time * 1000)); // in seconds
-                expires = "; expires=" + date.toUTCString();
-            }
-            let cookie = name + "=" + (value || "") + expires + "; path=/";
-            console.log("Cookie updatesuccess: " + cookie);
-            document.cookie = cookie
-        },
         toggleDropdown(index){
             this.history[index].isExpanded = !this.history[index].isExpanded;
         },

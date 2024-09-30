@@ -31,17 +31,19 @@
             <div id="left-panel">
                 <div id="left-content">
                     <h2 id="topicdescription">Parsons Problem Topic</h2> <!-- 问题数：Question1之类的但是不打算做在这个地方，先放着吧 -->
-                    <p id="questiondescription">Question Description</p> <!-- 问题描述 -->
+                    <p id="questiondescription">Questiondescriptiondewjiodewjioewjidowjdoewjiodewjiodewj</p> <!-- 问题描述 -->
                     
                     <!--<a id="regenerate-btn" href="regen_demo_page.html"> -->
                     <!--    <button>Regenerate</button>-->
                     <!--</a>-->
-                    <a id="regenerate-btn" href="index.html"> 
-                        <button>Regenerate</button>
-                    </a>
+                    
                 </div>
                 
                 <div id="sortableTrash" class="sortable-code"> </div>
+    
+                <a id="regenerate-btn" href="index.html"> 
+                        <button>Regenerate</button>
+                </a>
             </div>
             
             <!-- 可拖动的中分线 -->
@@ -78,6 +80,11 @@
                     <div id="feedback"></div>
                 </div>
             </div>
+            <div id="resultMessage">
+            Correct answer! Congratulations!
+            <button id="regenerate-btn">Regenerate</button>
+            <button id="retry-btn">Try Again</button>
+        </div>
         </main>
     
     </body>
@@ -184,7 +191,9 @@
                     }
     
                     const data = await response.json();
-                    initial = data.info.Code; // Update initial code
+                    // initial = data.info.Code; // Update initial code
+                    document.getElementById('questiondescription').textContent = data.info.Description;
+                    // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
                     this.initializeParsonsWidget(); // Initialize Parsons widget with fetched code
                 } catch (error) {
                     console.error('Error fetching strings:', error);
@@ -286,25 +295,44 @@
     
     <style scoped>
     /* Overall Layout */
+    
+    html {
+        height: 100%;
+    }
     template, body {
         height: 100vh;
         margin: 0;
         padding: 0;
+        display: flex;
     }
+    
+    /* #app {
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    } */
+    
     body{
-        height: 100vh;
+        /* height: 100vh; */
+        /* flex-grow: 1; */
         background: linear-gradient(to top right, #e7fcc8, #ffffff);
         display: flex;
         flex-direction: column;
     }
+    
     main {
         display: flex;
         justify-content: space-between;
         padding: 0; /* Remove padding */
         margin: 0; /* Remove margin */
-        height: 100%;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-direction: row;
         position: relative;
         margin-top: 0;
+        max-height: 84%;
     }
     #top-panel{
         width: 100%;
@@ -313,6 +341,8 @@
         flex-direction: column;
         margin: 0;
         padding: 0;
+        flex-shrink: 0;
+        flex-grow: 0;
     }
     
     /* menu */
@@ -452,6 +482,8 @@
         margin-top: 0; /* 移除顶部不必要的间距 */
         padding: 0; /* 确保padding不会影响间距 */
         width: auto;
+        /* overflow-y: auto;
+        max-height: 500px; */
     }
     
     
@@ -530,7 +562,7 @@
     #divider {
         width: 10px;
         height: 100%;
-        background-color: #6c8c8158;
+        background-color: #76ad9aac;
         cursor: ew-resize;  /* 调整鼠标指针形状 */
         position: relative;
         text-align: center;
@@ -550,12 +582,12 @@
     /* 左边的拖动区域 */
     #left-panel{
         width: 40%;
-        height: auto;
-        display: block;
+        /* height: auto; */
+        display: flex;
         flex-direction: column; /* 垂直方向排列 */
         align-items: stretch;
-        justify-content: flex-start;
-        background: #f9f7eace;
+        /* justify-content: flex-start; */
+        background: #f4f2e2;
         margin-top: 0px;
         position: relative;
         box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
@@ -566,8 +598,7 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        overflow-y: hidden;
-        overflow-x: visible;
+        overflow:auto;
         flex-shrink: 0;
     }
     
@@ -578,20 +609,23 @@
     #sortableTrash {
         width: calc(80% - 20px);
         background: #37b0a200;
+        max-height: 20%;
         /* border: 1px solid #dcdcdc; */
         border-radius: 10px;
         padding: 20px;
         /* box-shadow: 0 2px 8px rgba(131, 40, 40, 0.1); */
         flex-shrink: 0;
         overflow-y: auto;
-        max-height: 250px;
+    }
+    
+    #regenerate-btn{
+        position: absolute;
+        left: 5px;
+        bottom: 5px;
     }
     
     #regenerate-btn button{
         border: none;
-        position: absolute;
-        left: 5px;
-        bottom: 5px;
         border-radius: 5px;
         background: linear-gradient(to right, #d7b50d, #e9a004e2); 
         
@@ -633,6 +667,15 @@
         gap: 20%;
         margin-bottom: 10px; /* 将按钮组推到区域的底部 */
     
+    }
+
+    #resultMessage {    /* Pop up after correct submission*/
+        display: none; /* Initially hidden */
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px;
+        margin-top: 10px;
+        text-align: center;
     }
     
     /* @media (max-width: 768px) {
