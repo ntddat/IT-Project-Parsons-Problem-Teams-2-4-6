@@ -1,11 +1,11 @@
 
-// containing all the relevant topics 
-// TODO: create specific contexts for topics 
-
 import { readFileSync } from 'fs';
 import { promptDataFrame } from "./tasks/dataframeTasks.js";
 import { promptNMI } from "./tasks/nmiTasks.js";
+import { promptNLTK } from "./tasks/nltkTasks.js";
 import { promptCorr } from "./tasks/corrTasks.js";
+import { promptLR } from "./tasks/lrTasks.js";
+import { promptDTree } from "./tasks/dTreeTasks.js";
 import { promptCSV } from "./tasks/csvTasks.js";
 
 export const TOPICS = {
@@ -27,16 +27,6 @@ export const TOPICS = {
 *
 * The context of the prompt should be randomly generated based 
 * on each individual context 
-* 
-* TODO: discuss whether the prompt should ask for JSON formatted response
-* or just plain response 
-'DataFrame',
-'NMI (Normalised Mutual Information)',
-'Sentence splitting using nltk (i.e. nltk.sent_tokenize())',
-'Correlation',
-'Linear Regression',
-'Decision Tree Classifier',
-'Reading/Writing CSV files'
 */
 export function generatePrompt(topic, context) {
     let prompt = "Generate a piece of Python code with the following specifications:\n";
@@ -49,8 +39,17 @@ export function generatePrompt(topic, context) {
       case "NMI (Normalised Mutual Information)":
         prompt += promptNMI();
         break;
+      case "Sentence splitting using nltk (i.e. nltk.sent_tokenize())":
+        prompt += promptNLTK(context);
+        break;
       case "Correlation":
         prompt += promptCorr();
+        break;
+      case "Linear Regression":
+        prompt += promptLR();
+        break;
+      case "Decision Tree Classifier":
+        prompt += promptDTree();
         break;
       case "Reading/Writing CSV files":
         prompt += promptCSV();
@@ -59,19 +58,6 @@ export function generatePrompt(topic, context) {
         prompt += "- The code must be about " + topic + "\n";
     }
     
-    /*
-    if (topic == "DataFrame") {
-      //prompt += "- It should be similar to the following code snippets:\n";
-      //prompt += data;
-      //prompt += "\n";
-      //prompt += "- If the code uses fillna(), the DataFrames must contain None values\n";
-      prompt += "The DataFrames in the code should contain some None values\n";
-      prompt += promptDataFrame(); 
-    }
-    else {
-      prompt += "- The code must be about " + topic + "\n";
-    }
-    */
     prompt += "- The code must also have the context of " + context + "\n";
     
     // code formatting requirements

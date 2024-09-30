@@ -47,6 +47,7 @@ async function askGemini(topic, context) {
 
     // Parsing the JSON response from Gemini
     fixed_resp = outputParserJson(resp);
+    console.log(fixed_resp.Code);
       
     // Checking if the generated code is syntactically correct
     //fixed_resp.Code = fixed_resp.Code.join('\n');
