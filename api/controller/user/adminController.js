@@ -11,6 +11,12 @@ function getDbName() {
 }
 
 const adminController = {
+  /**
+   * Request: { cookieID }
+   * Response: { success, message, summary, topicsInfo }
+   * Summary: { accuracy, totalAttempts, averageTime }
+   * TopicsInfo: [ { topic, accuracy, totalAttempts, users: [{ cookieID, numAttempts, accuracy, totalTime }] } ]
+   */
   summariseInfo: async (req, res) => {
     try {
       const dbName = getDbName();
@@ -39,6 +45,7 @@ const adminController = {
         summary: overallInfo.summary,
         topicsInfo: topicsInfo.topicsAnalytics,
       });
+
     } catch (e) {
       console.error("Error summarising OVERALL information:", e);
       return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({

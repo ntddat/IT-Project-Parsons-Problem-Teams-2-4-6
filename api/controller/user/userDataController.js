@@ -13,28 +13,9 @@ const getDbName = () => {
 
 const userController = {
   /**
-   * Response format:
-   * {
-   *  "success": true,
-   *  "message": "User data retrieved successfully",
-   *  "userData": {
-   *   "accuracy": 0.5,
-   *   "numAttempts": 10,
-   *   "attemptsSummary": [
-   *    {
-   *     "topic": "DataFrame",
-   *     "questions": [
-   *      {
-   *       "questionID": "1234",
-   *       ...question details
-   *      },
-   *      ....
-   *     ]
-   *    },
-   *    ....
-   *    ]
-   *   }
-   * }
+   * Request: CookieID
+   * Response: { success, message, userData }
+   * userData: { accuracy, numAttempts, attemptsSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, averageTime, numAttempts } ] } ] }
    */
 
   getUserData: async (req, res) => {
@@ -55,14 +36,13 @@ const userController = {
           message: userData.message
         });
       }
-
+      // adds question details to the user data
       const modifiedUserData = await userDataService.addQuestionDetailsToUserData(userData, dbName);
     
-      // They can call this to get all summarised information about the user
       return res.status(httpCodes.OK).json({
         success: true,
         message: result.message,
-        // takes data straight from the user object
+        // takes data straight from the user object, with question details added
         userData: modifiedUserData
       });
       
@@ -76,16 +56,18 @@ const userController = {
   },
 
   /**
-   * Request format:
-    {
-      "cookieID": "1234",
-      "analytics": {
-        "topic": "DataFrame",
-        "correct": true,
-        "time": 100,
-        "questionID": "1234"
-      }
-  */
+   * Request: { cookieID, analytics }
+   * {
+   *  "cookieID": "1234",
+   *  "analytics": {
+   *    "topic": "DataFrame", 
+   *    "correct": true,
+   *    "time": 100,
+   *    "questionID": "1234"
+   *   }
+   * }
+   * Response: { success, message }
+   */
 
   updateUserAnalytics: async (req, res) => {
     try {

@@ -23,10 +23,12 @@ const attemptRepo = {
       return await attemptModel.countDocuments();
     } catch (e) {
       console.error("Error getting total number of attempts:", e);
+      throw e;
     }
   },
 
-  // Uses the mongodb aggregation pipeline to get the average time spent on a question
+  // Uses the mongodb aggregation pipeline to get the average time spent on an attempt
+  // TODO: decide if we need total time or average time for admin, and whether its for questions or attempts
   getAverageTime: async (dbName) => {
     try {
       const attemptModel = await getAttemptModel(dbName);
@@ -41,6 +43,25 @@ const attemptRepo = {
       return averageTime;
     } catch (e) {
       console.error("Error calculating average time:", e);
+      throw e;
+    }
+  },
+
+  // TODO: decide if we need total time or average time for admin
+  getTotalTime: async (dbName) => {
+    try {
+      const attemptModel = await getAttemptModel(dbName);
+      const result = await attemptModel.aggregate([{
+        $group: {
+          _id: null,
+          totalTime: { $sum: "$time" }
+        }
+      }]);
+      const totalTime = result.length > 0 ? result[0].totalTime : 0;
+      return totalTime;
+    } catch (e) {
+      console.error("Error calculating total time:", e);
+      throw e;
     }
   },
 
@@ -69,13 +90,12 @@ const attemptRepo = {
       return accuracy;
     } catch (e) {
       console.error("Error calculating total accuracy:", e);
+      throw e;
     }
   },
 
   /**
    * Uses the mongodb aggregation pipeline to get the data for all topics
-   * @param String dbName 
-   * @returns an array of total attempts, average time, and accuracy of each topic
    * [ {
    *  topic: "abcxyz",
    * `numAttempts: 90,
@@ -85,7 +105,7 @@ const attemptRepo = {
    */
   getTopicsAnalytics: async (dbName) => {
     try {
-      attemptModel = await getAttemptModel(dbName);
+      const attemptModel = await getAttemptModel(dbName);
       const result = await attemptModel.aggregate([{
           $group: {
             // group attempts by topic

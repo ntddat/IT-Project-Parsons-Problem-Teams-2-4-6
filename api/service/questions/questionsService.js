@@ -24,7 +24,7 @@ const questionService = {
     }
   },
 
-  attemptedQuestion: async (questionID, time, correct, dbName) => {
+  updateQuestionDetails: async (questionID, time, correct, dbName) => {
     try {
       const updateResults = await questionRepo.updateQuestionDetails(questionID, time, correct, dbName);
       if (!updateResults.acknowledged) {

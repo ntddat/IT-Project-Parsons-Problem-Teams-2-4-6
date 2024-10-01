@@ -87,7 +87,7 @@ const userDataRepo = {
             cookieID: 1,
             numAttempts: "$attemptsSummary.numAttempts",
             accuracy: "$attemptsSummary.accuracy",
-            averageTime: "$attemptsSummary.averageTime"
+            totalTime: "$attemptsSummary.totalTime",
           }
         },
         {
