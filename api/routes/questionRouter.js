@@ -1,10 +1,10 @@
 import express from 'express';
-import generateQuestion from '../controller/questions/questionController.js';
+import questionController from '../controller/questions/questionController';
 
 // Routes posts and get requests
 const router = express.Router();
 
 // send answers to the problems page
-router.route('/sendTopicContext').post(generateQuestion);
+router.post('/generateQuestion', questionController.generateQuestion);
 
 export default router;

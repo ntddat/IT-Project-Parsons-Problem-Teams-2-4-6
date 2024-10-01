@@ -3,4 +3,4 @@ import adminController from '../controller/user/adminController';
 
 const router = express.Router();
 
-router.route('/summary').get();
+router.get('/summary', adminController.summariseInfo);

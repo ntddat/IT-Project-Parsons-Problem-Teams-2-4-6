@@ -57,15 +57,7 @@ const userController = {
 
   /**
    * Request: { cookieID, analytics }
-   * {
-   *  "cookieID": "1234",
-   *  "analytics": {
-   *    "topic": "DataFrame", 
-   *    "correct": true,
-   *    "time": 100,
-   *    "questionID": "1234"
-   *   }
-   * }
+   * analytics: { topic, correct, time, questionID }
    * Response: { success, message }
    */
 

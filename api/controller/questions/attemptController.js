@@ -31,12 +31,8 @@ const attemptController = {
           message: result.message
         });
       }
-
-      return res.status(httpCodes.OK).json({
-        success: true,
-        message: result.message
-      });
-
+      // next one in the middleware chain (this is actually a middleware!)
+      next();
     } catch (e) {
       console.error("Error saving attempt:", e);
       return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
