@@ -72,7 +72,6 @@ async function askGemini(topic, context) {
     
     // Checking if the generated code is syntactically correct
     try {
-      fixed_resp.Code = fixed_resp.Code.join('\n');
       createCSV(fixed_resp.CSV, fixed_resp.CSVName);
     } catch (error) {
       console.error(error);

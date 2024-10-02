@@ -20,36 +20,36 @@ export function syntaxCheck(code) {
    */
   // Running the response through python interpreter
   //try {
-    let pyShell = new PythonShell("script.py", { mode: 'text' });
-
-    // Printing the output
-    pyShell.on('message', function(message) {
-      console.log("Output: " + message);
-    });
+    //let pyShell = new PythonShell("script.py", { mode: 'text' });
+    //
+    //// Printing the output
+    //pyShell.on('message', function(message) {
+    //  console.log("Output: " + message);
+    //});
   // } catch (error) {
   //   throw new Error("Failed to run gemini's python response through interpreter");
   // }
   
   
-  return new Promise(function(resolve, reject) {
-    // End the input stream and allow the process to exit
-    pyShell.end(function(err, code, signal) {
-      console.log('The exit code was: ' + code);
-      console.log('The exit signal was: ' + signal);
-      console.log('finished');
-      if (err) {
-        console.error("The error is:\n" + err);
-        resolve(false);
-      }
-      else {
-        console.log("gemini's python code run successfully!\n");
-        resolve(true);
-      }
-      
-    });
-  });
-}
-*/
+//  return new Promise(function(resolve, reject) {
+//    // End the input stream and allow the process to exit
+//    pyShell.end(function(err, code, signal) {
+//      console.log('The exit code was: ' + code);
+//      console.log('The exit signal was: ' + signal);
+//      console.log('finished');
+//      if (err) {
+//        console.error("The error is:\n" + err);
+//        resolve(false);
+//      }
+//      else {
+//        console.log("gemini's python code run successfully!\n");
+//        resolve(true);
+//      }
+//
+//    });
+//  });
+//}
+//*/
 
 export function syntaxCheck(code) {
 
