@@ -5,16 +5,15 @@ import { PythonShell } from 'python-shell';
 import express, { static as expressStatic, json } from 'express';
 import format from 'string-format';
 import cors from 'cors';
+// Importing our modules
+import { establishConnection } from './database/connection.js';
+import router from './routes/index.js';
 
 dotenv.config();
 const app = express()
 
 app.use(express.json());
 app.use(cors());
-
-// Importing our modules
-import { establishConnection } from './database/connection.js';
-import backendRouter from './routes/backendRouter.js';
 
 // Establishing connection to the database
 establishConnection();
@@ -61,8 +60,6 @@ app.post('/run-python', async (req, res) => {
     });
 });
 
-app.use('/api', backendRouter);
-
-app.use('/app', )
+app.use('/api', router);
 
 app.listen(port, () => console.log(format("server has started on port: {}", port)))

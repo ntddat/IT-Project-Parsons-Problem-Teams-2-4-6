@@ -1,9 +1,9 @@
 import express from 'express';
-import userController from '../controller/user/userDataController';
+import userController from '../controller/user/userDataController.js';
 
-const router = express.Router();
+const userRouter = express.Router();
 
 // gets user data of the user
-router.get('/user', userController.getUserData);
+userRouter.get('/userData', userController.getUserData);
 
-export default router;
+export default userRouter;

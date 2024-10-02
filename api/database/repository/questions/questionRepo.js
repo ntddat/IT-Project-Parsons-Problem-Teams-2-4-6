@@ -1,6 +1,5 @@
 import QuestionSchema from "../../model/questions/questionModel.js";
-import { establishConnection, getDatabaseConnection } from "../connection.js";
-import messages from "../../utils/constants/messages.js";
+import { getDatabaseConnection } from "../../connection.js";
 import dotenv from 'dotenv'
 dotenv.config();
 
@@ -8,7 +7,7 @@ dotenv.config();
 const getQuestionModel = async (dbName) => {
   const questionCollection = process.env.QUESTION_DETAILS_COLLECTION;
   if (!questionCollection) {
-    throw new Error(messages.QUESTION_COLLECTION_UNDEFINED);
+    throw new Error("Question collection is not defined in env file");
   }
   const dbConnection = await getDatabaseConnection(dbName);
   return dbConnection.model(questionCollection, QuestionSchema);

@@ -1,6 +1,8 @@
 import express from 'express';
-import adminController from '../controller/user/adminController';
+import adminController from '../controller/user/adminController.js';
 
-const router = express.Router();
+const adminRouter = express.Router();
 
-router.get('/summary', adminController.summariseInfo);
+adminRouter.get('/summary', adminController.summariseInfo);
+
+export default adminRouter;

@@ -1,5 +1,5 @@
-import attemptRepo from "../../database/repository/questions/attemptRepo";
-import userDataRepo from "../../database/repository/user/userDataRepo";
+import attemptRepo from "../../database/repository/questions/attemptRepo.js";
+import userDataRepo from "../../database/repository/user/userDataRepo.js";
 
 /**
  * Data to display:

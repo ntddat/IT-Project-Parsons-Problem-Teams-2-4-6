@@ -1,4 +1,4 @@
-import attemptRepo from "../../database/repository/questions/attemptRepo";
+import attemptRepo from "../../database/repository/questions/attemptRepo.js";
 
 const attemptService = {
   saveAttempt: async (attempt, dbName) => {

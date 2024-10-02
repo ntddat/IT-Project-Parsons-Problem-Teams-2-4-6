@@ -1,5 +1,5 @@
-import httpCodes from "../../utils/constants/httpsCodes";
-import adminService from "../../service/user/adminService";
+import httpCodes from "../../utils/constants/httpsCodes.js";
+import adminService from "../../service/user/adminService.js";
 
 // ADMIN CONTROLS
 function getDbName() {

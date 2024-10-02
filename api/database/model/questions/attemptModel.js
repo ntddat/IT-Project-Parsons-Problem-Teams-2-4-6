@@ -1,4 +1,7 @@
-const AttemptSchema = new mongoose.Schema({
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+
+const AttemptSchema = new Schema({
   attemptID: {
     type: Number, 
     required: true,
@@ -26,7 +29,6 @@ const AttemptSchema = new mongoose.Schema({
     default: false,
     required: true
   },
-  
 });
 
 export default AttemptSchema; 

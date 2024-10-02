@@ -1,10 +1,10 @@
 import express from 'express';
-import questionController from '../controller/questions/questionController';
+import questionController from '../controller/questions/questionController.js';
 
 // Routes posts and get requests
-const router = express.Router();
+const questionRouter = express.Router();
 
 // send answers to the problems page
-router.post('/generateQuestion', questionController.generateQuestion);
+questionRouter.post('/generateQuestion', questionController.generateQuestion);
 
-export default router;
+export default questionRouter;

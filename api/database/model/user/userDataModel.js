@@ -1,3 +1,6 @@
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+
 const UserDataSchema = new Schema({
   cookieID: { type: Number, required: true , unique: true},
   // num attempts and percent correct for each topic
@@ -15,7 +18,6 @@ const UserDataSchema = new Schema({
       attemptedQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
     },
   ],
-  
 });
 
 export default UserDataSchema;

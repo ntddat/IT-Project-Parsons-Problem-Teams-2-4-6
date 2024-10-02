@@ -1,6 +1,5 @@
 import dotenv from 'dotenv'
-import userDataService from '../../service/user/userDataService';
-import questionService from '../../service/questions/questionsService';
+import userDataService from '../../service/user/userDataService.js';
 dotenv.config();
 
 const getDbName = () => {

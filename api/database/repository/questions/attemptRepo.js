@@ -1,13 +1,12 @@
-import { getDatabaseConnection } from "../../index.js";
-import attemptModel from "../../model/questions/attemptModel.js";
-import { AttemptSchema } from "../../models/attemptModel.js";
-import { messages } from "../../../utils/constants/messages.js";
-require('dotenv').config();
+import { getDatabaseConnection } from "../../connection.js";
+import AttemptSchema from "../../model/questions/attemptModel.js";
+import dotenv from 'dotenv';
+dotenv.config();
 
 const getAttemptModel = async (dbName) => {
   const attemptCollection = process.env.ATTEMPT_COLLECTION;
   if (!attemptCollection) {
-    throw new Error(messages.ATTEMPT_COLLECTION_UNDEFINED);
+    throw new Error("Attempt collection is not defined in env file");
   }
   const dbConnection = await getDatabaseConnection(dbName);
   return dbConnection.model(attemptCollection, AttemptSchema);

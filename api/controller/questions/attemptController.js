@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import attemptService from '../../service/questions/attemptService.js';
-import httpCodes from '../../utils/constants/httpsCodes';
+import httpCodes from '../../utils/constants/httpsCodes.js';
 
 dotenv.config();
 

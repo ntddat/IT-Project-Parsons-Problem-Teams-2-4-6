@@ -1,4 +1,7 @@
-const QuestionSchema = {
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+
+const QuestionSchema = new Schema({
   questionID: {
     type: Number,
     required: true,
@@ -32,6 +35,6 @@ const QuestionSchema = {
     default: 0,
     required: true
   },
-}
+});
 
 export default QuestionSchema;

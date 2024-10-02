@@ -1,14 +1,13 @@
 import dotenv from 'dotenv';
-import { getDatabaseConnection } from '../connection.js';
-import messages from '../../utils/constants/messages.js';
-import UserDataSchema from '../model/user/userDataModel.js';
+import { getDatabaseConnection } from '../../connection.js';
+import UserDataSchema from '../../model/user/userDataModel.js';
 
 dotenv.config();
 
 const getUserDataModel = async (dbName) => {
   const userDataCollection = process.env.USER_DATA_COLLECTION;
   if (!userDataCollection) {
-    throw new Error(messages.USER_COLLECTION_UNDEFINED);
+    throw new Error("User data collection is not defined in env file");
   }
   const dbConnection = await getDatabaseConnection(dbName);
   return dbConnection.model(userDataCollection, UserDataSchema);
