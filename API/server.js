@@ -40,14 +40,11 @@ async function askGemini(topic, context) {
   const chat = model.startChat({ history: [] })
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
+  // Generating a new prompt based on the given topic and context
   prompt = generatePrompt(topic, context);
   console.log(prompt);
 
   while (!syntaxPassed) {
-    /**Do we need to generate a new prompt every iteration? ## */
-    // Generating a new prompt based on the given topic and context
-    prompt = generatePrompt(topic, context);
-    /**Is this an unsafe way to handle errors? ## */
     //Attempt to prompt gemini, if it fails prompt again
     try {
       result = await chat.sendMessage(prompt);
@@ -66,7 +63,6 @@ async function askGemini(topic, context) {
       console.error(error);
       continue;
     }
-    
 
     console.log(fixed_resp);
     

@@ -77,7 +77,6 @@ export function createCSV(csvStr, csvName) {
   writeFile(csvName, csvStr, 'utf8', function (err) {
     if (err) {
       console.error("Creating CSV file failed!");
-      throw new Error("Creating CSV file failed!");
     }
     else {
       console.log("Creating CSV file succeeded!");
