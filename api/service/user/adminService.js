@@ -1,4 +1,4 @@
-import attemptRepo from "../../database/repository/questions/attemptRepo.js";
+import attemptRepo from "../../database/repository/user/attemptRepo.js";
 import userDataRepo from "../../database/repository/user/userDataRepo.js";
 
 /**

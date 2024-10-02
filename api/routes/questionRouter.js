@@ -6,5 +6,6 @@ const questionRouter = express.Router();
 
 // send answers to the problems page
 questionRouter.post('/generateQuestion', questionController.generateQuestion);
+questionRouter.post('/runPython', questionController.runPython);
 
 export default questionRouter;

@@ -1,20 +1,12 @@
-import dotenv from 'dotenv'
 import userDataService from '../../service/user/userDataService.js';
-dotenv.config();
-
-const getDbName = () => {
-  const dbName = process.env.USERS_DATABASE;
-  if (!dbName) {
-    throw new Error("Database name is not defined in env file");
-  }
-  return dbName;
-}
+import { getUsersDbName } from '../../utils/functions/dbName.js';
+import httpCodes from "../../utils/constants/httpsCodes.js";
 
 const userController = {
   /**
    * Request: CookieID
    * Response: { success, message, userData }
-   * userData: { accuracy, numAttempts, attemptsSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, averageTime, numAttempts } ] } ] }
+   * userData: { accuracy, numAttempts, attemptsSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, numAttempts } ] } ] }
    */
 
   getUserData: async (req, res) => {
@@ -26,7 +18,7 @@ const userController = {
           message: "Please provide a cookieID"
         });
       }
-      const dbName = getDbName();
+      const dbName = getUsersDbName();
       // fetch user data
       const userData = await userDataService.getUserData(cookieID, dbName);
       if (!userData.success) {
@@ -60,7 +52,7 @@ const userController = {
    * Response: { success, message }
    */
 
-  updateUserAnalytics: async (req, res) => {
+  updateUserAnalytics: async (req, res, next) => {
     try {
       const { cookieID, analytics } = req.body;
       if (!cookieID || !analytics) {
@@ -70,7 +62,7 @@ const userController = {
         });
       }
 
-      const dbName = getDbName();
+      const dbName = getUsersDbName();
       const result = await userDataService.updateUserAnalytics(cookieID, analytics, dbName);
 
       if (!result.success) {

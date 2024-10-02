@@ -1,15 +1,7 @@
 import httpCodes from "../../utils/constants/httpsCodes.js";
 import adminService from "../../service/user/adminService.js";
-
+import { getUsersDbName } from "../../utils/functions/dbName.js";
 // ADMIN CONTROLS
-function getDbName() {
-  const dbName = process.env.QUESTIONS_DATABASE;
-  if (!dbName) {
-    throw new Error("Database name is not defined in env file");
-  }
-  return dbName;
-}
-
 const adminController = {
   /**
    * Request: { cookieID }
@@ -19,7 +11,7 @@ const adminController = {
    */
   summariseInfo: async (req, res) => {
     try {
-      const dbName = getDbName();
+      const dbName = getUsersDbName();
 
       const overallInfo = await adminService.summariseInfo(dbName);
       if (!overallInfo.success) {

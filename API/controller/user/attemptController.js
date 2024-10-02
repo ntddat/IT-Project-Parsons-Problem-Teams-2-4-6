@@ -1,19 +1,9 @@
-import dotenv from 'dotenv';
-import attemptService from '../../service/questions/attemptService.js';
+import attemptService from '../../service/user/attemptService.js';
 import httpCodes from '../../utils/constants/httpsCodes.js';
-
-dotenv.config();
-
-async function getDbName() { 
-  const dbName = process.env.QUESTIONS_DATABASE;
-  if (!dbName) {
-    throw new Error("Database name is not defined in env file");
-  }
-  return dbName;
-}
+import { getUsersDbName } from '../../utils/functions/dbName.js';
 
 const attemptController = {
-  saveAttempt: async (req, res) => {
+  saveAttempt: async (req, res, next) => {
     try {
       const { attempt } = req.body;
       if (!attempt) {
@@ -22,7 +12,7 @@ const attemptController = {
           message: "Please provide an attempt to save"
         });
       }
-      const dbName = await getDbName();
+      const dbName = await getUsersDbName();
       const result = await attemptService.saveAttempt(attempt, dbName);
 
       if (!result.success) {

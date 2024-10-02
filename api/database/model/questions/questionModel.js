@@ -25,11 +25,6 @@ const QuestionSchema = new Schema({
     default: 0,
     required: true
   },
-  averageTime: {
-    type: Number,
-    default: 0,
-    required: true
-  },
   numAttempts: {
     type: Number,
     default: 0,

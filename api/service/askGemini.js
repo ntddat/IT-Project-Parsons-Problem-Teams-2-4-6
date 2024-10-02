@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { outputParserJson } from "../service/outputParser.js";
+import { outputParserJson } from './OutputParser.js';
 import { generatePrompt } from "../utils/constants/TopicsContexts.js";
-import { createCSV, syntaxCheck } from "../utils/compiler.js";
+import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 

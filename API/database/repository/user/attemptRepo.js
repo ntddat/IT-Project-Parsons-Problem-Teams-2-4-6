@@ -1,5 +1,5 @@
 import { getDatabaseConnection } from "../../connection.js";
-import AttemptSchema from "../../model/questions/attemptModel.js";
+import AttemptSchema from "../../model/user/attemptModel.js";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,7 +14,6 @@ const getAttemptModel = async (dbName) => {
 
 const attemptRepo = {
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
-
   // Counts total number of attempts
   getTotalNumAttempts: async (dbName) => {
     try {

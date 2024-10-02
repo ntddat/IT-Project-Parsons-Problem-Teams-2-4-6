@@ -1,5 +1,5 @@
 import express from 'express';
-import attemptController from '../controller/questions/attemptController.js';
+import attemptController from '../controller/user/attemptController.js';
 import questionController from '../controller/questions/questionController.js';
 import userController from '../controller/user/userDataController.js';
 

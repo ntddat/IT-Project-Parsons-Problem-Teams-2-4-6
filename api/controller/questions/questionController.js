@@ -1,17 +1,8 @@
+import { getQuestionsDbName } from "@/utils/functions/dbName.js";
 import askGemini from "../../service/askGemini.js";
-import dotenv from 'dotenv';
 import questionService from "../../service/questions/questionsService.js";
 import httpCodes from "../../utils/constants/httpsCodes.js";
-
-dotenv.config();
-
-function getDbName() {
-  const dbName = process.env.QUESTIONS_DATABASE;
-  if (!dbName) {
-    throw new Error("Database name is not defined in env file");
-  }
-  return dbName;
-}
+import { PythonShell } from 'python-shell';
 
 // Uses askGemini to generate a question based on the topic and context
 const questionController = {
@@ -29,7 +20,7 @@ const questionController = {
         })
       }
     
-      const dbName = getDbName();
+      const dbName = getQuestionsDbName();
     
       const questionID = await questionService.generateNewQuestionID(dbName);
       const question = await askGemini(topic, context);
@@ -62,7 +53,7 @@ const questionController = {
   // Updates the question details based on the user's attempt
   // Request: { questionID, time, correct }
   // Response: { success, message }
-  updateQuestionDetails: async (req, res) => {
+  updateQuestionDetails: async (req, res, next) => {
     try {
       const { questionID, time, correct } = req.body; // Destructure the questionID, time and correct from req.body
       if (!questionID || !time || correct === undefined) {
@@ -72,7 +63,7 @@ const questionController = {
         });
       }
     
-      const dbName = getDbName();
+      const dbName = getQuestionsDbName();
     
       const updateResult = await questionService.updateQuestionDetails(questionID, time, correct, dbName);
       if (!updateResult.success) {
@@ -93,11 +84,13 @@ const questionController = {
     }
   },
 
-  runPythonCode: async (req, res) => {
+  runPython: async (req, res) => {
     const { pythonCode } = req.body;
-  
     if (!pythonCode) {
-      return res.status(400).send('No Python code provided.');
+      return res.status(httpCodes.BAD_REQUEST).json({
+        success: false,
+        message: "Please provide Python code to run"
+      });
     }
   
     // Options for PythonShell
@@ -111,12 +104,18 @@ const questionController = {
     // Run the Python code
     PythonShell.runString(pythonCode) 
       .then(messages => {
-        console.log(messages)
         messages = messages.join("\r\n");
-        console.log(messages)
-        res.json({ output: messages }); // Send the output back to the client
-      }).catch(err => {
-        res.status(500).json({ error: err.message }); // Send any errors back to the client
+        res.status(httpCodes.OK).json({ 
+          success: true,
+          message: "Python code executed successfully",
+          output: messages 
+        }); // Send the output back to the client
+      }).catch(e => {
+        res.status(httpCodes.INTERNAL_SERVER_ERROR).json({ 
+          success: false,
+          message: "Error executing Python code",
+          error: e.message 
+        }); // Send any errors back to the client
       }
     );
   },
