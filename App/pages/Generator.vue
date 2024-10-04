@@ -70,7 +70,8 @@
       </div>
     </div>
     <div v-if="loading" class="loading-overlay">
-      <h2>Loading...</h2>
+      <img src="../loading3.gif" width="50" height="50"lass="loading-icon"/>
+      <h2 class="loading-text">{{ loadingWord }}</h2>
     </div>
   </div>
 </template>
@@ -85,6 +86,7 @@ export default {
     return {
       cookieWords: "We are using Cookie to recording your past data. By clicking 'Accept', you agree to our use of cookies",
       showPopUp: true, 
+      loadingWord: "Generating questions may take some time, please be patient.",
 
       isTopicDropdownVisible: false,
       isContextDropdownVisible: false,
@@ -311,15 +313,19 @@ export default {
 }
 
 .loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 1000; 
+  height: 100vh; /* Full-screen loading overlay */
+}
+
+.loading-icon {
+  margin-bottom: 20px; /* Space between the icon and the text */
+}
+
+.loading-text {
+  color: #333; /* Darker color for contrast */
 }
 
 .top {
