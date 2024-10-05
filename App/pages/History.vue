@@ -21,7 +21,7 @@
                     </div>
                     <div class="profile-info">
                         <h1>{{ userName }}</h1>
-                        <h3>{{ userID }}</h3>
+                        <h3>#{{ userID.toString().padStart(5, '0') }}</h3>
                     </div>
                 </div>
                 <div class="stats">
@@ -38,7 +38,7 @@
             </div>
             
             <!-- Recent Problem Section -->
-        <div class="recent-container">
+        <div class="recent-container" v-if="false">
             <div class="recent-header">Recent Five Questions</div>
                 <div class="recent-datas">    
                     <div class="question-header">
@@ -68,51 +68,89 @@
             </div>
 
             <!-- History Section -->
-            <div class="history-container">
+        <div class="history-container">
+            <!-- History Header -->
             <div class="history-header">
                 <span class="header-topic">Topic</span>
                 <span class="tit_text header-practice">Total Practice</span>
                 <span class="tit_text header-accuracy">Accuracy</span>
             </div>
+            <!-- History detail -->
             <ul class="history-list">
-                <li @click="toggleDropdown(index)" v-for="(item, index) in history" :key="index" class="history-item">
+                <li  v-for="(item, index) in topicSummary" :key="index" >
+                <div @click="questionDropdown(index)" class="history-item">
                     <div class="history-topic">
-                        <img class="tubiao" src="/App/tubiao.png" /> {{ item.title }}
+                        <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
                     </div>
                     <div class="history-practice">
-                        {{ item.practice }}
+                        {{ item.numQuestions }}
                     </div>
                     <div class="history-accuracy">
                         {{ item.accuracy }}%
                     </div>
-
+                </div>
                     <!-- Question details -->
-                    <div v-show="item.isExpanded" class="dropdown-content">
-                        
-                        <div class="question-header">
-                            <span class="question-topic">Question</span>
-                            <span class="question-attempts">Attempts</span>
-                            <span class="question-time">Time</span>
-                            <span class="question-correct">Correct</span>
-                        </div>
 
-                        <ul class = "question-datas">
-                        <li v-for="(attempt, attemptIndex) in attempts" :key="attemptIndex" class="question-data">
+                    <div v-show="item.isExpanded" class="question-dropdown">
+                <!-- <div v-show="true" class="question-dropdown"> -->
+                    <!-- Question Dropdown Head -->
+                    <div class="question-header">
+                        <span class="question-topic">Question</span>
+                        <span class="question-attempts">Attempts</span>
+                        <span class="question-time">Total-Time (minutes)</span>
+                        <span class="question-correct">Had Been Correct</span>
+                    </div>
+
+                    <!-- Question Dropdown data -->
+                    <ul class = "question-datas">
+                        <li @click="attemptDropdown(index, questionIndex)" 
+                        v-for="(question, questionIndex) in item.attemptedQuestions" 
+                        :key="questionIndex" class="question-data">  
                             <div class="question">
-                                {{ attempt.question }}
+                                {{ question.questionID }}
                             </div>
-                            <div class="attempt">
-                                {{ attempt.attempt }}
+                            <div class="attempts">
+                                {{ question.numAttempts }}
                             </div>
                             <div class="time">
-                                {{ (attempt.time/60).toFixed(2) }}
+                                {{ (question.totalTime/60).toFixed(2) }}
                             </div>
                             <div class="correct">
-                                <img :src="attempt.correctness ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
+                                <img :src="question.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
+                            </div>
+                            
+                            <!-- Attempts Dropdown -->
+                            <div v-show="question.isExpanded" class="attempt-dropdown">
+                            <!-- <div v-show="true" class="attempt-dropdown"> -->
+                                <!-- Attempt Dropdown Header -->
+                                <div class="attempts-header">
+                                    <span class="question-topic">Attempt</span>
+                                    <span class="question-time">Time (minutes)</span>
+                                    <span class="question-correct">Correct</span>
+                                </div>
+
+                                <!-- Attempt Dropdown data -->
+                                <ul class="attempts-datas">
+                                    <li v-for="(attempt, attemptIndex) in question.attempts" 
+                                    :key="attemptIndex" class="attempts-data">
+                                        <div class="attempt">
+                                            {{ attempt.attemptID }}
+                                        </div>
+                                        <div class="time">
+                                            {{ (attempt.time/60).toFixed(2) }}
+                                        </div>
+                                        <!-- <div class="date">
+                                            {{ attempt.date }}
+                                        </div> -->
+                                        <div class="correct">
+                                            <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
                         </li>
-                        </ul>
-                    </div>                  
+                    </ul>
+                </div>                  
 
                 </li>
             </ul>
@@ -121,9 +159,9 @@
 
         </div>
 
-        <div v-else>
-            <div>You must accept the cookie if you want check this pag</div>
-            <bottom @click="accept">Accept</bottom>
+        <div id="notacceptCookie" v-else>
+            <div id="cookie-request">You must accept the cookie if you want check this page</div>
+            <button @click="accept" id="accept-btn">Accept</button>
         </div>
     </div>
 </template>
@@ -132,69 +170,159 @@
 import {getCookie, setCookie} from "../libs/cookie.js"
 
 export default {
-    beforeMount () {
-      this.checkCookie()
+    mounted () {
+        const ignoreCookie = (this.$route.query.ignoreCookie);
+        this.userID = this.$route.query.userID
+            console.log("ignoreCookie: " + ignoreCookie + " ,UserID: " + this.userID)
+            // console.log(typeof(ignoreCookie))
+        if (ignoreCookie == "Yes") {
+            this.acceptCookie = true
+        } 
+        else {
+            this.checkCookie()
+        }
     },
     data() {
         return {
-            acceptCookie: true,
+            acceptCookie: null,
+            // acceptCookie: true,
             userName: "Student",
-            userID: "#0001",
+            userID: null,
             accuracy: 60,
             exercises: 5,
-            space: "     ",
-            history: [
-                { title: "Decision Tree Classifier", practice: 90, accuracy: 77 },
-                { title: "Linear Regression", practice: 100, accuracy: 80 },
-                { title: "Correlation", practice: 78, accuracy: 65 },
-                { title: "NMI", practice: 133, accuracy: 70 },
-                { title: "Correlation", practice: 60, accuracy: 90 }
-            ],
-            attempts: [
-                { question: 1, attempt: 4, time: 75, correctness: false },
-                { question: 2, attempt: 3, time: 112, correctness: true },
-                { question: 3, attempt: 5, time: 89, correctness: true },
-                { question: 4,attempt: 2, time: 58, correctness: false },
-                { question: 5,attempt: 6, time: 108, correctness: true },
-                { question: 6,attempt: 2, time: 70, correctness: true },
-                { question: 7,attempt: 8, time: 95, correctness: false },
-                { question: 8,attempt: 2, time: 100, correctness: true },
-                { question: 9,attempt: 3, time: 81, correctness: false },
-                { question: 11,attempt: 4, time: 115, correctness: true },
-                { question: 12,attempt: 4, time: 115, correctness: true },
-                { question: 13,attempt: 4, time: 115, correctness: true },
-                { question: 14,attempt: 4, time: 115, correctness: true }
-            ],
-            recent: [
-                { topic: 0, attempt: 4, time: 75 ,correctness: false },
-                { topic: 1, attempt: 3, time: 112,correctness: true },
-                { topic: 4, attempt: 5, time: 89, correctness: true },
-                { topic: 2,attempt: 2, time: 58, correctness: false },
-                { topic: 2,attempt: 6, time: 108, correctness: true },
+
+            topicSummary: [
+            {topic: "Decision Tree Classifier", numQuestions: 2, accuracy: 50, 
+                attemptedQuestions: [
+                    {
+                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: true },
+                            { attemptID: 3, time: 256, correct: false },
+                        ]
+                    },
+                    {
+                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: false },
+                            { attemptID: 3, time: 256, correct: false },
+                            { attemptID: 4, time: 256, correct: false }
+                        ]
+                    }
+                ]},
+            { topic: "Linear Regression", numQuestions: 100, accuracy: 80, 
+                attemptedQuestions: [
+                    {
+                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: true },
+                            { attemptID: 3, time: 256, correct: false },
+                        ]
+                    },
+                    {
+                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: false },
+                            { attemptID: 3, time: 256, correct: false },
+                            { attemptID: 4, time: 256, correct: false }
+                        ]
+                    }
+                ]},
+            { topic: "Correlation", numQuestions: 78, accuracy: 65, 
+                attemptedQuestions: [
+                    {
+                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: true },
+                            { attemptID: 3, time: 256, correct: false },
+                        ]
+                    },
+                    {
+                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: false },
+                            { attemptID: 3, time: 256, correct: false },
+                            { attemptID: 4, time: 256, correct: false }
+                        ]
+                    }
+                ]},
+            { topic: "NMI", numQuestions: 133, accuracy: 70, 
+                attemptedQuestions: [
+                    {
+                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: true },
+                            { attemptID: 3, time: 256, correct: false },
+                        ]
+                    },
+                    {
+                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: false },
+                            { attemptID: 3, time: 256, correct: false },
+                            { attemptID: 4, time: 256, correct: false }
+                        ]
+                    }
+                ]},
+            { topic: "Correlation", numQuestions: 60, accuracy: 90, 
+                attemptedQuestions: [
+                    {
+                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: true },
+                            { attemptID: 3, time: 256, correct: false },
+                        ]
+                    },
+                    {
+                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+                        attempts: [
+                            { attemptID: 1, time: 345, correct: false },
+                            { attemptID: 2, time: 245, correct: false },
+                            { attemptID: 3, time: 256, correct: false },
+                            { attemptID: 4, time: 256, correct: false }
+                        ]
+                    }
+                ]}
             ]
         };
     },
     methods: {
-    checkCookie() {
-        const acception = getCookie("acception")
-        if (acception == "false") {
-            console.log("acception is false")
-            this.acceptCookie = false
-        } 
-    },
-    accept() {
-        this.acceptCookie =  true,
-        setCookie("acception", "true", 5)
-    },
-    toggleDropdown(index) {
-      this.history[index].isExpanded = !this.history[index].isExpanded;
-    },
-    formatTime(seconds) {
-      const minutes = Math.floor(seconds / 60); 
-      const sec = seconds % 60; 
+        checkCookie() {
+            const acception = getCookie("acception")
+            if (acception == "true") {
+                // console.log("acception is false")
+                this.acceptCookie = true
+            } else {
+                console.log(acception + " acception is false or does not exist")
+                this.acceptCookie = false
+            }
+        },
+        accept() {
+            this.acceptCookie = true,
+            setCookie("acception", "true", 5)
+        },
+        questionDropdown(index) {
+        this.topicSummary[index].isExpanded = !this.topicSummary[index].isExpanded;
+        },
+        attemptDropdown(topicIndex, questionIndex) {
+        this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded = 
+        !this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded
+        },
+        formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60); 
+        const sec = seconds % 60; 
 
-      return `${minutes}m ${sec < 10 ? '0' + sec : sec}s`; 
-    },
+        return `${minutes}m ${sec < 10 ? '0' + sec : sec}s`; 
+        },
   }
 };
 </script>
@@ -410,27 +538,46 @@ export default {
     text-align: right;
 }
 
-.dropdown-content {
+.question-dropdown {
     /* position: absolute; */
     grid-column: span 3;
     background-color: transparent;
-    border: solid #777777;
     list-style-type: none;
     padding: 20;
     margin: 20;
     width: 100%;
     align-items: center;
+    border: solid #777777;
     border-width: 1px 0 1px;
     color: #3e3e3e;
     /* overflow-y: auto;
     max-height: 350px; */
     margin-top: 20px; 
+    
+}
+
+.attempt-dropdown{
+    grid-column: span 4;
+    background-color: transparent;
+    list-style-type: none;
+    padding: 20;
+    margin: 20;
+    /* width: 90%; */
+    width: 100%;
+    align-items: center;
+    border: solid #777777;
+    border-width: 1px 0 1px;
+    color: #3e3e3e;
+    margin-top: 20px; 
+    /* margin: 20 auto */
 }
 
 .question-datas {
     overflow-y: auto;
     max-height: 350px; 
     /* margin-top: 10px; */
+    margin: 0; /* 移除外边距 */
+    padding: 0; /* 移除内边距 */
 }
 
 /* scroll bar style */
@@ -457,6 +604,20 @@ export default {
     color: #3e3e3e;
 }
 
+.attempts-header {
+    /* position: sticky; */
+    position: relative;
+    top : 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 10px 0;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    color: #3e3e3e;
+}
+
 .question-data {
     position: relative;
     display: grid;
@@ -464,22 +625,43 @@ export default {
     /* Topic gets more space */
     padding: 10px 0;
     align-items: center;
-
+    border-radius: 40px
+    /* Center items vertically */
+}
+.question-data:hover {
+    /* background-color: #b3c1a0; */
+    /* background-color: #538665; */
+    background-color: #ccf6b34b;
+}
+.attempts-datas {
+    margin: 0; /* 移除外边距 */
+    padding: 0; /* 移除内边距 */
+}
+.attempts-data {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    /* Topic gets more space */
+    padding: 10px 0;
+    align-items: center;
+    border-radius: 40px
     /* Center items vertically */
 }
 
 .question {
-    padding-left: 80px;
+    /* padding-left: 120px; */
+    text-align: center
 }
-
 .topic {
     padding-left: 10px
 }
-
-.attempt {
-    padding-left: 85px;
+.attempts {
+    text-align: center
+    /* padding-left: 85px; */
 }
-
+.attempt {
+    text-align: center
+}
 .time {
     /* padding-left: 90px; */
     text-align: center
@@ -488,7 +670,6 @@ export default {
 .date {
     text-align: center
 }
-
 .correct {
     text-align: center
 }
@@ -496,4 +677,35 @@ export default {
   width: 20px; /* 根据需求调整图片大小 */
   height: 20px;
 }
+#notacceptCookie{
+    display: flex;
+    /* justify-content: center; 水平居中 */
+    align-items: center;
+    flex-direction: column;
+    row-gap: 50px;
+    margin-top: 12.5%;
+    margin-bottom: 25%;
+}
+#cookie-request{
+    /* justify-content: center; */
+    font-weight: 600;
+    font-size: 32px;
+    color: #c93c32;
+}
+#accept-btn{
+    border: none;
+    border-radius: 7px;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 24px;
+    background-color: #e58110;
+    /* box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.3), inset -3px -3px 8px rgba(255, 255, 255, 0.1); */
+    transition: all 0.3s ease;
+}
+#accept-btn:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2);
+}
+
 </style>

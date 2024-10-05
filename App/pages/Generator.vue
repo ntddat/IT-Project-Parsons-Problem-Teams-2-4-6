@@ -2,12 +2,13 @@
     <!-- cookie pop up -->
     <div v-if="showPopUp" class="modal-backdrop">
       <div class="modal-content">
-        <p>{{ cookieWords }}</p>
-        <button @click="accept">Agree</button>
-        <button @click="reject">Reject</button>
+        <p id="cookieTop"><i class="fa-solid fa-cookie-bite"></i> Cookie</p>
+        <p id="cookieWords">{{ cookieWords }}</p>
+        <button id="accept-btn" @click="accept">Accept</button>
+        <button id="reject-btn" @click="reject">Reject</button>
       </div>
     </div>
-    <!-- cookie pop up -->  
+    <!-- cookie pop up --> 
 
   <div class="generator" @click="closeDropdowns">
     <nav class="top" v-if="!loading">
@@ -17,7 +18,7 @@
       </div>
       <div class="nav-links">
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
-        <router-link to="/history" class="nav-link">History</router-link>
+        <div @click="historyBotton" class="nav-link">History</div>
       </div>
     </nav>
     <div class="main-content" v-if="!loading">
@@ -123,10 +124,20 @@ export default {
   },
   // -----------------------
   methods: {
+    historyBotton() {
+      this.$router.push({
+        path: '/History',
+        query: {
+          ignoreCookie: "No",
+          userID: getCookie("userID")
+        }
+      })
+    },
     // cookie pop up 
     accept() {       // handle acceptance
       this.showPopUp = false;
       setCookie("acception", "true", 5)
+      setCookie("userID", "114", 60)
     },
     reject() {       // handle rejection
       this.showPopUp = false;
@@ -144,8 +155,6 @@ export default {
         this.showPopUp = false
       }
     },
-
-
     toggleDropdown1(event) {
       this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
       this.isContextDropdownVisible = false;
@@ -210,17 +219,50 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.183);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  
 }
 
 .modal-content {
+  display: flex;
   padding: 20px;
-  background: white;
-  border-radius: 5px;
+  background-color: rgb(204, 223, 197);
+  border-radius: 10px;
+  flex-direction: column;
+  border:2px solid #156B3A
+}
+#cookieTop{
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0;
+  font-family: "Font Awesome 5 Free";
+}
+#cookieTop i{
+  padding-right: 3px;
+}
+
+#cookieWords{
+  font-size: 22px;
+  margin: 10px;
+  margin-left: 0px
+}
+#accept-btn, #reject-btn{
+  width: 60%;
+  height: 40%;
+  padding: 3px;
+  background-color: rgba(0, 255, 255, 0);
+  border: 1.5px solid rgb(0, 0, 0);
+  margin: 10px;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  font-weight: 600;
+}
+#accept-btn:hover, #reject-btn:hover{
+  background-color: #dd8b33f4;
 }
 /* ----------------------------- */
 

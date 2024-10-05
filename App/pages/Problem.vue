@@ -81,10 +81,10 @@
                 </div>
             </div>
             <div id="resultMessage">
-            Correct answer! Congratulations!
-            <button id="regenerate-btn">Regenerate</button>
-            <button id="retry-btn">Try Again</button>
-        </div>
+                Correct answer! Congratulations!
+                <button id="regenerate-btn">Regenerate</button>
+                <button id="retry-btn">Try Again</button>
+            </div>
         </main>
     
     </body>
@@ -213,25 +213,32 @@
                 parson.shuffleLines();
     
                 document.getElementById('run-btn').addEventListener('click', () => {
-                    const codeLines = [];
-                    $('#sortable li').each(function() {
-                        codeLines.push($(this).text());
-                    });
-    
-                    const studentCode = codeLines.join('\n');
-                    this.runCode(studentCode);
+                    refreshOutput();
+                    console.log("0000");
+                    var studentCode = getStudentCode();
+
+
+                    runCode(studentCode).then(
+                        result => {
+                            document.getElementById('output').textContent = result.output || result.error;
+                        }
+                    )
+
+                    //document.getElementById('output').textContent = studentCode; // Display the code
                 });
     
                 document.getElementById('submit-btn').addEventListener('click', () => {
-                    var result = parson.getFeedback();
-                    if (result == []) {
-                        result = "Congratulations, correct";
+                    console.log("press submit");
+                    var studentCode = getStudentCode();
+                    
+                    if(runSubmit(studentCode,solution) == "1"){
+                        
+                        console.log("result correct");
                     }
-                    document.getElementById('feedback').textContent = result;
                 });
-    
+
                 document.getElementById('reset-btn').addEventListener('click', () => {
-                    parson.shuffleLines();
+                    parson.shuffleLines(); // Reshuffle the blocks for a new attempt
                 });
             },
     
@@ -240,7 +247,9 @@
                     alert(fb.errors[0]);
                 }
             },
-    
+            
+            
+
             async runCode(studentCode) {
                 const url = 'http://localhost:8383/run-python';
     
@@ -257,7 +266,7 @@
                 try {
                     const response = await fetch(url, options);
                     const result = await response.json();
-                    document.getElementById('output').textContent = result.output || result.error;
+                    
                 } catch (error) {
                     console.error('Error:', error);
                 }
@@ -287,8 +296,61 @@
                 } catch (error) {
                     console.error('Error fetching result:', error);
                 }
+            },
+
+            //modified submit function
+            async runSubmit(studentCode,solution) {
+                refreshOutput();
+                //const correctSolution = runCode(question);
+                const studentAnswer = await runCode(studentCode);
+                console.log("studentanswer");
+                console.log(studentAnswer);
+                console.log("studentanswer11");
+                document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
+
+                if(solution.output.join('') === studentAnswer.output.join('')){
+                    console.log("same");
+                    document.getElementById('resultMessage').style.display = 'block';
+                    sendResult(1);
+                    return 1;
+                }
+                else{
+                    console.log("not same");
+                    console.log(solution.output);
+                    console.log(studentAnswer.output);
+                    sendResult(0);
+                    return 0;
+                }
             }
+            //modified runcode to support 
+            // async runCode(code) {
+            //     // The URL for your backend server endpoint
+            //     const url = 'http://localhost:3000/run-python'; // Replace with your actual backend URL if deployed
+
+            //     const options = {
+            //         method: 'POST',
+            //         headers: {
+            //             "Content-Type": "application/json"
+            //         },
+            //         body: JSON.stringify({
+            //             pythonCode: code  // Send the Python code to the backend
+            //         })
+            //     };
+
+            //     try {
+            //         const response = await fetch(url, options);
+            //         const result = await response.json(); // Convert the response to JSON
+            //         console.log(result); // Output the response to the console
+                    
+            //         return result;
+            //         // Display the output or errors from the Python code execution
+                    
+            //     } catch (error) {
+            //         console.error('Error:', error);
+            //     }
+            // }
         }
+        
       }
     </script>
     
