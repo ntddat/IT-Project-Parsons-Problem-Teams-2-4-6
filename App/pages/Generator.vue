@@ -132,7 +132,7 @@ export default {
       console.log('Sending data to backend:', payload);
 
       // Data is sent to the back end via HTTP requests
-      axios.post('http://localhost:8383/api/sendData', payload, {
+      axios.post('http://localhost:8383/api/question/generateQuestion', payload, {
         headers: {
           'Content-Type': 'application/json'
         }
