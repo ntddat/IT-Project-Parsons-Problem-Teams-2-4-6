@@ -10,7 +10,7 @@ import userDataRepo from "../../database/repository/user/userDataRepo.js";
  * - Total Accuracy
  * Student analytics:
  * - Show all students who has attempted a question in this topic
- * - Show numAttempts, accuracy and averageTime
+ * - Show numAttempts, accuracy, totalTime
  */
 
 async function calculateTotalAccuracy(dbName) {
@@ -33,15 +33,15 @@ async function calculateTotalAttempts(dbName) {
   }
 }
 
-async function calculateAverageTime(dbName) {
-  try {
-    const averageTime = await attemptRepo.getAverageTime(dbName);
-    return averageTime;
-  } catch (e) {
-    console.error("Error calculating average time:", e);
-    return 0;
-  }
-}
+// async function calculateAverageTime(dbName) {
+//   try {
+//     const averageTime = await attemptRepo.getAverageTime(dbName);
+//     return averageTime;
+//   } catch (e) {
+//     console.error("Error calculating average time:", e);
+//     return 0;
+//   }
+// }
 
 async function calculateTopicAnalytics(dbName) {
   try {
@@ -54,20 +54,20 @@ async function calculateTopicAnalytics(dbName) {
 }
 
 const adminService = {
-  // Summarises all information to display to the admin: accuracy, totalAttempts, averageTime OF ATTEMPTS
+  // Summarises all information to display to the admin: accuracy, totalAttempts of EVERYONE
   summariseInfo: async (dbName) => {
     try {
       // for EVERYONE
       const accuracy = await calculateTotalAccuracy(dbName);
       const totalAttempts = await calculateTotalAttempts(dbName);
-      const averageTime = await calculateAverageTime(dbName);
+      // const averageTime = await calculateAverageTime(dbName);
       return {
         success: true,
         message: "Successfully summarised information",
         summary: {
           accuracy: accuracy,
           totalAttempts: totalAttempts,
-          averageTime: averageTime,
+          // averageTime: averageTime,
         },
       };
     } catch (e) {

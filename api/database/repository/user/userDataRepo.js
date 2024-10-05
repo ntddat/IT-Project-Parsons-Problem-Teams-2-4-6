@@ -60,8 +60,8 @@ const userDataRepo = {
     * {
     *  cookieID: 1234,
     *  numAttempts: 10,
-      * accuracy: 80,
-      * averageTime: 80,
+    *  accuracy: 80,
+    *  totalTime: 80,
     * }, 
    * .....
    * ]
@@ -120,12 +120,6 @@ const userDataRepo = {
               $cond: [
                 { $eq: ["$numAttempts", 0] }, 0,
                 { $round: [{$multiply: [{ $divide: ["$numCorrect", "$numAttempts"] }, 100] }]} // percentage
-              ]
-            },
-            "$attemptsSummary.$[element].averageTime": {
-              $cond: [
-                { $eq: ["$attemptsSummary.$[element].numAttempts", 0] }, 0, // if no attempts, average time is 0
-                { $round: [{ $divide: ["$attemptsSummary.$[element].totalTime", "$attemptsSummary.$[element].numAttempts"] }] } // else, average time is total time / total attempts, in seconds maybe
               ]
             },
             "$attemptsSummary.$[element].accuracy": {

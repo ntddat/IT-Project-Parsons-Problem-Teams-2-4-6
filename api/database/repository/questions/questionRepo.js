@@ -71,12 +71,6 @@ const questionRepo = {
           }, 
           $set: {
             correct: correct,
-            // averageTime: {
-            //   $cond: [
-            //     { $eq: ["$numAttempts", 0] }, 0,
-            //     { $round: [{ $divide: ["$totalTime", "$numAttempts"] }] } // else, average time is total time / total attempts, in seconds maybe
-            //   ]
-            // }
           }
         }
       );

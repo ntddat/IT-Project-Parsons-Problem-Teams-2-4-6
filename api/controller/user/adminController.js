@@ -4,14 +4,14 @@ import { getUsersDbName } from "../../utils/functions/dbName.js";
 // ADMIN CONTROLS
 const adminController = {
   /**
-   * Request: { cookieID }
+   * Request: { }
    * Response: { success, message, summary, topicsInfo }
-   * Summary: { accuracy, totalAttempts, averageTime }
+   * Summary: { accuracy, totalAttempts }
    * TopicsInfo: [ { topic, accuracy, totalAttempts, users: [{ cookieID, numAttempts, accuracy, totalTime }] } ]
    */
   summariseInfo: async (req, res) => {
     try {
-      const dbName = getUsersDbName();
+      const dbName = await getUsersDbName();
 
       const overallInfo = await adminService.summariseInfo(dbName);
       if (!overallInfo.success) {

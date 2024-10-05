@@ -1,4 +1,4 @@
-import { getQuestionsDbName } from "@/utils/functions/dbName.js";
+import { getQuestionsDbName } from "../../utils/functions/dbName.js";
 import askGemini from "../../service/askGemini.js";
 import questionService from "../../service/questions/questionsService.js";
 import httpCodes from "../../utils/constants/httpsCodes.js";
@@ -20,9 +20,10 @@ const questionController = {
         })
       }
     
-      const dbName = getQuestionsDbName();
+      const dbName = await getQuestionsDbName();
     
       const questionID = await questionService.generateNewQuestionID(dbName);
+      console.log(questionID);
       const question = await askGemini(topic, context);
 
       // save this question to the database
@@ -63,7 +64,7 @@ const questionController = {
         });
       }
     
-      const dbName = getQuestionsDbName();
+      const dbName = await getQuestionsDbName();
     
       const updateResult = await questionService.updateQuestionDetails(questionID, time, correct, dbName);
       if (!updateResult.success) {

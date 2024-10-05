@@ -18,7 +18,7 @@ const userController = {
           message: "Please provide a cookieID"
         });
       }
-      const dbName = getUsersDbName();
+      const dbName = await getUsersDbName();
       // fetch user data
       const userData = await userDataService.getUserData(cookieID, dbName);
       if (!userData.success) {
@@ -62,7 +62,7 @@ const userController = {
         });
       }
 
-      const dbName = getUsersDbName();
+      const dbName = await getUsersDbName();
       const result = await userDataService.updateUserAnalytics(cookieID, analytics, dbName);
 
       if (!result.success) {
