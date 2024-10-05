@@ -71,7 +71,7 @@
     </div>
     <div v-if="loading" class="loading-overlay">
       <img src="../loading3.gif" width="50" height="50"lass="loading-icon"/>
-      <h2 class="loading-text">{{ loadingWord }}</h2>
+      <p class="loading-text">{{ loadingWord }}</p>
     </div>
   </div>
 </template>
@@ -319,12 +319,11 @@ export default {
   height: 100vh; /* Full-screen loading overlay */
 }
 
-.loading-icon {
-  margin-bottom: 20px; /* Space between the icon and the text */
-}
-
 .loading-text {
+  margin-top: 60px;
   color: #333; /* Darker color for contrast */
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .top {
