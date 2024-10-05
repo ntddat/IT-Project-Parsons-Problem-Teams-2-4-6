@@ -16,5 +16,5 @@ export default defineConfig({
   outputDir: 'App',
   devServer: {
     proxy: 'http://localhost:3000',
-  },
+  }
 })

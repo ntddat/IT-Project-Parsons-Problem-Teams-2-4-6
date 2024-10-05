@@ -1,4 +1,14 @@
 <template>
+    <!-- cookie pop up -->
+    <div v-if="showPopUp" class="modal-backdrop">
+      <div class="modal-content">
+        <p>{{ cookieWords }}</p>
+        <button @click="accept">Agree</button>
+        <button @click="reject">Reject</button>
+      </div>
+    </div>
+    <!-- cookie pop up -->  
+
   <div class="generator" @click="closeDropdowns">
     <nav class="top" v-if="!loading">
       <div class="header">
@@ -60,18 +70,24 @@
       </div>
     </div>
     <div v-if="loading" class="loading-overlay">
-      <h2>Loading...</h2>
+      <img src="../loading3.gif" width="50" height="50"lass="loading-icon"/>
+      <p class="loading-text">{{ loadingWord }}</p>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import {getCookie, setCookie} from "../libs/cookie.js"
 
 export default {
   name: 'Generator',
   data() {
     return {
+      cookieWords: "We are using Cookie to recording your past data. By clicking 'Accept', you agree to our use of cookies",
+      showPopUp: true, 
+      loadingWord: "Generating questions may take some time, please be patient.",
+
       isTopicDropdownVisible: false,
       isContextDropdownVisible: false,
       // Store the selected topic
@@ -103,7 +119,35 @@ export default {
       loading: false
     };
   },
+
+  beforeMount () {
+      this.checkPopUp();
+  },
+  // -----------------------
   methods: {
+    // cookie pop up 
+    accept() {       // handle acceptance
+      this.showPopUp = false;
+      setCookie("acception", "true", 5)
+    },
+    reject() {       // handle rejection
+      this.showPopUp = false;
+      setCookie("acception", "false", 5)
+      console.log(getCookie("acception"))
+    },
+    checkPopUp() {
+      const acception = getCookie("acception")
+      if (acception == "") {
+        console.log("acception not exist: ")
+        this.showPopUp = true
+      }
+      else {
+        console.log("acception already exist: " + acception)
+        this.showPopUp = false
+      }
+    },
+
+
     toggleDropdown1(event) {
       this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
       this.isContextDropdownVisible = false;
@@ -161,6 +205,27 @@ export default {
 </script>
 
 <style scoped>
+/* cookie pop up  */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  padding: 20px;
+  background: white;
+  border-radius: 5px;
+}
+/* ----------------------------- */
+
 .generator {
   display: flex;
   flex-direction: column;
@@ -175,7 +240,6 @@ export default {
   text-align: center;
   color: black;
   font-size: 20px;
-  font-family: Lexend, sans-serif;
   font-weight: 500;
   line-height: 40px;
   word-wrap: break-word;
@@ -248,15 +312,18 @@ export default {
 }
 
 .loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 1000; 
+  height: 100vh; /* Full-screen loading overlay */
+}
+
+.loading-text {
+  margin-top: 60px;
+  color: #333; /* Darker color for contrast */
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .top {

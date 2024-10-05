@@ -56,6 +56,7 @@ ul.output {
     /* overflow: visible; */
     transform: translateY(-3px); /* 悬浮效果 */
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* 阴影变大 */
+    /* z-index: 1000; */
 }
 
 ul.incorrect {

@@ -11,10 +11,10 @@
                 <router-link to="/Generator" class="nav-link">Home</router-link>
             </div>
         </nav>
-        <div id="cont_box">
 
+        <div id="cont_box" v-if="acceptCookie">
             <!-- Profile Section -->
-            <div class="profile-container">
+        <div class="profile-container">
                 <div class="profile-header">
                     <div class="profile-pic">
                         <span class="profile-initial">S</span>
@@ -34,6 +34,36 @@
                         <h2>{{ exercises }}</h2>
                         <p>Exercises</p>
                     </div>
+                </div>
+            </div>
+            
+            <!-- Recent Problem Section -->
+        <div class="recent-container">
+            <div class="recent-header">Recent Five Questions</div>
+                <div class="recent-datas">    
+                    <div class="question-header">
+                        <span class="question-topic">Question</span>
+                        <span class="question-attempts">Attempts</span>
+                        <span class="question-time">Time</span>
+                        <span class="question-correct">Correct</span>
+                    </div>
+
+                    <ul class = "question-datas">
+                        <li v-for="(attempt, attemptIndex) in recent" :key="attemptIndex" class="question-data">
+                            <div class="topic">
+                                {{ history[attempt.topic].title }}
+                            </div>
+                            <div class="attempt">
+                                {{ attempt.attempt }}
+                            </div>
+                            <div class="time">
+                                {{ (attempt.time/60).toFixed(2)  }}
+                            </div>
+                            <div class="correct">
+                                <img :src="attempt.correctness ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
 
@@ -75,7 +105,7 @@
                                 {{ attempt.attempt }}
                             </div>
                             <div class="time">
-                                {{ formatTime(attempt.time)  }}
+                                {{ (attempt.time/60).toFixed(2) }}
                             </div>
                             <div class="correct">
                                 <img :src="attempt.correctness ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
@@ -87,14 +117,27 @@
                 </li>
             </ul>
         </div>
+
+
+        </div>
+
+        <div v-else>
+            <div>You must accept the cookie if you want check this pag</div>
+            <bottom @click="accept">Accept</bottom>
         </div>
     </div>
 </template>
 
 <script>
+import {getCookie, setCookie} from "../libs/cookie.js"
+
 export default {
+    beforeMount () {
+      this.checkCookie()
+    },
     data() {
         return {
+            acceptCookie: true,
             userName: "Student",
             userID: "#0001",
             accuracy: 60,
@@ -121,10 +164,28 @@ export default {
                 { question: 12,attempt: 4, time: 115, correctness: true },
                 { question: 13,attempt: 4, time: 115, correctness: true },
                 { question: 14,attempt: 4, time: 115, correctness: true }
+            ],
+            recent: [
+                { topic: 0, attempt: 4, time: 75 ,correctness: false },
+                { topic: 1, attempt: 3, time: 112,correctness: true },
+                { topic: 4, attempt: 5, time: 89, correctness: true },
+                { topic: 2,attempt: 2, time: 58, correctness: false },
+                { topic: 2,attempt: 6, time: 108, correctness: true },
             ]
         };
     },
     methods: {
+    checkCookie() {
+        const acception = getCookie("acception")
+        if (acception == "false") {
+            console.log("acception is false")
+            this.acceptCookie = false
+        } 
+    },
+    accept() {
+        this.acceptCookie =  true,
+        setCookie("acception", "true", 5)
+    },
     toggleDropdown(index) {
       this.history[index].isExpanded = !this.history[index].isExpanded;
     },
@@ -260,6 +321,23 @@ export default {
     margin-top: 5px;
 }
 
+/* recent part */
+.recent-container {
+    max-width: 1000px;
+    padding: 20px;
+    border-top: 1px solid #777777;
+    padding-top: 20px;
+    overflow: auto; 
+    font-weight: 600;
+    color: #3e3e3e;
+}
+.recent-header {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* history part */
 .history-container {
     max-width: 1000px;
     padding: 20px;
@@ -273,6 +351,7 @@ export default {
     padding: 0;
     font-weight: 600;
 }
+
 
 .history-header {
     display: grid;
@@ -343,26 +422,30 @@ export default {
     align-items: center;
     border-width: 1px 0 1px;
     color: #3e3e3e;
+    /* overflow-y: auto;
+    max-height: 350px; */
+    margin-top: 20px; 
+}
+
+.question-datas {
     overflow-y: auto;
     max-height: 350px; 
-    margin-top: 20px;
+    /* margin-top: 10px; */
 }
 
 /* scroll bar style */
-.dropdown-content::-webkit-scrollbar {
+.question-datas::-webkit-scrollbar {
     background-color: #CFD1B8;
     border-radius: 10px;
-    /* background: #888; */
-    /* border-radius: 10px;  */
 }
-.dropdown-content::-webkit-scrollbar-thumb {
+.question-datas::-webkit-scrollbar-thumb {
     background-color: #A8BA99;
     border-radius: 10px;
 }
 
 .question-header {
-    /* position: sticky; */
-    position: relative;
+    position: sticky;
+    /* position: relative; */
     top : 0;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -371,6 +454,7 @@ export default {
     text-align: center;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
+    color: #3e3e3e;
 }
 
 .question-data {
@@ -388,13 +472,23 @@ export default {
     padding-left: 80px;
 }
 
+.topic {
+    padding-left: 10px
+}
+
 .attempt {
     padding-left: 85px;
 }
 
 .time {
-    padding-left: 70px;
+    /* padding-left: 90px; */
+    text-align: center
 }
+
+.date {
+    text-align: center
+}
+
 .correct {
     text-align: center
 }
