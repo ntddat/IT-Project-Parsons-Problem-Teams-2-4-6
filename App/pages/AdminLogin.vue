@@ -152,7 +152,6 @@ onMounted(() => {
   text-align: center;
   color: black;
   font-size: 24px;
-  font-family: Lexend, sans-serif;
   font-weight: 500;
   line-height: 230%;
   word-wrap: break-word;

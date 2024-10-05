@@ -213,7 +213,6 @@ export default {
 }
 
 .profile-info h1 {
-    font-family: Lexend, sans-serif;
     margin: 0;
     font-size: 28px;
     font-weight: bold;
@@ -238,7 +237,6 @@ export default {
 }
 
 .stat h2 {
-    font-family: Lexend, sans-serif;
     margin: 0;
     font-size: 20px;
     font-weight: bold;
@@ -246,7 +244,6 @@ export default {
 }
 
 .stat p {
-    font-family: Lexend, sans-serif;
     margin: 0;
     font-size: 14px;
     color: #777777;
@@ -261,7 +258,6 @@ export default {
 }
 
 .history-header {
-    font-family: Lexend, sans-serif;
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
     font-size: 20px;
@@ -291,7 +287,6 @@ export default {
 }
 
 .history-item {
-    font-family: Lexend, sans-serif;
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
     padding: 15px 0;
@@ -315,7 +310,6 @@ export default {
 }
 .history-practice,
 .history-accuracy {
-    font-family: Lexend, sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;

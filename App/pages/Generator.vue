@@ -240,7 +240,6 @@ export default {
   text-align: center;
   color: black;
   font-size: 20px;
-  font-family: Lexend, sans-serif;
   font-weight: 500;
   line-height: 40px;
   word-wrap: break-word;
