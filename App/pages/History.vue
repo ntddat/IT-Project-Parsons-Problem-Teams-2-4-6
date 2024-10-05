@@ -190,7 +190,6 @@ export default {
             userID: null,
             accuracy: 60,
             exercises: 5,
-
             topicSummary: [
             {topic: "Decision Tree Classifier", numQuestions: 2, accuracy: 50, 
                 attemptedQuestions: [

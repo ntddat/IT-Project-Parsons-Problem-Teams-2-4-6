@@ -40,7 +40,7 @@
             <div class="history-container">
                 <div class="history-header">
                     <span class="header-topic">Topic</span>
-                    <span class="tit_text header-practice">Total Practice</span>
+                    <span class="tit_text header-practice">Total Questions</span>
                     <span class="tit_text header-accuracy">Accuracy</span>
                 </div>
 
@@ -56,7 +56,7 @@
                             <div v-show="item.isExpanded" class="dropdown-content">
                                 <div class="summary-header">
                                     <span class="header-ID">ID</span>
-                                    <span class="header-Answer">Total Answer</span>
+                                    <span class="header-Answer">Total Questions</span>
                                     <span class="header-Accuracy">Accuracy</span>
                                     <span class="header-Time">Total Time</span>
                                 </div>

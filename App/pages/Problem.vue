@@ -191,7 +191,7 @@
                     }
     
                     const data = await response.json();
-                    // initial = data.info.Code; // Update initial code
+                    initial = data.info.Code; // Update initial code
                     document.getElementById('questiondescription').textContent = data.info.Description;
                     // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
                     this.initializeParsonsWidget(); // Initialize Parsons widget with fetched code
@@ -583,7 +583,6 @@
     #output{
         /* overflow-y: auto; */
         /* padding-left: 5px; */
-        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-weight: 750;
         /* overflow-y: auto; */
         padding-left: 5px;
@@ -616,7 +615,6 @@
         align-items: flex-start;
         box-sizing: border-box; /* 包括 padding 和 border 在元素总尺寸内 */
         font-size: 24px;
-        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
         overflow-y: auto;
     }
     
@@ -705,7 +703,6 @@
         border-radius: 50px;
         color: rgb(0, 0, 0);
         padding: 10px;
-        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-size: 14px;
         font-weight: 800;
         border-radius: 17.5px;

@@ -5,6 +5,10 @@ body, html {
   overflow: auto; 
 }
 
+* {
+  font-family: 'Lexend', sans-serif; 
+}
+
 #app {
   position: relative; /* Enable relative positioning for pseudo-element */
   min-height: 100vh;
