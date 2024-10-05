@@ -5,7 +5,7 @@
             <!-- 导航栏 -->
             <nav class="top">
             <div class="header">
-                <img src="/App/logo.png" alt="Logo" class="top-logo" />
+                <img src="/public/logo.png" alt="Logo" class="top-logo" />
                 <div class="web-name">Learnr</div>
             </div>
             <div class="nav-links">
@@ -80,6 +80,7 @@
                     <div id="feedback"></div>
                 </div>
             </div>
+            <!-- todo move this into some other places and add the jumping functions of the buttons inside-->
             <div id="resultMessage">
             Correct answer! Congratulations!
             <button id="regenerate-btn">Regenerate</button>
@@ -180,11 +181,12 @@
                     document.body.style.cursor = 'default';
                 });
             },
+            
             async fetchStrings() {
                 const outputElement = document.getElementById('output');
     
                 try {
-                    const response = await fetch('http://localhost:8383/info/');
+                    const response = await fetch('http://localhost:8383/api/question/getQuestion/');
     
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -194,45 +196,116 @@
                     initial = data.info.Code; // Update initial code
                     document.getElementById('questiondescription').textContent = data.info.Description;
                     // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
-                    this.initializeParsonsWidget(); // Initialize Parsons widget with fetched code
+                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
                 } catch (error) {
                     console.error('Error fetching strings:', error);
                     outputElement.textContent = 'Error fetching strings: ' + error.message;
                 }
             },
-    
-            initializeParsonsWidget() {
-                var parson = new ParsonsWidget({
-                    sortableId: 'sortable',
-                    trashId: 'sortableTrash',
-                    max_wrong_lines: 1,
-                    feedback_cb: this.displayErrors,
-                    can_indent: true
+
+            refreshOutput(){
+                document.getElementById('output').textContent = ""
+                document.getElementById('resultMessage').style.display = 'none';
+            },
+
+            refreshTimer(){
+                document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'
+            },
+
+            getStudentCode(){
+                const codeLines = [];
+                $('#sortable li').each(function () {
+                    codeLines.push($(this).text()); // Retrieve the text of each <li> element
                 });
-                parson.init(initial);
-                parson.shuffleLines();
-    
-                document.getElementById('run-btn').addEventListener('click', () => {
-                    const codeLines = [];
-                    $('#sortable li').each(function() {
-                        codeLines.push($(this).text());
+
+                // Join the code lines into a single string
+                const studentCode = codeLines.join('\n');
+                return studentCode;
+            },
+
+            //sending the result back to server
+            async sendAttempt(correct){
+                console.log(correct);
+
+                var pack = {
+                    questionNo: questionNo,
+                    studentId : studentId,
+                    correctness : correct,
+                    time : document.getElementById(time),
+                    topic : topic
+                }
+
+                const url = 'http://localhost:8383/api/attempt/submitAttempt'; // Replace with your actual backend URL if deployed
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: pack
+                };
+                //not sure if we need a response for this, maybe we need?
+                try {
+                    const response = await fetch(url, options);
+                    const result = await response.json(); // Convert the response to JSON
+                    console.log(result); // Output the response to the console
+                    
+                    //return result;
+                    // Display the output or errors from the Python code execution
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+
+            initializeParsonsWidget(question) {
+                
+                runCode(question).then(solution => {
+                    //comment or remove this after testing
+                    console.log("Solution retrieved:", solution);
+                
+                    var parson = new ParsonsWidget({
+                        sortableId: 'sortable',
+                        trashId: 'sortableTrash',
+                        max_wrong_lines: 1,
+                        feedback_cb : displayErrors,
+                        can_indent: true
                     });
-    
-                    const studentCode = codeLines.join('\n');
-                    this.runCode(studentCode);
-                });
-    
-                document.getElementById('submit-btn').addEventListener('click', () => {
-                    var result = parson.getFeedback();
-                    if (result == []) {
-                        result = "Congratulations, correct";
-                    }
-                    document.getElementById('feedback').textContent = result;
-                });
-    
-                document.getElementById('reset-btn').addEventListener('click', () => {
+                    parson.init(question);
                     parson.shuffleLines();
-                });
+                
+                    document.getElementById('run-btn').addEventListener('click', () => {
+                        refreshOutput();
+                        console.log("0000");
+                        var studentCode = getStudentCode();
+
+
+                        runCode(studentCode).then(
+                            result => {
+                                document.getElementById('output').textContent = result.output || result.error;
+                            }
+                        )
+
+                    //document.getElementById('output').textContent = studentCode; // Display the code
+                    });
+
+
+                    document.getElementById('submit-btn').addEventListener('click', () => {
+                        console.log("press submit");
+                        var studentCode = getStudentCode();
+                        //runsubmit should be a no return function, this is now for testing
+                        //document.getElementById('resultMessage').style.display = 'block';
+                        if(runSubmit(studentCode,solution) == "1"){
+                            
+                            console.log("result correct");
+                        }
+                    });
+
+                    document.getElementById('reset-btn').addEventListener('click', () => {
+                        parson.shuffleLines(); // Reshuffle the blocks for a new attempt
+                    });
+ 
+                })
             },
     
             displayErrors(fb) {
@@ -241,27 +314,60 @@
                 }
             },
     
-            async runCode(studentCode) {
-                const url = 'http://localhost:8383/run-python';
-    
+            //todo change this to none-return and correspond calling statement after make sure its functioning
+            async runSubmit(studentCode,solution){
+                refreshOutput();
+                //const correctSolution = runCode(question);
+                const studentAnswer = await runCode(studentCode);
+                console.log("studentanswer");
+                console.log(studentAnswer);
+                console.log("studentanswer11");
+                document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
+
+                if(solution.output.join('') === studentAnswer.output.join('')){
+                    console.log("same");
+                    document.getElementById('resultMessage').style.display = 'block';
+                    sendAttempt(1);
+                    return 1;
+                }
+                else{
+                    console.log("not same");
+                    console.log(solution.output);
+                    console.log(studentAnswer.output);
+                    sendAttempt(0);
+                    return 0;
+                }
+                refreshTimer();
+            },
+
+            //modified runCode, now does not automatically print output
+            async runCode(Code) {
+                const url = 'http://localhost:8383/api/question/runPython'; // Replace with your actual backend URL if deployed
+
                 const options = {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        pythonCode: studentCode
+                        pythonCode: code  // Send the Python code to the backend
                     })
                 };
-    
+
                 try {
                     const response = await fetch(url, options);
-                    const result = await response.json();
-                    document.getElementById('output').textContent = result.output || result.error;
+                    const result = await response.json(); // Convert the response to JSON
+                    console.log(result); // Output the response to the console
+                    
+                    return result;
+                    // Display the output or errors from the Python code execution in caller
+                    
                 } catch (error) {
                     console.error('Error:', error);
                 }
             },
+
+            //this should be abandoned
             async fetchResult(token) {
                 const resultUrl = `https://judge0-ce.p.rapidapi.com/submissions/${token}?base64_encoded=false&fields=*`;
                 const resultOptions = {
@@ -724,6 +830,7 @@
     
     }
 
+    /*todo change the style of this*/
     #resultMessage {    /* Pop up after correct submission*/
         display: none; /* Initially hidden */
         background-color: #4CAF50;
