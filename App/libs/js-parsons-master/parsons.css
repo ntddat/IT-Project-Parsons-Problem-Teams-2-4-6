@@ -35,7 +35,28 @@ ul.output {
     width: calc(100% - 10px); 
     box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2), inset -3px -3px 8px rgba(255, 255, 255, 0.05); /* Concave effect */
     border-radius: 5px;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
     /* padding-left: 10px; */
+}
+ul.output:hover {
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+}
+ul.output::-webkit-scrollbar {
+    width: 8px; 
+}
+
+ul.output::-webkit-scrollbar-thumb {
+    background-color: #ffa200a1; 
+    border-radius: 10px; 
+}
+
+ul.output::-webkit-scrollbar-button {
+    display: none; 
+}
+ul.output::-webkit-scrollbar-track {
+    background: transparent; 
 }
 .sortable-code li {
     width: 80%;
@@ -46,8 +67,8 @@ ul.output {
     border:1px solid rgb(193, 193, 193);
     padding:15px;
     margin-top: 5px;
-    white-space: nowrap;
-    overflow: auto;
+    white-space: normal;
+    overflow: clip;
     cursor: move;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1); /* 阴影 */
     z-index: auto;
