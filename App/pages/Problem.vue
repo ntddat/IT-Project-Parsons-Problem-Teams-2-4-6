@@ -17,11 +17,14 @@
     
             <!-- 进度条 -->
             <div id="progress-container">
-                <div id="progress-percent">0%</div>
+                <!-- <div id="progress-percent">0%</div>
                 <div id="progress-bar">
                     <div id="progress"></div>
-                </div>
+                </div> -->
                 <div id="time-elapsed">0 mins 0 seconds</div>
+                <a id="regenerate-btn" href="index.html"> 
+                        <button>Regenerate</button>
+                </a>
             </div>
         </div>
     
@@ -40,14 +43,10 @@
                 </div>
                 
                 <div id="sortableTrash" class="sortable-code"> </div>
-    
-                <a id="regenerate-btn" href="index.html"> 
-                        <button>Regenerate</button>
-                </a>
             </div>
             
             <!-- 可拖动的中分线 -->
-            <div id="divider">⫴</div>
+            <div id="divider"></div>
     
             <!-- 右侧面板，用户构建解决方案的区域 -->
             <div id="right-panel">
@@ -67,7 +66,7 @@
                 </div>
                 
                 <!-- 右侧可移动线 -->
-                <div id="horizontal-divider">=</div>
+                <div id="horizontal-divider"></div>
     
                 <!-- output 栏 -->
                 <div id="calculated-value"> 
@@ -80,11 +79,15 @@
                     <div id="feedback"></div>
                 </div>
             </div>
+
             <div id="resultMessage">
-                Correct answer! Congratulations!
-                <button id="regenerate-btn">Regenerate</button>
-                <button id="retry-btn">Try Again</button>
+                <p>Correct answer! Congratulations!</p>
+                <div id="button-container">
+                    <button id="window-regenerate-btn">Regenerate</button>
+                    <button id="window-retry-btn">Try Again</button>
+                </div>
             </div>
+
         </main>
     
     </body>
@@ -97,6 +100,12 @@
                 "print('Parsons')\n" +
                 "print('problems!')";
 
+    let testSample  = "fruits = ['apple', 'banana', 'cherry']\n" +
+                               "for x in fruits :\n" +
+                             "  print(x)";
+    let startTime;
+    let intervalId;
+    let elapsedTime;
     export default {
         data() {
             return {
@@ -107,6 +116,7 @@
             this.midDragControllerDiv();
             this.horDragControllerDiv();
             this.fetchStrings(); // Fetch initial strings on mount
+            this.startTimer(); 
         },
     
         methods: {
@@ -149,42 +159,106 @@
             horDragControllerDiv() {
                 const horizontalDivider = document.getElementById('horizontal-divider');
                 const topSection = document.getElementById('right-top');
-                const bottomSection = document.getElementById('right-bottom');
-                const righTpanel = document.getElementById('right-panel');  
-    
-                let iSdragging = false;
-                let startY = 0;  
-                let startHeight = 0;  
-    
+                const bottomSection = document.getElementById('calculated-value');
+                const rightPanel = document.getElementById('right-panel');
+                
+                let isDragging = false;
+                let startY = 0;
+                let startTopHeight = 0;
+
                 horizontalDivider.addEventListener('mousedown', function(e) {
-                    iSdragging = true;
-                    startY = e.clientY;
-                    startHeight = topSection.offsetHeight;
+                    isDragging = true;
+                    startY = e.clientY; 
+                    startTopHeight = topSection.offsetHeight; 
                     document.body.style.cursor = 'ns-resize';
                 });
-    
+
                 document.addEventListener('mousemove', function(e) {
-                    if (iSdragging) {
-                        const diffY = e.clientY - startY;
-                        const newHeight = startHeight + diffY;
-    
-                        if (newHeight > 50 && newHeight < righTpanel.offsetHeight - 50) {
-                            topSection.style.height = `${newHeight}px`;
-                            bottomSection.style.height = `${righTpanel.offsetHeight - newHeight - horizontalDivider.offsetHeight}px`;
-                        }
+                    if (isDragging) {
+                        let diffY = e.clientY - startY;
+                        let totalHeight = rightPanel.offsetHeight;
+
+                        let newTopHeight = startTopHeight + diffY;
+                        let newBottomHeight = totalHeight - newTopHeight - horizontalDivider.offsetHeight;
+
+                        if (newTopHeight < totalHeight * 0.1) newTopHeight = totalHeight * 0.1;
+                        if (newBottomHeight < totalHeight * 0.1) newTopHeight = totalHeight - totalHeight * 0.1 - horizontalDivider.offsetHeight;
+
+                        topSection.style.height = newTopHeight + 'px';
+                        bottomSection.style.height = newBottomHeight + 'px';
+
+                        bottomSection.style.overflow = 'auto'; 
                     }
                 });
-    
+
                 document.addEventListener('mouseup', function() {
-                    iSdragging = false;
+                    isDragging = false;
                     document.body.style.cursor = 'default';
                 });
             },
+            
+
+            // startTimer() {
+            //     elapsedTime = 0;
+
+            //     intervalId = setInterval(() => {
+            //         elapsedTime++; 
+            //         this.updateTimeElapsed(); 
+            //     }, 1000);
+            // },
+
+            
+            // updateTimeElapsed() {
+            //     const minutes = Math.floor(elapsedTime / 60); 
+            //     const seconds = elapsedTime % 60; 
+
+                
+            //     document.getElementById('time-elapsed').textContent = `${minutes} mins ${seconds} seconds`;
+            // },
+
+            
+            // stopTimer() {
+            //     clearInterval(intervalId); 
+            // },
+
+            
+            // refreshTimer() {
+            //     this.stopTimer(); 
+            //     elapsedTime = 0;
+            //     document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
+            // },
+
+            async runCode(code) {
+                const url = 'http://localhost:8383/run-python'; // Replace with your actual backend URL if deployed
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        pythonCode: code  // Send the Python code to the backend
+                    })
+                };
+
+                try {
+                    const response = await fetch(url, options);
+                    const result = await response.json(); // Convert the response to JSON
+                    console.log(result); // Output the response to the console
+                    
+                    return result;
+                    // Display the output or errors from the Python code execution in caller
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+
             async fetchStrings() {
                 const outputElement = document.getElementById('output');
     
                 try {
-                    const response = await fetch('http://localhost:8383/info/');
+                    const response = await fetch('http://localhost:8383/info');
     
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -194,83 +268,170 @@
                     initial = data.info.Code; // Update initial code
                     document.getElementById('questiondescription').textContent = data.info.Description;
                     // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
-                    this.initializeParsonsWidget(); // Initialize Parsons widget with fetched code
+                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
                 } catch (error) {
                     console.error('Error fetching strings:', error);
                     outputElement.textContent = 'Error fetching strings: ' + error.message;
                 }
             },
-    
-            initializeParsonsWidget() {
-                var parson = new ParsonsWidget({
-                    sortableId: 'sortable',
-                    trashId: 'sortableTrash',
-                    max_wrong_lines: 1,
-                    feedback_cb: this.displayErrors,
-                    can_indent: true
-                });
-                parson.init(initial);
-                parson.shuffleLines();
-    
-                document.getElementById('run-btn').addEventListener('click', () => {
-                    refreshOutput();
-                    console.log("0000");
-                    var studentCode = getStudentCode();
 
-
-                    runCode(studentCode).then(
-                        result => {
-                            document.getElementById('output').textContent = result.output || result.error;
-                        }
-                    )
-
-                    //document.getElementById('output').textContent = studentCode; // Display the code
-                });
-    
-                document.getElementById('submit-btn').addEventListener('click', () => {
-                    console.log("press submit");
-                    var studentCode = getStudentCode();
-                    
-                    if(runSubmit(studentCode,solution) == "1"){
-                        
-                        console.log("result correct");
-                    }
-                });
-
-                document.getElementById('reset-btn').addEventListener('click', () => {
-                    parson.shuffleLines(); // Reshuffle the blocks for a new attempt
-                });
+            refreshOutput(){
+                document.getElementById('output').textContent = ""
+                document.getElementById('resultMessage').style.display = 'none';
             },
-    
-            displayErrors(fb) {
-                if (fb.errors.length > 0) {
-                    alert(fb.errors[0]);
+
+            refreshTimer(){
+                document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'
+            },
+
+            getStudentCode(parson) {
+                const codeLines = [];
+
+                // Iterate over each modified line in the Parsons widget
+                parson.modified_lines.forEach(line => {
+                    // Retrieve the code and indent level
+                    const indentedLine = '    '.repeat(line.indent) + line.code; // Assuming 4 spaces per indent level
+                    codeLines.push(indentedLine);
+                });
+
+                // Join the lines into a single string with line breaks
+                const studentCode = codeLines.join('\n');
+                return studentCode;
+            },
+
+            //sending the result back to server
+            async sendAttempt(correct){
+                console.log(correct);
+                //todo change this to variables
+                var pack = {
+                    questionNo: 1,
+                    studentId : 1,
+                    correctness : correct,
+                    time : 1,
+                    topic : 1
                 }
-            },
-            
-            
+                this.refreshTimer();
+                const url = 'http://localhost:8383/api/attempt/submitAttempt'; // Replace with your actual backend URL if deployed
 
-            async runCode(studentCode) {
-                const url = 'http://localhost:8383/run-python';
-    
                 const options = {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({
-                        pythonCode: studentCode
-                    })
+                    body: JSON.stringify(pack)
                 };
-    
+                //not sure if we need a response for this, maybe we need?
                 try {
                     const response = await fetch(url, options);
-                    const result = await response.json();
+                    const result = await response.json(); // Convert the response to JSON
+                    console.log(result); // Output the response to the console
+                    
+                    //return result;
+                    // Display the output or errors from the Python code execution
                     
                 } catch (error) {
                     console.error('Error:', error);
                 }
             },
+
+            displayErrors(fb) {
+                if (fb.errors.length > 0) {
+                    alert(fb.errors[0]);
+                }
+            },
+
+            initializeParsonsWidget(question) {
+
+                //question = testSample
+                
+                this.runCode(question).then(solution => {
+
+                    // console.log("Solution retrieved:", solution);
+                
+                    var parson = new ParsonsWidget({
+                        sortableId: 'sortable',
+                        trashId: 'sortableTrash',
+                        max_wrong_lines: 1,
+                        feedback_cb : this.displayErrors,
+                        can_indent: true
+                    });
+                    console.log(parson);
+                    parson.init(question);
+                    parson.shuffleLines();
+                
+                    document.getElementById('run-btn').addEventListener('click', () => {
+                        this.refreshOutput();
+                        console.log("0000");
+                        var studentCode = this.getStudentCode(parson);
+
+
+                        this.runCode(studentCode).then(
+                            result => {
+                                document.getElementById('output').textContent = result.output || result.error;
+                            }
+                        )
+
+                    //document.getElementById('output').textContent = studentCode; // Display the code
+                    });
+
+
+                    document.getElementById('submit-btn').addEventListener('click', async () => {
+                        console.log("press submit");
+                        var studentCode = this.getStudentCode(parson);
+                        //runsubmit should be a no return function, this is now for testing
+                        //todo this resultMessage is not working
+                        await this.runSubmit(studentCode, solution);
+                        this.stopTimer();
+                        if(this.runSubmit(studentCode,solution) == "1"){
+                            document.getElementById('resultMessage').style.display = 'block';
+                            const result = this.runSubmit(studentCode, solution);
+                            // stopTimer();
+                            console.log("result correct");
+                        }
+                    });
+
+                    document.getElementById('reset-btn').addEventListener('click', () => {
+                        parson.shuffleLines(); // Reshuffle the blocks for a new attempt
+                        // this.refreshTimer();
+                        // this.startTimer();
+                    });
+ 
+                })
+            },
+    
+            
+    
+            //todo change this to none-return and correspond calling statement after make sure its functioning
+            async runSubmit(studentCode, solution) {
+                this.refreshOutput();
+                const studentAnswer = await this.runCode(studentCode);
+                console.log("studentanswer", studentAnswer);
+
+                // 显示输出结果
+                document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
+
+                if (studentAnswer.error == "") {
+                    if (solution.output.join('') === studentAnswer.output.join('')) {
+                        console.log("same");
+                        document.getElementById('resultMessage').style.display = 'block'; // 显示弹窗
+                        this.sendAttempt(1); // 提交正确的尝试
+                    } else {
+                        console.log("not same");
+                        console.log(solution.output);
+                        console.log(studentAnswer.output);
+                        this.sendAttempt(0); // 提交错误的尝试
+                    }
+                } else {
+                    console.log("Error occurred:", studentAnswer.error);
+                    this.sendAttempt(0); // 提交错误的尝试
+                }
+            },
+
+
+            //modified runCode, now does not automatically print output
+            
+
+            //this should be abandoned
             async fetchResult(token) {
                 const resultUrl = `https://judge0-ce.p.rapidapi.com/submissions/${token}?base64_encoded=false&fields=*`;
                 const resultOptions = {
@@ -296,61 +457,8 @@
                 } catch (error) {
                     console.error('Error fetching result:', error);
                 }
-            },
-
-            //modified submit function
-            async runSubmit(studentCode,solution) {
-                refreshOutput();
-                //const correctSolution = runCode(question);
-                const studentAnswer = await runCode(studentCode);
-                console.log("studentanswer");
-                console.log(studentAnswer);
-                console.log("studentanswer11");
-                document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
-
-                if(solution.output.join('') === studentAnswer.output.join('')){
-                    console.log("same");
-                    document.getElementById('resultMessage').style.display = 'block';
-                    sendResult(1);
-                    return 1;
-                }
-                else{
-                    console.log("not same");
-                    console.log(solution.output);
-                    console.log(studentAnswer.output);
-                    sendResult(0);
-                    return 0;
-                }
             }
-            //modified runcode to support 
-            // async runCode(code) {
-            //     // The URL for your backend server endpoint
-            //     const url = 'http://localhost:3000/run-python'; // Replace with your actual backend URL if deployed
-
-            //     const options = {
-            //         method: 'POST',
-            //         headers: {
-            //             "Content-Type": "application/json"
-            //         },
-            //         body: JSON.stringify({
-            //             pythonCode: code  // Send the Python code to the backend
-            //         })
-            //     };
-
-            //     try {
-            //         const response = await fetch(url, options);
-            //         const result = await response.json(); // Convert the response to JSON
-            //         console.log(result); // Output the response to the console
-                    
-            //         return result;
-            //         // Display the output or errors from the Python code execution
-                    
-            //     } catch (error) {
-            //         console.error('Error:', error);
-            //     }
-            // }
         }
-        
       }
     </script>
     
@@ -360,12 +468,14 @@
     
     html {
         height: 100%;
+        
     }
     template, body {
         height: 100vh;
         margin: 0;
         padding: 0;
         display: flex;
+        overflow-x: hidden;
     }
     
     /* #app {
@@ -379,9 +489,26 @@
     body{
         /* height: 100vh; */
         /* flex-grow: 1; */
-        background: linear-gradient(to top right, #e7fcc8, #ffffff);
+        background: transparent;
         display: flex;
         flex-direction: column;
+    }
+
+    /* 滚动条样式 */
+    *:not(body)::-webkit-scrollbar {
+        width: 8px; 
+    }
+
+    *:not(body)::-webkit-scrollbar-thumb {
+        background-color: #ffa200a1; 
+        border-radius: 10px; 
+    }
+
+    *:not(body)::-webkit-scrollbar-button {
+        display: none; 
+    }
+    *:not(body)::-webkit-scrollbar-track {
+        background: transparent; 
     }
     
     main {
@@ -394,7 +521,7 @@
         flex-direction: row;
         position: relative;
         margin-top: 0;
-        max-height: 84%;
+        max-height: 86.2vh;
     }
     #top-panel{
         width: 100%;
@@ -458,7 +585,7 @@
         position: relative;
         height: auto;
     }
-    #progress-percent {
+    /*#progress-percent {
         position: relative;
         top: 0;
         left: 0;
@@ -466,7 +593,7 @@
         font-size: 15px;
         padding: 0;
         font-weight: bold;
-        margin-bottom: 10px; /* 添加与进度条的间隔 */
+        margin-bottom: 10px; /* 添加与进度条的间隔 
     }
     #progress-bar {
         width: 100%;
@@ -475,22 +602,25 @@
         border-radius: 5px;
         position: relative;
         overflow: hidden;
-        margin-bottom: 5px; /* 添加与时间文本的间隔 */
+        margin-bottom: 5px; /* 添加与时间文本的间隔 
     }
     #progress {
         height: 100%;
-        background-color: #F0A554; /* 设置进度条颜色 */
-        width: 0%; /* 初始宽度 */
-    }
+        background-color: #F0A554; /* 设置进度条颜色 
+        width: 0%; /* 初始宽度 
+    }*/
     #time-elapsed {
         position: relative; /* Use absolute positioning */
         bottom: 0; /* Align to the bottom of the container */
         left: 0; /* Align to the left of the container */
-        font-size: 15px;
+        font-size: 16px;
+        font-weight: 600;
         color: #fdffec;
-        padding-left: 0; /* Add padding for spacing from left edge */
-        padding-top: 5px; /* Add padding for spacing from bottom edge */
-        margin-top: 1px; /* 添加与进度条的间隔 */
+        justify-content: center;
+        margin: 0px auto;
+        /* padding-left: 0; Add padding for spacing from left edge */
+        /* padding-top: 5px; Add padding for spacing from bottom edge */
+        /* margin-top: 1px; 添加与进度条的间隔 */
     }
     
     /* main body */
@@ -529,14 +659,19 @@
         background-color: #C4D6BE;
         text-align: flex-start;
         height: 55%;
-        overflow: auto; /* 如果内容超出，则添加滚动条 */
+        overflow: hidden; /* 如果内容超出，则添加滚动条 */
         display: flex;
         flex-direction: column; /* 确保内部的内容竖直排列 */
         justify-content: flex-start; /* Push the button-group to the bottom */
         margin-top: 0; /* 移除不必要的顶部间距 */
         margin-bottom: 0; /* 确保和#sortable之间的间距 */
+        scrollbar-gutter: stable;
     }
-    
+    /* 如果需要在鼠标悬停时显示滚动条 */    
+    #right-top:hover {
+        overflow: auto;
+        scrollbar-gutter: stable;
+    }
     #sortable{
         flex-grow: 1;
         margin-left: 20px;
@@ -547,21 +682,23 @@
         /* overflow-y: auto;
         max-height: 500px; */
     }
-    
+
     
     /* 可拖动的水平分割线 */
     #horizontal-divider {
         width: 100%;
-        height: 10px;
-        background-color: #f1edb96c;
+        height: 2px;
+        background-color: #f9f7eace;
         cursor: ns-resize;
         display: flex;
         justify-content: center;
         align-items: center;
-        color: #52543b86;
+        color: #000000e5;
     }
     
     #horizontal-divider:hover {
+        background-color: #156b3a80;
+        height:10px;
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
     }
     
@@ -583,6 +720,7 @@
     #output{
         /* overflow-y: auto; */
         /* padding-left: 5px; */
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-weight: 750;
         /* overflow-y: auto; */
         padding-left: 5px;
@@ -615,14 +753,20 @@
         align-items: flex-start;
         box-sizing: border-box; /* 包括 padding 和 border 在元素总尺寸内 */
         font-size: 24px;
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        overflow-y: hidden;
+        scrollbar-gutter: stable;
+    }
+    #calculated-value:hover {
         overflow-y: auto;
+        scrollbar-gutter: stable;
     }
     
     /* 分割线 */
     #divider {
-        width: 10px;
+        width: 2px;
         height: 100%;
-        background-color: #76ad9aac;
+        background-color: #f4f2e2;
         cursor: ew-resize;  /* 调整鼠标指针形状 */
         position: relative;
         text-align: center;
@@ -636,7 +780,10 @@
     }
     
     #divider:hover{
+        width: 10px;
+        background-color: #f0a554db;
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);   /* 阴影变大 */
+        /* display:flex; */
     }
     
     /* 左边的拖动区域 */
@@ -658,51 +805,59 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        overflow:auto;
+        /* overflow:auto; */
         flex-shrink: 0;
+        max-height: 50%;
     }
     
     #topicdescription, #questiondescription{
-        margin-left: 30px;
+        margin-left: 10px;
     }
-    
+    #topicdescription{
+        max-height: 10%;
+    }
+    #questiondescription{
+        overflow-y: hidden;
+        max-height: calc(60%);
+        scrollbar-gutter: stable;
+    }
+    #questiondescription:hover {
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+    }
     #sortableTrash {
-        width: calc(80% - 20px);
+        width: calc(100% - 20px);
         background: #37b0a200;
-        max-height: 20%;
+        max-height: 50%;
         /* border: 1px solid #dcdcdc; */
         border-radius: 10px;
-        padding: 20px;
+        /* padding: 20px; */
         /* box-shadow: 0 2px 8px rgba(131, 40, 40, 0.1); */
         flex-shrink: 0;
-        overflow-y: auto;
+        overflow-y: hidden;
+        scrollbar-gutter: stable;
+    }
+    /* 鼠标悬浮时显示滚动条 */
+    #sortableTrash:hover {
+        overflow: auto;
+        scrollbar-gutter: stable;
     }
     
-    #regenerate-btn{
-        position: absolute;
-        left: 5px;
-        bottom: 5px;
-    }
     
-    #regenerate-btn button{
-        border: none;
-        border-radius: 5px;
-        background: linear-gradient(to right, #d7b50d, #e9a004e2); 
-        
-    }
     
     button i {
-        font-size: 16px;
+        font-size: 14px;
         padding-right: 5px;
     }
     
-    button {
+    #regenerate-btn button, #button-group button {
         width: 150px;
         background-color: #C4D2C1;  /* 渐变绿色按钮 */
         border: 2px solid #ffffff;
         border-radius: 50px;
         color: rgb(0, 0, 0);
         padding: 10px;
+        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-size: 14px;
         font-weight: 800;
         border-radius: 17.5px;
@@ -713,28 +868,79 @@
     }
     
     /* 鼠标悬停时的效果 */
-    button:hover {
+    #button-group button:hover {
         border:2px solid #e2b00e;
         transform: translateY(-3px);     /* 悬浮效果 */
         /*box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);   /* 阴影变大 */
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2); /* Convex effect */
     }
+    #regenerate-btn{
+        position: absolute;
+        right: 5px;
+        bottom: 2px;
+    }
     
+    #regenerate-btn button{
+        border: none;
+        border-radius: 5px;
+        background: linear-gradient(to right, #d7b50d, #e9a004e2); 
+        
+    }
+    #regenerate-btn button:hover{
+        border:2px solid #e2b00e;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2); 
+    }
     #button-group {
         display: flex;
         justify-content: center;
         gap: 20%;
         margin-bottom: 10px; /* 将按钮组推到区域的底部 */
-    
     }
 
-    #resultMessage {    /* Pop up after correct submission*/
-        display: none; /* Initially hidden */
-        background-color: #4CAF50;
-        color: white;
-        padding: 15px;
-        margin-top: 10px;
+    #button-container {
+        display: flex;
+        flex-direction: row; 
+        align-items: center;   
         text-align: center;
+        justify-content: center;
+        gap: 50px;              
+    }
+    #button-container button{
+        padding: 3px;
+        background-color: rgba(0, 255, 255, 0);
+        border: 1px solid rgb(0, 0, 0);
+        border-radius: 5px;
+        margin: 10px;
+        transition: all 0.3s ease;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    #button-container button:hover{
+        background-color: #dd8b33f4;
+    }
+    #resultMessage p{
+        margin: 0;
+        margin-top: 15px;
+    }
+    #resultMessage {
+        height:10%;
+        width: 40%;
+        display: none; 
+        position: fixed;
+        flex-direction: column;
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+        padding: 30px;
+        background-color: rgb(224, 247, 216);
+        border: 1px solid black;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000; 
+        border-radius: 10px;
+        text-align: center;
+        align-self: center;
+        font-size: 20px;
     }
     
     /* @media (max-width: 768px) {
@@ -756,6 +962,17 @@
             width: 95%;
         }
     } */
+    @media (max-height: 768px){
+        #button-group button i {
+            font-size: 10px;
+        }
+        #button-group button{
+            font-size: 12px;
+            padding: 5px;
+            margin-top: 50px;
+            font-weight: 700;
+        }
+    }
     @media (max-width: 768px) {
         .top{
             height: 40px;
@@ -785,7 +1002,7 @@
             /* flex-shrink: 0; */
         }
         #sortableTrash {
-            height: 15%;
+            height: 50%;
             margin-bottom: 45px;
         }
     
@@ -835,15 +1052,25 @@
             margin-top: 40px;
         }
     
-        #progress-percent,
+        /* #progress-percent,
         #progress-bar {
             display: none;
-        }
+        } */
     
         #time-elapsed {
             font-size: 12px;
             margin: 0 auto;
             text-align: center;
+        }
+        #resultMessage {
+            font-size: 14px;
+        }
+        #button-container button {
+            margin: 10px;
+            font-size: 12px;      
+            font-weight: 500;
+            min-width: 70px;      
+            white-space: nowrap;    
         }
     }
     
