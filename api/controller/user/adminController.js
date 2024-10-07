@@ -7,13 +7,13 @@ const adminController = {
    * Request: { }
    * Response: { success, message, summary, topicsInfo }
    * Summary: { accuracy, totalAttempts }
-   * TopicsInfo: [ { topic, accuracy, totalAttempts, users: [{ cookieID, numAttempts, accuracy, totalTime }] } ]
+   * TopicsInfo: [ { topic, accuracy, totalAttempts, users: [{ userID, numAttempts, accuracy, totalTime }] } ]
    */
   summariseInfo: async (req, res) => {
     try {
-      const dbName = await getUsersDbName();
+      const usersDbName = await getUsersDbName();
 
-      const overallInfo = await adminService.summariseInfo(dbName);
+      const overallInfo = await adminService.summariseInfo(usersDbName);
       if (!overallInfo.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
@@ -22,7 +22,9 @@ const adminController = {
         });
       }
 
-      const topicsInfo = await adminService.summariseTopicsInfo(dbName);
+      const questionsDbName = await getQuestionsDbName();
+
+      const topicsInfo = await adminService.summariseTopicsInfo(usersDbName, questionsDbName);
       if (!topicsInfo.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,

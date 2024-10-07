@@ -60,7 +60,7 @@ const userController = {
   },
 
   /**
-   * Request: CookieID
+   * Request: { userID }
    * Response: { success, message, userData }
    * userData: { accuracy, numAttempts, attemptsSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, numAttempts } ] } ] }
    */
@@ -70,7 +70,7 @@ const userController = {
       if (!userID) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
-          message: "Please provide a cookieID"
+          message: "Please provide an userID"
         });
       }
       const usersDbName = await getUsersDbName();
@@ -108,7 +108,7 @@ const userController = {
   },
 
   /**
-   * Request: { cookieID, topic, correct, time, questionID }
+   * Request: { userID, topic, correct, time, questionID }
    * Response: { success, message }
    */
   updateUserAnalytics: async (req, res, next) => {
