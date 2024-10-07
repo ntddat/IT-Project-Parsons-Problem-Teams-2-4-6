@@ -1,16 +1,14 @@
 
 // containing all the relevant topics 
-// TODO: create specific contexts for topics 
 
-import { readFileSync } from 'fs';
 import { promptDataFrame } from "./tasks/dataframeTasks.js";
 import { promptNMI } from "./tasks/nmiTasks.js";
 import { promptCorr } from "./tasks/corrTasks.js";
 import { promptCSV } from "./tasks/csvTasks.js";
 
 export const TOPICS = {
-  DataFrames: "DataFrame",
-  NMI: "Normalized Mutual Information",
+  DataFrames: "Data Frame",
+  NMI: "Normalised Mutual Information",
   NLTK: "Sentence splitting using nltk",
   Correlation: "Correlation",
   LinearRegression: "Linear Regression",
@@ -56,6 +54,76 @@ export const SUBTOPICS = new Map([
     "Stemming", "Tokenization"
   ]]
 ]);
+
+/**
+ * Based on the topic requested from the front-end side, 
+ * find the topic contextually closest using Levenshtein distance.
+ * There is a realistic chance that the naming of the topics in the front-end
+ * is different than the topic string constants in the backend, this might come in handy.
+ * @param {string} topic 
+ * @returns {string} The topic closest to the given request
+ */
+export function findClosestTopic(findTopic) {
+  let editMin = Infinity;
+  let res = null;
+  let topics = Object.values(TOPICS);
+  
+  topics.forEach(t => {
+    let edit = editDistance(findTopic, t);
+    if (edit < editMin) {
+      res = t;
+      editMin = edit;
+    }
+  });
+
+  return res;
+}
+
+/**
+ * Fuzzy matching: Returns the edit distance between 2 strings using
+ * Levenshtein distance.
+ * @param {string} s1 
+ * @param {string} s2 
+ * @returns {number} The edit distance between 2 strings
+ */
+function editDistance(s1, s2) {
+  let m = s1.length;
+  let n = s2.length;
+  
+  // the mother of all edge cases
+  if (m === 0 || n === 0) {
+    // equivalent of (m == 0) -> ret n; (n == 0) -> ret m;
+    return m + n;
+  }
+
+  // create the dp table
+  let dp = []
+  for (let i = 0; i < m + 1; ++i) {
+    let row = []
+    for (let j = 0; j < n + 1; ++j) {
+      row.push(0);
+    }
+    dp.push(row);
+  }
+  for (let i = 0; i < n + 1; ++i) {
+    dp[0][i] = i;
+  }
+  for (let i = 0; i < m + 1; ++i) {
+    dp[i][0] = i;
+  }
+
+  // string matching
+  for (let i = 1; i <= m; ++i) {
+    for (let j = 1; j <= n; ++j) {
+      if (s1[i-1] === s2[j-1]) {
+        dp[i][j] = dp[i-1][j-1];
+      }
+      else dp[i][j] = 1 + Math.min( dp[i-1][j-1], dp[i][j-1], dp[i-1][j] );
+    }
+  }
+
+  return dp[m][n];
+}
 
 /**
 * @function generatePrompt

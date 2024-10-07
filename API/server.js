@@ -16,7 +16,8 @@ app.use(cors());
 // Importing our modules
 import { establishConnection } from './database/connection.js';
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./service/OutputParser.js";
-import { generatePrompt } from "./utils/constants/TopicsContexts.js";
+import { findClosestTopic } from "./utils/constants/TopicsContexts.js";
+import { generatePrompt } from './service/prompts.js';
 import { createCSV, syntaxCheck } from "./utils/compiler.js";
 
 // Establishing connection to the database
@@ -29,7 +30,13 @@ var answer = "Haven't queried yet";
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Choosing Gemini model
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: {temperature: 1.0 }});
+const model = genAI.getGenerativeModel({ 
+  model: "gemini-1.5-flash", 
+  generationConfig: {temperature: 1.0} 
+});
+
+// implement a simple delay to not exhaust API
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 // TODO: Separate compiler part into separate file, then use that for merging part
 async function askGemini(topic, context) {
@@ -37,7 +44,13 @@ async function askGemini(topic, context) {
   const chat = model.startChat({ history: [] })
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
-  prompt = generatePrompt(topic, context);
+
+  // select from the topics
+  let newTopic = findClosestTopic(topic);
+
+  console.log("Topic: " + newTopic)
+
+  prompt = generatePrompt(newTopic, context);
   console.log(prompt);
 
   while (!syntaxPassed) {
@@ -49,10 +62,12 @@ async function askGemini(topic, context) {
     fixed_resp = outputParserJson(resp);
       
     // Checking if the generated code is syntactically correct
-    //fixed_resp.Code = fixed_resp.Code.join('\n');
+    //fixed_resp.Code = fixed_resp.Code.join('\n');   
     createCSV(fixed_resp.CSV, fixed_resp.CSVName);
     syntaxPassed = await syntaxCheck(fixed_resp.Code);
     
+    // to prevent API exhaustion (yes that is a thing), delay for 0.25s
+    await delay(250);
   }
 
   fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 

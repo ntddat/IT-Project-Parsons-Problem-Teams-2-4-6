@@ -1,5 +1,8 @@
 import { TOPICS, SUBTOPICS } from "../utils/constants/TopicsContexts.js"; // access topics for generation
 
+let dataFormat = [ "Python Dictionary", "external CSV file" ]
+let ptr = 1;
+
 /**
  * Given a topic and a context, generate a prompt that, when fed into the Gemini API, will
  * return a piece of Python code, along with any additional resources it may require.
@@ -27,8 +30,9 @@ export function generatePrompt(topic, context) {
     prompt += "- Create a Python string relating to tne given context.\n"
     prompt += "- Generate a piece of Python code using the created string using the core technique: \"" + coreTechniqe + "\".\n";
   } else {
-    prompt += "- Create a Python Dictionary or an external CSV file dense with numeric data of the given topic, the create a dataset based on the data.\n";
-    prompt += "- Generate a piece of Python code using the created dataset using the core technique: \"" + coreTechniqe + "\".\n";
+    prompt += "- Create " + dataFormat[ptr] + " based on the given context.\n";
+    prompt += "- Generate a piece of Python code that reads from the generated + " + dataFormat[ptr] + " using the core technique: \"" + coreTechniqe + "\".\n";
+    ptr = (ptr + 1) % 2;
   }
 
   // randomly selecting elements
