@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import { getDatabaseConnection } from '../../connection.js';
 import UserDataSchema from '../../model/user/userDataModel.js';
-import { c } from 'vite/dist/node/types.d-aGj9QkWt.js';
 
 dotenv.config();
 

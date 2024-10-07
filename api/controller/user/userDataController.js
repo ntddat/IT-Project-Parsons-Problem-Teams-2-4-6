@@ -62,7 +62,7 @@ const userController = {
   /**
    * Request: { userID }
    * Response: { success, message, userData }
-   * userData: { accuracy, numAttempts, attemptsSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, numAttempts } ] } ] }
+   * userData: { accuracy, numQuestions, attemptsSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, numAttempts } ] } ] }
    */
   getUserData: async (req, res) => {
     try {

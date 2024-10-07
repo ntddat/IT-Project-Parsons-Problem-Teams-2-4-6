@@ -1,5 +1,5 @@
 import userDataRepo from "../../database/repository/user/userDataRepo.js";
-import questionRepo from "@/database/repository/questions/questionRepo.js";
+import questionRepo from "../../database/repository/questions/questionRepo.js";
 
 async function calculateTotalAccuracy(questionsDbName) {
   try {
