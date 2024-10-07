@@ -1,7 +1,6 @@
 import express from 'express';
 import questionRouter from './questionRouter.js';
 import userRouter from './userRouter.js';
-import attemptRouter from './attemptRouter.js';
 import adminRouter from './adminRouter.js';
 
 

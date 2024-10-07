@@ -6,8 +6,8 @@ const adminController = {
   /**
    * Request: { }
    * Response: { success, message, summary, topicsInfo }
-   * Summary: { accuracy, totalAttempts }
-   * TopicsInfo: [ { topic, accuracy, totalAttempts, users: [{ userID, numAttempts, accuracy, totalTime }] } ]
+   * Summary: { accuracy, numQuestions }
+   * TopicsInfo: [ { topic, accuracy, numQuestions, users: [{ userID, numQuestions, accuracy, totalTime }] } ]
    */
   summariseInfo: async (req, res) => {
     try {
