@@ -9,7 +9,9 @@ export async function getUserID() {
     };
     try {
         const response = await fetch(url,options);
-        return response
+        const data = await response.json();
+        return data;
+        // return response
     }catch (error){
         console.error('Error:',error);
     }
@@ -27,7 +29,9 @@ export async function getUserHistory(userID) {
     };
     try {
         const response = await fetch(url,options);
-        return response
+        const data = await response.json();
+        return data;
+        // return response
         }catch (error){
             console.error('Error:',error);
         }
