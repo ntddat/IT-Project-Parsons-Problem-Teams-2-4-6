@@ -7,10 +7,10 @@ const userController = {
     try {
       const usersDbName = await getUsersDbName();
       const userID = await userDataService.newUserID(usersDbName);
-      if (!result.success) {
+      if (!userID.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
-          message: result.message
+          message: userID.message
         });
       }
       return res.status(httpCodes.OK).json({

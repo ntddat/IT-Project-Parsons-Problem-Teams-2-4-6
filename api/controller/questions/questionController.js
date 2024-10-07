@@ -42,7 +42,7 @@ const questionController = {
   },
 
   // Generates a question based on the topic and context stored in the session
-  // Request: { topic, context, userID }
+  // Request: { }
   // Response: { success, message, questionID, question }
   getQuestion: async (req, res) => {
     try {

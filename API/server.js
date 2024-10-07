@@ -19,7 +19,12 @@ app.use(session({
   secret: process.env.SECRET_SESSION_KEY,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Should be true for HTTPS in production
+  proxy: true,
+  cookie: { 
+    secure: false,
+    httpOnly: false,
+    sameSite: 'none'
+   }
 }));
 
 app.use(cors());
