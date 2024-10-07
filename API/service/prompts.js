@@ -31,15 +31,15 @@ export function generatePrompt(topic, context) {
     prompt += "- Generate a piece of Python code using the created string using the core technique: \"" + coreTechniqe + "\".\n";
   } else {
     prompt += "- Create " + dataFormat[ptr] + " based on the given context.\n";
-    prompt += "- Generate a piece of Python code that reads from the generated + " + dataFormat[ptr] + " using the core technique: \"" + coreTechniqe + "\".\n";
+    prompt += "- Generate a piece of Python code that reads from the generated " + dataFormat[ptr] + " using the core technique: \"" + coreTechniqe + "\".\n";
     ptr = (ptr + 1) % 2;
   }
 
   // randomly selecting elements
   // due to the process of tokenization in LLM, these kinds of model are terrible at understanding numeric value, 
   // so i figure it would be better if we translate these to English representations
-  const numIfs = [ "zero", "one", "two", "three", "four", "five" ];
-  const numLoops = [ "zero", "one", "two", "three" ];
+  const numIfs = [ "zero", "one", "two" ];
+  const numLoops = [ "zero", "one", "two" ];
   const hasHelperFunction = Math.random() >= 0.5; // 50/50 chance of asking for a helper function
 
   // configure code structure 
@@ -51,12 +51,12 @@ export function generatePrompt(topic, context) {
     prompt += "- The code must contain one helper function.\n";
   }  
   prompt += "- The code must have only one output, and it must be printed to console at the end of the code.\n";
-  
+  prompt += "- The code must be limited to at most 20 lines of code, not including comments.\n"
+
   // set out the rules for the generated code (more like suggestions, the API may never follow these)
   // these exist just in hope of minimizing the chance the code breaking (Needs discussion)
   prompt += "The generated code must satisfy the following requirements:\n";
   prompt += "- The generated code must run without any syntax/runtime error.\n";
-  prompt += "- The generated code must not contain any comment.\n";
   prompt += "- Any indentation made in the code must be done using tab characters.\n";
   prompt += "- The generated code must not contain any two or more consecutive newline characters.\n";
 

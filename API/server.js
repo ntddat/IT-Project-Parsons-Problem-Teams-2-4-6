@@ -38,7 +38,6 @@ const model = genAI.getGenerativeModel({
 // implement a simple delay to not exhaust API
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-// TODO: Separate compiler part into separate file, then use that for merging part
 async function askGemini(topic, context) {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
@@ -53,7 +52,13 @@ async function askGemini(topic, context) {
   prompt = generatePrompt(newTopic, context);
   console.log(prompt);
 
-  while (!syntaxPassed) {
+  // create a simple timer running for 7s to attempt to generate a new question
+  let attempt = true;
+  setTimeout(function() {
+    attempt = false;
+  }, 7000);
+
+  while (!syntaxPassed && attempt) {
     // Generating a new prompt based on the given topic and context
     result = await chat.sendMessage(prompt);
     resp = result.response.text();
@@ -70,11 +75,17 @@ async function askGemini(topic, context) {
     await delay(250);
   }
 
-  fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
-  fixed_resp.Code = processString(fixed_resp.Code); 
-  fixed_resp.Code = fixed_resp.Code.join('\n');
-  answer = fixed_resp;
-  
+  // if it managed to generate a problem
+  if (syntaxPassed) {
+    fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
+    fixed_resp.Code = processString(fixed_resp.Code); 
+    fixed_resp.Code = fixed_resp.Code.join('\n');
+    answer = fixed_resp;
+  }  
+  // otherwise, it's really up to you to do whatever
+  else {
+    console.log("Exception not implemented yet");
+  } 
 }
 
 //Allows the server to see the index.html page in the public folder
