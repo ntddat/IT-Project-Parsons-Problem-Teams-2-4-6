@@ -238,7 +238,7 @@
             },
 
             async runCode(code) {
-                const url = 'http://localhost:8383/run-python'; // Replace with your actual backend URL if deployed
+                const url = 'http://localhost:8383/api/question/runPython'; // Replace with your actual backend URL if deployed
 
                 const options = {
                     method: 'POST',
@@ -267,7 +267,7 @@
                 const outputElement = document.getElementById('output');
     
                 try {
-                    const response = await fetch('http://localhost:8383/info');
+                    const response = await fetch('http://localhost:8383/api/question/getQuestion');
     
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -340,7 +340,7 @@
                     topic : 1
                 }
                 //this.refreshTimer();
-                const url = 'http://localhost:8383/api/attempt/submitAttempt'; // Replace with your actual backend URL if deployed
+                const url = 'http://localhost:8383/api/question/submitAttempt'; // Replace with your actual backend URL if deployed
 
                 const options = {
                     method: 'POST',

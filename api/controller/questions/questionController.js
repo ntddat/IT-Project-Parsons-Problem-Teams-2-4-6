@@ -3,6 +3,7 @@ import askGemini from "../../service/askGemini.js";
 import questionService from "../../service/questions/questionsService.js";
 import httpCodes from "../../utils/constants/httpsCodes.js";
 import { PythonShell } from 'python-shell';
+import session from "express-session";
 
 // Uses askGemini to generate a question based on the topic and context
 const questionController = {
@@ -11,21 +12,24 @@ const questionController = {
   // Response: { success, message }
   generateQuestion: async (req, res) => {
     try {
-      const { topic, context } = req.body; // Destructure the topic and context from req.body
+      const { topic, context, userID } = req.body; // Destructure the topic and context from req.body
   
-      if (!topic || !context) {
+      if (!topic || !context || !userID) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
-          message: "Please provide a topic and context"
+          message: "Please provide a valid topic, context, or userID"
         })
       }
 
       req.session.topic = topic;
       req.session.context = context;
+      req.session.userID = userID;
+
+      console.log(req.session);
     
       return res.status(httpCodes.OK).json({
         success: true,
-        message: "Received topic and context",
+        message: "Received topic, context, and userID",
       });
 
     } catch (e) {
@@ -43,7 +47,11 @@ const questionController = {
   getQuestion: async (req, res) => {
     try {
       const { topic, context, userID } = req.session;
-      if (!topic || !context) {
+      console.log(req.session.topic);
+      console.log(req.session.context);
+      console.log(req.session.userID);
+
+      if (!topic || !context || !userID) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
           message: "No topic and context found in session"

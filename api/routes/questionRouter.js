@@ -7,8 +7,11 @@ const questionRouter = express.Router();
 
 // send answers to the problems page
 questionRouter.post('/generateQuestion', questionController.generateQuestion);
+
 questionRouter.get('/getQuestion', questionController.getQuestion);
+
 questionRouter.post('/runPython', questionController.runPython);
+
 questionRouter.post('/submitAttempt', 
   questionController.updateQuestionDetails, 
   userController.updateUserAnalytics

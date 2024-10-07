@@ -184,7 +184,8 @@ export default {
     sendData() {
       const payload = {
         topic: this.selectedTopic,
-        context: this.selectedContext
+        context: this.selectedContext,
+        userID: getCookie("userID")
       };
       console.log('Sending data to backend:', payload);
 
