@@ -324,10 +324,11 @@ export default {
   background: white;
   border: 1px solid #ccc;
   border-radius: 5px;
-  max-height: 150px;
+  max-height: 43vh; 
   overflow-y: auto;
   width: 100%;
 }
+
 
 .dropdown-item {
   font-size: 15px;
