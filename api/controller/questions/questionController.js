@@ -38,11 +38,11 @@ const questionController = {
   },
 
   // Generates a question based on the topic and context stored in the session
-  // Request: {}
+  // Request: { topic, context, userID }
   // Response: { success, message, questionID, question }
   getQuestion: async (req, res) => {
     try {
-      const { topic, context } = req.session;
+      const { topic, context, userID } = req.session;
       if (!topic || !context) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
@@ -54,7 +54,7 @@ const questionController = {
     
       const questionID = await questionService.generateNewQuestionID(questionsDbName);
       
-      const question = await askGemini(topic, context);
+      const question = await askGemini(topic, context, userID);
       if (!question) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,
