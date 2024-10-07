@@ -191,7 +191,7 @@ export default {
             accuracy: 60,
             exercises: 5,
             topicSummary: [
-            {topic: "Decision Tree Classifier", numQuestions: 2, accuracy: 50, 
+            {Topic: "Decision Tree Classifier", numQuestions: 2, Accuracy: 50, 
                 attemptedQuestions: [
                     {
                         questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
@@ -211,7 +211,7 @@ export default {
                         ]
                     }
                 ]},
-            { topic: "Linear Regression", numQuestions: 100, accuracy: 80, 
+            { Topic: "Linear Regression", numQuestions: 100, Accuracy: 80, 
                 attemptedQuestions: [
                     {
                         questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
@@ -231,7 +231,7 @@ export default {
                         ]
                     }
                 ]},
-            { topic: "Correlation", numQuestions: 78, accuracy: 65, 
+            { Topic: "Correlation", numQuestions: 78, Accuracy: 65, 
                 attemptedQuestions: [
                     {
                         questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
@@ -251,7 +251,7 @@ export default {
                         ]
                     }
                 ]},
-            { topic: "NMI", numQuestions: 133, accuracy: 70, 
+            { Topic: "NMI", numQuestions: 133, Accuracy: 70, 
                 attemptedQuestions: [
                     {
                         questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
@@ -271,7 +271,7 @@ export default {
                         ]
                     }
                 ]},
-            { topic: "Correlation", numQuestions: 60, accuracy: 90, 
+            { Topic: "Correlation", numQuestions: 60, Accuracy: 90, 
                 attemptedQuestions: [
                     {
                         questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
