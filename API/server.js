@@ -41,10 +41,10 @@ async function askGemini(topic, context) {
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
   // Generating a new prompt based on the given topic and context
-  prompt = generatePrompt(topic, context);
   console.log(prompt);
 
   while (!syntaxPassed) {
+    prompt = generatePrompt(topic, context);
     //Attempt to prompt gemini, if it fails prompt again
     try {
       result = await chat.sendMessage(prompt);
