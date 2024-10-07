@@ -81,6 +81,7 @@
             </div>
 
             <div id="resultMessage">
+                <button id="escape-btn"><i class="fa-solid fa-xmark"></i></button>
                 <p>Correct answer! Congratulations!</p>
                 <div id="button-container">
                     <button id="window-regenerate-btn">Regenerate</button>
@@ -103,9 +104,10 @@
     let testSample  = "fruits = ['apple', 'banana', 'cherry']\n" +
                                "for x in fruits :\n" +
                              "  print(x)";
-    let startTime;
+    //let startTime;
     let intervalId;
     let elapsedTime;
+    let timerLock = false;
     export default {
         data() {
             return {
@@ -198,35 +200,42 @@
             },
             
 
-            // startTimer() {
-            //     elapsedTime = 0;
+            startTimer() {
+                elapsedTime = 0;
 
-            //     intervalId = setInterval(() => {
-            //         elapsedTime++; 
-            //         this.updateTimeElapsed(); 
-            //     }, 1000);
-            // },
+                intervalId = setInterval(() => {
+                    if(!timerLock){
+                        elapsedTime++; 
+                        this.updateTimeElapsed(); 
+                    }
+                }, 1000);
+            },
 
             
-            // updateTimeElapsed() {
-            //     const minutes = Math.floor(elapsedTime / 60); 
-            //     const seconds = elapsedTime % 60; 
+            updateTimeElapsed() {
+                const minutes = Math.floor(elapsedTime / 60); 
+                const seconds = elapsedTime % 60; 
 
                 
-            //     document.getElementById('time-elapsed').textContent = `${minutes} mins ${seconds} seconds`;
-            // },
+                document.getElementById('time-elapsed').textContent = `${minutes} mins ${seconds} seconds`;
+            },
 
             
-            // stopTimer() {
-            //     clearInterval(intervalId); 
-            // },
+            stopTimer() {
+                //clearInterval(intervalId); 
+                timerLock = true;
+            },
 
+            activeTimer(){
+                timerLock = false;
+            },
             
-            // refreshTimer() {
-            //     this.stopTimer(); 
-            //     elapsedTime = 0;
-            //     document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
-            // },
+            refreshTimer() {
+                console.log("refreshed");
+                //this.stopTimer(); 
+                elapsedTime = 0;
+                document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
+            },
 
             async runCode(code) {
                 const url = 'http://localhost:8383/run-python'; // Replace with your actual backend URL if deployed
@@ -244,7 +253,7 @@
                 try {
                     const response = await fetch(url, options);
                     const result = await response.json(); // Convert the response to JSON
-                    console.log(result); // Output the response to the console
+                    //console.log(result); // Output the response to the console
                     
                     return result;
                     // Display the output or errors from the Python code execution in caller
@@ -277,31 +286,51 @@
 
             refreshOutput(){
                 document.getElementById('output').textContent = ""
-                document.getElementById('resultMessage').style.display = 'none';
+                // document.getElementById('resultMessage').style.display = 'none';
             },
 
-            refreshTimer(){
-                document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'
+
+
+            emptyCheck(studentCode){
+                if(studentCode === ""){
+                    document.getElementById('output').textContent = "no blocks was used!";
+                    return true;
+                }
+                return false;
             },
 
             getStudentCode(parson) {
+                console.log(parson);
+                console.log(parson.modified_lines);
                 const codeLines = [];
 
-                // Iterate over each modified line in the Parsons widget
-                parson.modified_lines.forEach(line => {
-                    // Retrieve the code and indent level
-                    const indentedLine = '    '.repeat(line.indent) + line.code; // Assuming 4 spaces per indent level
-                    codeLines.push(indentedLine);
+                // Loop through each block in the current order (in the UI's sortable list)
+                $('#sortable li').each(function(index) {
+                    const lineText = $(this).text(); // Get the text of the current block (code line)
+                    
+                    // Find the corresponding modified line based on the index
+                    const lineData = parson.modified_lines.find(modLine => modLine.code.trim() === lineText.trim());
+                    
+                    if (lineData) {
+                        // Apply indentation based on the `indent` value from the corresponding modified line
+                        const indentedLine = '    '.repeat(lineData.indent) + lineData.code;
+                        codeLines.push(indentedLine); // Add the indented line to the array
+                    } else {
+                        // Fallback if we can't find the matching line, just push it without indentation
+                        codeLines.push(lineText);
+                    }
                 });
 
-                // Join the lines into a single string with line breaks
+                // Join the code lines into a single string
                 const studentCode = codeLines.join('\n');
                 return studentCode;
             },
 
             //sending the result back to server
+            //add more parameters
             async sendAttempt(correct){
-                console.log(correct);
+                // return ;
+                //console.log(correct);
                 //todo change this to variables
                 var pack = {
                     questionNo: 1,
@@ -310,7 +339,7 @@
                     time : 1,
                     topic : 1
                 }
-                this.refreshTimer();
+                //this.refreshTimer();
                 const url = 'http://localhost:8383/api/attempt/submitAttempt'; // Replace with your actual backend URL if deployed
 
                 const options = {
@@ -342,7 +371,7 @@
 
             initializeParsonsWidget(question) {
 
-                //question = testSample
+                question = testSample
                 
                 this.runCode(question).then(solution => {
 
@@ -355,45 +384,54 @@
                         feedback_cb : this.displayErrors,
                         can_indent: true
                     });
-                    console.log(parson);
+                    // console.log(parson);
                     parson.init(question);
                     parson.shuffleLines();
                 
                     document.getElementById('run-btn').addEventListener('click', () => {
                         this.refreshOutput();
-                        console.log("0000");
+                        // console.log("0000");
                         var studentCode = this.getStudentCode(parson);
+                        if(!this.emptyCheck(studentCode)){
 
-
-                        this.runCode(studentCode).then(
-                            result => {
-                                document.getElementById('output').textContent = result.output || result.error;
-                            }
-                        )
+                            this.runCode(studentCode).then(
+                                result => {
+                                    document.getElementById('output').textContent = result.output || result.error;
+                                    console.log("run-btn");
+                                }
+                            )
+                        }
 
                     //document.getElementById('output').textContent = studentCode; // Display the code
                     });
 
 
                     document.getElementById('submit-btn').addEventListener('click', async () => {
-                        console.log("press submit");
+                        // console.log("press submit");
                         var studentCode = this.getStudentCode(parson);
                         //runsubmit should be a no return function, this is now for testing
                         //todo this resultMessage is not working
-                        await this.runSubmit(studentCode, solution);
-                        this.stopTimer();
-                        if(this.runSubmit(studentCode,solution) == "1"){
-                            document.getElementById('resultMessage').style.display = 'block';
-                            const result = this.runSubmit(studentCode, solution);
-                            // stopTimer();
-                            console.log("result correct");
+                        
+                        if(!this.emptyCheck(studentCode)){
+                            // document.getElementById('resultMessage').style.display = 'block';
+                            //await this.runSubmit(studentCode, solution);
+                           // console.log("show box");
+                            this.stopTimer();
+                            this.runSubmit(studentCode,solution);          
+                            //this.refreshTimer();
+                            //this.activeTimer();
                         }
                     });
 
                     document.getElementById('reset-btn').addEventListener('click', () => {
                         parson.shuffleLines(); // Reshuffle the blocks for a new attempt
-                        // this.refreshTimer();
-                        // this.startTimer();
+                        this.refreshTimer();
+                        this.startTimer();
+                    });
+
+                    document.getElementById('escape-btn').addEventListener('click', function() {
+                        // 让 resultMessage 弹窗消失
+                        document.getElementById('resultMessage').style.display = 'none';
                     });
  
                 })
@@ -405,20 +443,23 @@
             async runSubmit(studentCode, solution) {
                 this.refreshOutput();
                 const studentAnswer = await this.runCode(studentCode);
-                console.log("studentanswer", studentAnswer);
-
+                // console.log("studentanswer", studentAnswer);
+                console.log("running");
                 // 显示输出结果
                 document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
 
-                if (studentAnswer.error == "") {
-                    if (solution.output.join('') === studentAnswer.output.join('')) {
+                if (!studentAnswer.error) {
+                    const solutionOutputString = solution.output.trim();
+                    const studentOutputString = studentAnswer.output.trim();
+
+                    if (solutionOutputString === studentOutputString) {
                         console.log("same");
                         document.getElementById('resultMessage').style.display = 'block'; // 显示弹窗
                         this.sendAttempt(1); // 提交正确的尝试
                     } else {
-                        console.log("not same");
-                        console.log(solution.output);
-                        console.log(studentAnswer.output);
+                         console.log("not same");
+                        // console.log(solution.output);
+                        // console.log(studentAnswer.output);
                         this.sendAttempt(0); // 提交错误的尝试
                     }
                 } else {
@@ -450,7 +491,7 @@
                             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
                         } else {
                             isPending = false;
-                            console.log(resultData);
+                            //console.log(resultData);
                             document.getElementById('output').textContent = resultData.stdout || resultData.stderr;
                         }
                     }
@@ -923,6 +964,27 @@
         margin: 0;
         margin-top: 15px;
     }
+    #escape-btn{
+        width: 25px;
+        padding: 0%;
+        margin: 0%;
+        position: absolute;
+        /* left: 15px; */
+        right: 3px;
+        top: 15px;
+        background-color: transparent;
+        border: none;
+        display: inline-flex;
+    }
+    #escape-btn i{
+        display: inline-block;
+        transition: transform 0.5s ease;
+        transform-origin: 30% 50%;
+    }
+    #escape-btn:hover i{
+        transform: scale(2.0) rotate(360deg);
+        /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
+    }
     #resultMessage {
         height:10%;
         width: 40%;
@@ -973,7 +1035,7 @@
             font-weight: 700;
         }
     }
-    @media (max-width: 768px) {
+    @media (max-width: 787px) {
         .top{
             height: 40px;
         }
@@ -1071,6 +1133,12 @@
             font-weight: 500;
             min-width: 70px;      
             white-space: nowrap;    
+        }
+        #escape-btn{
+
+            /* left: 8px; */
+            right: 0px;
+            top: 10px;
         }
     }
     
