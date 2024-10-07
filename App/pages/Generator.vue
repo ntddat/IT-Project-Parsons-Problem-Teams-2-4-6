@@ -85,9 +85,9 @@ export default {
   name: 'Generator',
   data() {
     return {
-      cookieWords: "We are using Cookie to recording your past data. By clicking 'Accept', you agree to our use of cookies",
+      cookieWords: "We are using Cookie to record your past data. By clicking 'Accept', you agree to our use of cookies",
       showPopUp: true, 
-      loadingWord: "Generating questions may take some time, please be patient.",
+      loadingWord: "Generating questions may take some time, please be patient...",
 
       isTopicDropdownVisible: false,
       isContextDropdownVisible: false,
@@ -395,6 +395,7 @@ export default {
   gap: 20px;
   width: auto; /* Set width to auto to adjust based on content */
   margin-right: 30px; /* Move nav bar slightly away from the right edge */
+  cursor: pointer;
 }
 
 .nav-link {
