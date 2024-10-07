@@ -2,9 +2,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { outputParserJson } from './OutputParser.js';
 import { generatePrompt } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
-import { getChatHistory } from '@/database/repository/questions/chatHistoryRepo.js';
-import chatHistoryModel from '@/database/model/questions/chatHistoryModel.js';
-import { getUsersDbName } from '@/utils/functions/dbName.js';
+import { getChatHistory } from '../database/repository/questions/chatHistoryRepo.js';
+import { getUsersDbName } from '../utils/functions/dbName.js';
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 

@@ -1,12 +1,12 @@
-import { ChatHistorySchema } from "../../models/questions/chatHisoryModel.js";
-import { getDatabaseConnection } from "../../index.js";
-import { messages } from "../../utils/constants/messages.js";
-require('dotenv').config();
+import ChatHistorySchema from "../../model/questions/chatHistoryModel.js";
+import { getDatabaseConnection } from "../../connection.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const getChatHistory = async (userID, dbName) => {
     const chatHistoryCollection = process.env.CHAT_HISTORY_COLLECTION;
     if (!chatHistoryCollection) {
-        throw new Error(messages.CHAT_HISTORY_COLLECTION_UNDEFINED);
+        throw new Error("Error getting chat history");
     }
     const dbConnection = getDatabaseConnection(dbName)
     const chatHisoryModel = dbConnection.model(
