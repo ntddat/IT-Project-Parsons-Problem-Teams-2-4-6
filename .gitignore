@@ -21,6 +21,7 @@ databaseScripts/*.js
 
 # Ignore script generated for PythonShell
 script.py
+test.py
 
 #TEAM 2's GITIGNORE
 # Logs
