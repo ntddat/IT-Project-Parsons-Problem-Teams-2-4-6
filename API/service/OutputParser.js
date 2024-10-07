@@ -1,5 +1,3 @@
-import regex from "../utils/constants/regex.js";
-import messages from "../utils/constants/messages.js";
 
 /**    
   * @function outputParserJson    
@@ -14,7 +12,7 @@ export function outputParserJson(output) {
   const regexJsonParser = /```json\n([\s\S]*?)```/g;
   let doParse = regexJsonParser.exec(output);
   if (doParse === null) {
-    throw messages.INVALID_OUTPUT_FORMAT;
+    throw new Error("Invalid output format");
     
   }
   let parsedData = doParse[1];
