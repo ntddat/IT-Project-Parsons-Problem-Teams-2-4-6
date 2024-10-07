@@ -99,6 +99,30 @@ const userDataRepo = {
     }
   },
 
+  createUser: async (userID, topicsList, usersDbName) => {
+    try {
+      const userDataModel = await getUserDataModel(usersDbName);
+      const topicSummary = topicsList.map(topic => ({
+        topic: topic,  // String value for the topic
+        numQuestions: 0,
+        numCorrect: 0,
+        accuracy: 0,
+        totalTime: 0,
+        attemptedQuestions: [],
+        correctQuestions: []
+      }));
+  
+      const newUser = new userDataModel({
+        userID: userID,
+        topicSummary: topicSummary,
+      });
+      return await newUser.save();
+    } catch (e) {
+      console.error("Error creating user:", e);
+      throw e;
+    }
+  },
+
   changeUsername: async (userID, newUsername, usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);

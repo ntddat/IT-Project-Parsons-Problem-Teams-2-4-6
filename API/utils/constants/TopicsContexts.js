@@ -15,6 +15,16 @@ export const TOPICS = {
   CSV: "Read/Write CSV File"
 };
 
+export const topicsList = [
+  'DataFrame',
+  'NMI (Normalised Mutual Information)',
+  'Sentence splitting using nltk (i.e. nltk.sent_tokenize())',
+  'Correlation',
+  'Linear Regression',
+  'Decision Tree Classifier',
+  'Reading/Writing CSV files'
+]
+
 /**
 * @function generatePrompt
 * This function generates a prompt based on the topic  

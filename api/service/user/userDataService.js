@@ -1,14 +1,16 @@
 import userDataRepo from "../../database/repository/user/userDataRepo.js";
 import questionRepo from "../../database/repository/questions/questionRepo.js";
+import { topicsList } from "../../utils/constants/TopicsContexts.js";
 
 const userDataService = {
   newUserID: async (usersDbName) => {
     try {
       const userID = await userDataRepo.newUserID(usersDbName);
-      if (!userID) {
+      const newUser = await userDataRepo.createUser(userID, topicsList, usersDbName);
+      if (!userID || !newUser) {
         return {
           success: false,
-          message: "Error generating new user ID",
+          message: "Error generating new user ID and new user",
         };
       }
       return {
