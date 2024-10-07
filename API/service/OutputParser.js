@@ -16,19 +16,14 @@ export function outputParserJson(output) {
     
   }
   let parsedData = doParse[1];
-  console.log(parsedData);
   parsedData = JSON.parse(parsedData); 
-  console.log("PARSED DATA:\n");
-  console.log(parsedData);
-  parsedData.Code = replaceSpacesWithTabs(parsedData.Code);
-  console.log("TABS ADDED IN\n:")
-  console.log(parsedData)
-  parsedData.Code = processString(parsedData.Code);
+  //parsedData.Code = replaceSpacesWithTabs(parsedData.Code);
+  //parsedData.Code = processString(parsedData.Code);
   return parsedData;
 }
 
 //THIS FUNCTION WAS GENERATED WITH CHATGPT
-function replaceSpacesWithTabs(inputString) {
+export function replaceSpacesWithTabs(inputString) {
   let result = '';
   let insideBrackets = false;
   let bracketsStack = [];
@@ -71,7 +66,7 @@ function replaceSpacesWithTabs(inputString) {
  * code to be parsed to the interactive problem
  */
 
-function processString(string) {
+export function processString(string) {
   let commentFlag = false;
   let acceptNewLines = true;
   let acceptNewLines2 = true;
