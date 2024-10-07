@@ -8,7 +8,7 @@ const UserDataSchema = new Schema({
   accuracy: { type: Number, default: 0, required: true },
   numQuestions: { type: Number, default: 0, required: true },
   numCorrect: { type: Number, default: 0, required: true },
-  topicSummary: [
+  topicSummary: { type: [
     {
       topic: { type: String, required: true},
       numQuestions: { type: Number, default: 0, required: true },
@@ -18,7 +18,7 @@ const UserDataSchema = new Schema({
       attemptedQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
       correctQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
     },
-  ],
+  ], default: [] },
 });
 
 export default UserDataSchema;
