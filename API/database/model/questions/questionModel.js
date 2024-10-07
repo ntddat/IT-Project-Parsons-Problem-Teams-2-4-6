@@ -18,6 +18,6 @@ const QuestionSchema = new Schema({
     ], 
     default: []
   }
-});
+}, { collection: "question_details" });
 
 export default QuestionSchema;

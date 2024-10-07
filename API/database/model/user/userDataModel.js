@@ -19,6 +19,6 @@ const UserDataSchema = new Schema({
       correctQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
     },
   ],
-});
+}, { collection: "user_data" });
 
 export default UserDataSchema;
