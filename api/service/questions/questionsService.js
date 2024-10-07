@@ -12,9 +12,9 @@ const questionService = {
     }
   },
 
-  saveNewQuestion: async (topic, context, dbName) => {
+  saveNewQuestion: async (topic, context, questionsDbName) => {
     try {
-       await questionRepo.createNewQuestion(topic, context, dbName);
+       await questionRepo.createNewQuestion(topic, context, questionsDbName);
     } catch (e) {
       console.error('Error saving a new question:', e);
       return {
@@ -24,9 +24,9 @@ const questionService = {
     }
   },
 
-  updateQuestionDetails: async (questionID, time, correct, dbName) => {
+  updateQuestionDetails: async (questionID, time, correct, questionsDbName) => {
     try {
-      const updateResults = await questionRepo.updateQuestionDetails(questionID, time, correct, dbName);
+      const updateResults = await questionRepo.updateQuestionDetails(questionID, time, correct, questionsDbName);
       if (!updateResults.acknowledged) {
         return {
           success: false,

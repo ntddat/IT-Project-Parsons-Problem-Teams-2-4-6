@@ -8,26 +8,62 @@ import { PythonShell } from 'python-shell';
 const questionController = {
   // Generates a question based on the topic and context provided
   // Request: { topic, context }
-  // Response: { success, message, questionID, question }
+  // Response: { success, message }
   generateQuestion: async (req, res) => {
     try {
       const { topic, context } = req.body; // Destructure the topic and context from req.body
   
-      if (!topic && !context) {
+      if (!topic || !context) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
           message: "Please provide a topic and context"
         })
       }
+
+      req.session.topic = topic;
+      req.session.context = context;
     
-      const dbName = await getQuestionsDbName();
+      return res.status(httpCodes.OK).json({
+        success: true,
+        message: "Received topic and context",
+      });
+
+    } catch (e) {
+      console.error("Error generating question:", e);
+      return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: e.message
+      });
+    }
+  },
+
+  // Generates a question based on the topic and context stored in the session
+  // Request: {}
+  // Response: { success, message, questionID, question }
+  getQuestion: async (req, res) => {
+    try {
+      const { topic, context } = req.session;
+      if (!topic || !context) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: "No topic and context found in session"
+        });
+      }
+
+      const questionsDbName = await getQuestionsDbName();
     
-      const questionID = await questionService.generateNewQuestionID(dbName);
-      console.log(questionID);
+      const questionID = await questionService.generateNewQuestionID(questionsDbName);
+      
       const question = await askGemini(topic, context);
+      if (!question) {
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message: "Error generating question"
+        });
+      }
 
       // save this question to the database
-      const saveResult = await questionService.saveNewQuestion(topic, context, dbName);
+      const saveResult = await questionService.saveNewQuestion(topic, context, questionsDbName);
       if (!saveResult.success) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,
@@ -43,7 +79,7 @@ const questionController = {
       });
 
     } catch (e) {
-      console.error("Error generating question:", e);
+      console.error("Error getting question:", e);
       return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: e.message
@@ -51,40 +87,7 @@ const questionController = {
     }
   },
 
-  // Updates the question details based on the user's attempt
-  // Request: { questionID, time, correct }
-  // Response: { success, message }
-  updateQuestionDetails: async (req, res, next) => {
-    try {
-      const { questionID, time, correct } = req.body; // Destructure the questionID, time and correct from req.body
-      if (!questionID || !time || correct === undefined) {
-        return res.status(httpCodes.BAD_REQUEST).json({
-          success: false,
-          message: "Please provide a questionID, time and correct"
-        });
-      }
-    
-      const dbName = await getQuestionsDbName();
-    
-      const updateResult = await questionService.updateQuestionDetails(questionID, time, correct, dbName);
-      if (!updateResult.success) {
-        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-          success: false,
-          message: updateResult.message
-        });
-      }
-      // next one in the middleware chain (this is actually a middleware!)
-      next();
-
-    } catch (e) {
-      console.error("Error updating question details:", e);
-      return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: e.message
-      });
-    }
-  },
-
+  // Runs the Python code by the user
   runPython: async (req, res) => {
     const { pythonCode } = req.body;
     if (!pythonCode) {
@@ -119,6 +122,70 @@ const questionController = {
         }); // Send any errors back to the client
       }
     );
+  },
+
+  saveAttempt: async (req, res, next) => {
+    try {
+      const { questionID, time, correct, topic } = req.body;
+      if (!topic || !questionID || !time || correct === undefined) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Please provide an attempt to save"
+        });
+      }
+
+      const questionsDbName = await getQuestionsDbName();
+      const result = await questionService.saveAttempt(questionID, time, correct, topic, questionsDbName);
+
+      if (!result.success) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: result.message
+        });
+      }
+      // next one in the middleware chain (this is actually a middleware!)
+      next();
+    } catch (e) {
+      console.error("Error saving attempt:", e);
+      return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: e.message
+      });
+    }
+  },
+
+  // Updates the question details based on the user's attempt
+  // Request: { questionID, time, correct }
+  // Response: { success, message }
+  updateQuestionDetails: async (req, res, next) => {
+    try {
+      const { questionID, time, correct } = req.body; // Destructure the questionID, time and correct from req.body
+      if (!questionID || !time || correct === undefined) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Please provide a questionID, time and correct"
+        });
+      }
+    
+      const questionsDbName = await getQuestionsDbName();
+    
+      const updateResult = await questionService.updateQuestionDetails(questionID, time, correct, questionsDbName);
+      if (!updateResult.success) {
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message: updateResult.message
+        });
+      }
+      // next one in the middleware chain (this is actually a middleware!)
+      next();
+
+    } catch (e) {
+      console.error("Error updating question details:", e);
+      return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: e.message
+      });
+    }
   },
 }
 

@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const UserDataSchema = new Schema({
-  cookieID: { type: Number, required: true , unique: true},
+  userID: { type: Number, required: true , unique: true},
   name: {type: String, required: true, default: "Student"},
   // num attempts and percent correct for each topic
   accuracy: { type: Number, default: 0, required: true },
   numQuestions: { type: Number, default: 0, required: true },
   numCorrect: { type: Number, default: 0, required: true },
-  attemptsSummary: [
+  topicSummary: [
     {
       topic: { type: String, required: true},
       numQuestions: { type: Number, default: 0, required: true },
@@ -16,6 +16,7 @@ const UserDataSchema = new Schema({
       accuracy: { type: Number, default: 0, required: true },
       totalTime: { type: Number, default: 0, required: true },
       attemptedQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
+      correctQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
     },
   ],
 });

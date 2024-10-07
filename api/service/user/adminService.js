@@ -1,21 +1,9 @@
-import attemptRepo from "../../database/repository/user/attemptRepo.js";
 import userDataRepo from "../../database/repository/user/userDataRepo.js";
+import questionRepo from "@/database/repository/questions/questionRepo.js";
 
-/**
- * Data to display:
- * - Total Attempts
- * - Total Accuracy
- * Each Topic:
- * - Total Attempts
- * - Total Accuracy
- * Student analytics:
- * - Show all students who has attempted a question in this topic
- * - Show numAttempts, accuracy, totalTime
- */
-
-async function calculateTotalAccuracy(dbName) {
+async function calculateTotalAccuracy(questionsDbName) {
   try {
-    const accuracy = await attemptRepo.getTotalAccuracy(dbName);
+    const accuracy = await questionRepo.getTotalAccuracy(questionsDbName);
     return accuracy;
   } catch (e) {
     console.error("Error calculating total accuracy:", e);
@@ -23,29 +11,19 @@ async function calculateTotalAccuracy(dbName) {
   }
 }
 
-async function calculateTotalAttempts(dbName) {
+async function calculateTotalQuestions(questionsDbName) {
   try {
-    const attempts = await attemptRepo.getTotalNumAttempts(dbName);
-    return attempts;
+    const questions = await questionRepo.getTotalNumQuestions(questionsDbName);
+    return questions;
   } catch (e) {
     console.error("Error calculating total attempts:", e);
     return 0;
   }
 }
 
-// async function calculateAverageTime(dbName) {
-//   try {
-//     const averageTime = await attemptRepo.getAverageTime(dbName);
-//     return averageTime;
-//   } catch (e) {
-//     console.error("Error calculating average time:", e);
-//     return 0;
-//   }
-// }
-
-async function calculateTopicAnalytics(dbName) {
+async function calculateTopicAnalytics(questionsDbName) {
   try {
-    const topicsAnalytics = await attemptRepo.getTopicsAnalytics(dbName);
+    const topicsAnalytics = await questionRepo.getTopicsAnalytics(questionsDbName);
     return topicsAnalytics;
   } catch (e) {
     console.error("Error calculating topic analytics:", e);
@@ -55,33 +33,30 @@ async function calculateTopicAnalytics(dbName) {
 
 const adminService = {
   // Summarises all information to display to the admin: accuracy, totalAttempts of EVERYONE
-  summariseInfo: async (dbName) => {
+  summariseInfo: async (questionsDbName) => {
     try {
       // for EVERYONE
-      const accuracy = await calculateTotalAccuracy(dbName);
-      const totalAttempts = await calculateTotalAttempts(dbName);
-      // const averageTime = await calculateAverageTime(dbName);
+      const accuracy = await calculateTotalAccuracy(questionsDbName);
+      const totalQuestions = await calculateTotalQuestions(questionsDbName);
       return {
         success: true,
         message: "Successfully summarised information",
         summary: {
           accuracy: accuracy,
-          totalAttempts: totalAttempts,
-          // averageTime: averageTime,
+          numQuestions: totalQuestions,
         },
       };
     } catch (e) {
       return {
         success: false,
         message: e.message,
-        error: e,
       };
     }
   },
 
-  summariseTopicsInfo: async (dbName) => {
+  summariseTopicsInfo: async (usersDbName, questionsDbName) => {
     try {
-      const topicsAnalytics = await calculateTopicAnalytics(dbName);
+      const topicsAnalytics = await calculateTopicAnalytics(questionsDbName);
       if (!topicsAnalytics || topicsAnalytics.length === 0) {
         return {
           success: false,
@@ -92,7 +67,7 @@ const adminService = {
       const result = [];
 
       for (const topicData of topicsAnalytics) {
-        const userData = await userDataRepo.getUserSummaryOfTopic(topicData.topic, dbName);
+        const userData = await userDataRepo.getUserSummaryOfTopic(topicData.topic, usersDbName);
         if (!userData) {
           return {
             success: false,

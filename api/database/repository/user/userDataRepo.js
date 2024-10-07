@@ -1,38 +1,40 @@
 import dotenv from 'dotenv';
 import { getDatabaseConnection } from '../../connection.js';
 import UserDataSchema from '../../model/user/userDataModel.js';
+import { c } from 'vite/dist/node/types.d-aGj9QkWt.js';
 
 dotenv.config();
 
-const getUserDataModel = async (dbName) => {
+const getUserDataModel = async (usersDbName) => {
   const userDataCollection = process.env.USER_DATA_COLLECTION;
   if (!userDataCollection) {
     throw new Error("User data collection is not defined in env file");
   }
-  const dbConnection = await getDatabaseConnection(dbName);
+  const dbConnection = await getDatabaseConnection(usersDbName);
   return dbConnection.model(userDataCollection, UserDataSchema);
 }
 
 const userDataRepo = {
   // -------------------------------------FOR USER ANALYTICS-------------------------------------
-  getUserData: async (cookieID, dbName) => {
+  getUserData: async (userID, usersDbName) => {
     try {
-      const userDataModel = await getUserDataModel(dbName);
+      const userDataModel = await getUserDataModel(usersDbName);
       const result = await userDataModel.aggregate([
-        { $match: { cookieID: cookieID } },
+        { $match: { userID: userID } },
         {
           $project: {
             _id: 0,
-            cookieID: 1,
+            userID: 1,
+            name: 1,
             accuracy: 1,
-            numAttempts: 1,
-            attemptsSummary: {
+            numQuestions: 1,
+            topicSummary: {
               $map: {
-                input: "$attemptsSummary",
+                input: "$topicSummary",
                 as: "summary",
                 in: {
                   topic: "$$summary.topic",
-                  numAttempts: "$$summary.numAttempts",
+                  numQuestions: "$$summary.numQuestions",
                   accuracy: "$$summary.accuracy",
                   attemptedQuestions: {
                     $slice: ["$$summary.attemptedQuestions", -5] // return up to 5 most recent questions
@@ -51,47 +53,32 @@ const userDataRepo = {
   },
 
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
-
-  /**
-   * Uses the mongodb aggregation pipeline to get the data for all users according to topic
-   * @param {string} topic
-   * @returns an array of Objects. For example, for topic DataFrame, there are users 1234, 1235, 1236 who has attempted: 
-   * [
-    * {
-    *  cookieID: 1234,
-    *  numAttempts: 10,
-    *  accuracy: 80,
-    *  totalTime: 80,
-    * }, 
-   * .....
-   * ]
-   */
-  getUserSummaryOfTopic: async (topic, dbName) => {
+  getUserSummaryOfTopic: async (topic, usersDbName) => {
     try {
-      const userDataModel = await getUserDataModel(dbName);
+      const userDataModel = await getUserDataModel(usersDbName);
       const result = await userDataModel.aggregate([
         {
           // splits the attemptsSummary array into separate documents
-          $unwind: "$attemptsSummary"
+          $unwind: "$topicSummary"
         },
         {
           $match: {
             // user's topic matches what is given
-            "attemptsSummary.topic": topic,
-            "attemptsSummary.numAttempts": { $gt: 0 } // greater than 0 (they have attempted at least one question)
+            "topicSummary.topic": topic,
+            "topicSummary.numQuestions": { $gt: 0 } // greater than 0 (they have attempted at least one question)
           }
         },
         {
           $project: {
-            cookieID: 1,
-            numAttempts: "$attemptsSummary.numAttempts",
-            accuracy: "$attemptsSummary.accuracy",
-            totalTime: "$attemptsSummary.totalTime",
+            userID: 1,
+            numQuestions: "$topicSummary.numQuestions",
+            accuracy: "$topicSummary.accuracy",
+            totalTime: "$topicSummary.totalTime",
           }
         },
         {
           // sort so the top users are at the top
-          $sort: { "attemptsSummary.numAttempts": -1 }
+          $sort: { "topicSummary.numQuestions": -1 }
         }
       ])
       return result;
@@ -102,45 +89,101 @@ const userDataRepo = {
   },
 
   // -------------------------------------UPDATES-------------------------------------
-  updateUserAnalytics: async (cookieID, topic, correct, time, questionID, dbName) => {
+  newUserID: async (usersDbName) => {
     try {
-      const userDataModel = await getUserDataModel(dbName);
+      const userDataModel = await getUserDataModel(usersDbName);
+      const result = await userDataModel.countDocuments();
+      return result + 1;
+    } catch (e) {
+      console.error("Error getting new user ID:", e);
+      throw e;
+    }
+  },
+
+  changeUsername: async (userID, newUsername, usersDbName) => {
+    try {
+      const userDataModel = await getUserDataModel(usersDbName);
       return await userDataModel.updateOne(
-        { cookieID: cookieID },
-        {
-          $inc: {
-            numAttempts: 1,
-            numCorrect: correct ? 1 : 0,
-            "$attemptsSummary.$[element].numAttempts": 1,
-            "$attemptsSummary.$[element].numCorrect": correct ? 1 : 0,
-            "$attemptsSummary.$[element].totalTime": time,
-          },
-          $set: {
-            accuracy: {
-              $cond: [
-                { $eq: ["$numAttempts", 0] }, 0,
-                { $round: [{$multiply: [{ $divide: ["$numCorrect", "$numAttempts"] }, 100] }]} // percentage
-              ]
-            },
-            "$attemptsSummary.$[element].accuracy": {
-              $cond: [
-                { $eq: ["$attemptsSummary.$[element].numAttempts", 0] }, 0,
-                { $round: [{$multiply: [{ $divide: ["$attemptsSummary.$[element].numCorrect", "$attemptsSummary.$[element].numAttempts"] }, 100] }]} // percentage
-              ]
+        { userID: userID },
+        { name: newUsername }
+      );
+    } catch (e) {
+      console.error("Error changing username:", e);
+      throw e;
+    }
+  },
+
+  updateUserAnalytics: async (userID, topic, correct, time, questionID, usersDbName) => {
+    try {
+      const userDataModel = await getUserDataModel(usersDbName);
+      return await userDataModel.updateOne(
+        { userID: userID },
+        [
+          {
+            $set: {
+              topicSummary: {
+                $map: {
+                  input: "$topicSummary",
+                  as: "summary",
+                  in: {
+                    $cond: {
+                      if: { $eq: ["$$summary.topic", topic] },
+                      then: {
+                        topic: "$$summary.topic",
+                        attemptedQuestions: {
+                          $addToSet: { questionID: questionID } // Adding to set for attemptedQuestions
+                        },
+                        correctQuestions: {
+                          $cond: {
+                            if: { $eq: [correct, true] },
+                            then: { $addToSet: { questionID: questionID } }, // add only if correct
+                            else: "$$REMOVE" // dont add
+                          }
+                        },
+                        totalTime: { $add: ["$$summary.totalTime", time] },
+                        numCorrect: { $size: "$$summary.correctQuestions" },
+                        numQuestions: { $size: "$$summary.attemptedQuestions" },
+                        accuracy: {
+                          $cond: [
+                            { $eq: [{ $size: "$$summary.attemptedQuestions" }, 0] }, 0,
+                            { $round: [{$multiply: [{ $divide: [
+                              { $size: "$$summary.correctQuestions" }, { $size: "$$summary.attemptedQuestions" }
+                            ] }, 100] }]} // percentage
+                          ]
+                        }
+                      },
+                      else: "$$summary" // return the original document
+                    }
+                  }
+                }
+              },
+              numQuestions: {
+                $reduce: {
+                  input: "$topicSummary",
+                  initialValue: 0,
+                  in: { $add: ["$$value", "$$this.numQuestions"] } // Sum all numQuestions in each topic
+                }
+              },
+              accuracy: {
+                $cond: [
+                  { $eq: ["$numQuestions", 0] }, 0, // if no questions, accuracy is 0
+                  { $round: [{$multiply: [{ $divide: [
+                    {$reduce: {
+                      input: "$topicSummary",
+                      initialValue: 0,
+                      in: { $add: ["$$value", "$$this.numCorrect"] } // Sum all numCorrect in each topic
+                    }}, 
+                    {$reduce: {
+                      input: "$topicSummary",
+                      initialValue: 0,
+                      in: { $add: ["$$value", "$$this.numQuestions"] } // Sum all numQuestions in each topic
+                    }}
+                  ] }, 100] }]} // percentage
+                ]
+              }
             }
-          },
-          $push: {
-            "$attemptsSummary.$[element].attemptedQuestions": { questionID: questionID }
-          },
-        },
-        {
-          arrayFilters: [
-            // the element has to have the same topic as the one we are updating
-            {
-              "element.topic": topic
-            }
-          ]
-        }
+          }
+        ]
       );
     } catch (e) {
       console.error("Error updating user data:", e);

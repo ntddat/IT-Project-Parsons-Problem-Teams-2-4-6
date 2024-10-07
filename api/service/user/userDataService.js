@@ -2,9 +2,54 @@ import userDataRepo from "../../database/repository/user/userDataRepo.js";
 import questionRepo from "../../database/repository/questions/questionRepo.js";
 
 const userDataService = {
-  getUserData: async (cookieID, dbName) => {
+  newUserID: async (usersDbName) => {
     try {
-      const user = await userDataRepo.getUserData(cookieID, dbName);
+      const userID = await userDataRepo.newUserID(usersDbName);
+      if (!userID) {
+        return {
+          success: false,
+          message: "Error generating new user ID",
+        };
+      }
+      return {
+        success: true,
+        message: "New user ID generated successfully",
+        userID: userID,
+      };
+    } catch (e) {
+      console.error("Error generating new user ID:", e);
+      return {
+        success: false,
+        message: e.message,
+      };
+    }
+  },
+
+  changeUsername: async (userID, newUsername, usersDbName) => {
+    try {
+      const result = await userDataRepo.changeUsername(userID, newUsername, usersDbName);
+      if (!result.acknowledged) {
+        return {
+          success: false,
+          message: "Error changing username",
+        };
+      }
+      return {
+        success: true,
+        message: "Username changed successfully",
+      };
+    } catch (e) {
+      console.error("Error changing username:", e);
+      return {
+        success: false,
+        message: e.message,
+      };
+    }
+  },
+
+  getUserData: async (userID, usersDbName) => {
+    try {
+      const user = await userDataRepo.getUserData(userID, usersDbName);
       if (!user) {
         return {
           success: false,
@@ -27,14 +72,14 @@ const userDataService = {
     }
   },
 
-  addQuestionDetailsToUserData: async (userData, dbName) => {
+  addQuestionDetailsToUserData: async (userData, questionsDbName) => {
     try {
       // squash everything into a giant list of questionIDs
       const allQuestionIDs = userData.attemptsSummary.reduce((acc, topic) => {
         return acc.concat(topic.attemptedQuestions.map(question => question.questionID));
       }, []); // accumulate all question IDs into this empty array
 
-      const questionDetails = await questionRepo.getQuestionDetailsFromArray(allQuestionIDs, dbName); // fetch everything
+      const questionDetails = await questionRepo.getQuestionDetailsFromArray(allQuestionIDs, questionsDbName); // fetch everything
 
       const questionDetailsMap = questionDetails.reduce((acc, question) => {
         acc[question.questionID] = question;
@@ -66,17 +111,16 @@ const userDataService = {
     }
   },
 
-  updateUserAnalytics: async (cookieID, analytics, dbName) => {
+  updateUserAnalytics: async (userID, topic, correct, time, questionID, usersDbName) => {
     try {
-      const { topic, correct, time, questionID } = analytics;
-      if (!cookieID || !topic || correct === undefined || time === undefined || !questionID) {
+      const result = await userDataRepo.updateUserAnalytics(userID, topic, correct, time, questionID, usersDbName);
+      if (!result.acknowledged) {
         return {
           success: false,
-          message: "Please provide a valid cookieID, topic, correct, time, and questionID",
+          message: "Error updating user analytics",
         };
       }
 
-      const result = await userDataRepo.updateUserAnalytics(cookieID, topic, correct, time, questionID, dbName);
       return {
         success: true,
         message: "User analytics updated successfully",
