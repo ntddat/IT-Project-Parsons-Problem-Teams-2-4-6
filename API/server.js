@@ -35,7 +35,6 @@ establishConnection();
 // Constants
 const port = 8383
 
-
 app.use(expressStatic('App'))
 //Expects to receive json in the app.post method
 app.use(json())

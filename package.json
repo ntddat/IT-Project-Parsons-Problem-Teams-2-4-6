@@ -17,7 +17,7 @@
     "string-format": "^2.0.0",
     "vue": "^3.4.29",
     "vue-router": "^4.4.3",
-    "express-session": "^1.17.2"
+    "express-session": "^1.18.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

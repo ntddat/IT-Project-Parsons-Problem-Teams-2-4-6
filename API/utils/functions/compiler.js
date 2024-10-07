@@ -20,12 +20,12 @@ export function syntaxCheck(code) {
    */
   // Running the response through python interpreter
   //try {
-    //let pyShell = new PythonShell("script.py", { mode: 'text' });
-    //
-    //// Printing the output
-    //pyShell.on('message', function(message) {
-    //  console.log("Output: " + message);
-    //});
+    // let pyShell = new PythonShell("script.py", { mode: 'text' });
+
+    // // Printing the output
+    // pyShell.on('message', function(message) {
+    //   console.log("Output: " + message);
+    // });
   // } catch (error) {
   //   throw new Error("Failed to run gemini's python response through interpreter");
   // }
@@ -53,16 +53,33 @@ export function syntaxCheck(code) {
 
 export function syntaxCheck(code) {
 
+  // return new Promise(function(resolve, reject) {
+  //   PythonShell.runString(code, null).then(messages=>{
+  //     resolve(true);
+  //   })
+  //   .catch(err=>{
+  //     console.log(err);
+  //     resolve(false);
+  //   });
+  // });
+
   return new Promise(function(resolve, reject) {
-    PythonShell.runString(code, null).then(messages=>{
-      resolve(true);
-    })
-    .catch(err=>{
-      console.log(err);
-      resolve(false);
+    // End the input stream and allow the process to exit
+    pyShell.end(function(err, code, signal) {
+      console.log('The exit code was: ' + code);
+      console.log('The exit signal was: ' + signal);
+      console.log('finished');
+      if (err) {
+        console.error("The error is:\n" + err);
+        resolve(false);
+      }
+      else {
+        console.log("gemini's python code run successfully!\n");
+        resolve(true);
+      }
+      
     });
   });
-
 }
 
 export function createCSV(csvStr, csvName) {
@@ -77,6 +94,7 @@ export function createCSV(csvStr, csvName) {
   writeFile(csvName, csvStr, 'utf8', function (err) {
     if (err) {
       console.error("Creating CSV file failed!");
+      throw new Error("Creating CSV file failed!");
     }
     else {
       console.log("Creating CSV file succeeded!");
