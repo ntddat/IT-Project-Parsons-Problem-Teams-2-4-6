@@ -80,7 +80,7 @@
                 <li  v-for="(item, index) in topicSummary" :key="index" >
                 <div @click="questionDropdown(index)" class="history-item">
                     <div class="history-topic">
-                        <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
+                        <img class="tubiao" src="/App/tubiao.png" /> {{ item.Topic }}
                     </div>
                     <div class="history-practice">
                         {{ item.numQuestions }}
@@ -167,20 +167,18 @@
 </template>
 
 <script>
-import {getCookie, setCookie} from "../libs/cookie.js"
+// import {getCookie, setCookie} from "../libs/cookie.js"
 
 export default {
     mounted () {
-        const ignoreCookie = (this.$route.query.ignoreCookie);
+        const isAdmin = (this.$route.query.isAdmin);
         this.userID = this.$route.query.userID
-            console.log("ignoreCookie: " + ignoreCookie + " ,UserID: " + this.userID)
+            // console.log("ignoreCookie: " + isAdmin + " ,UserID: " + this.userID)
             // console.log(typeof(ignoreCookie))
-        if (ignoreCookie == "Yes") {
-            this.acceptCookie = true
-        } 
-        else {
-            this.checkCookie()
-        }
+            console.log("isAdmin: "+ isAdmin)
+            console.log("in cookie-acception: " + this.$cookies.get('acception'))
+        this.acceptCookie = isAdmin || this.$cookies.get('acception')
+            console.log("acceptCookie: " + this.acceptCookie)
     },
     data() {
         return {
@@ -295,19 +293,20 @@ export default {
         };
     },
     methods: {
-        checkCookie() {
-            const acception = getCookie("acception")
-            if (acception == "true") {
-                // console.log("acception is false")
-                this.acceptCookie = true
-            } else {
-                console.log(acception + " acception is false or does not exist")
-                this.acceptCookie = false
-            }
-        },
+        // checkCookie() {
+        //     const acception = getCookie("acception")
+        //     if (acception == "true") {
+        //         // console.log("acception is false")
+        //         this.acceptCookie = true
+        //     } else {
+        //         console.log(acception + " acception is false or does not exist")
+        //         this.acceptCookie = false
+        //     }
+        // },
         accept() {
             this.acceptCookie = true,
-            setCookie("acception", "true", 5)
+            // setCookie("acception", "true", 5)
+            this.$cookies.set('acception', 'true', '10s');
         },
         questionDropdown(index) {
         this.topicSummary[index].isExpanded = !this.topicSummary[index].isExpanded;

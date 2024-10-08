@@ -17,6 +17,7 @@
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
+        <div @click="cleanCookies" class="nav-link">Clean</div>
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
         <div @click="historyBotton" class="nav-link">History</div>
       </div>
@@ -79,8 +80,8 @@
 
 <script>
 import axios from 'axios';
-import {getCookie, setCookie} from "../libs/cookie.js"
-import { getUserID } from "../libs/user.js"
+// import {getCookie, setCookie} from "../libs/cookie.js"
+// import { getUserID } from "../libs/user.js"
 
 export default {
   name: 'Generator',
@@ -124,34 +125,47 @@ export default {
 
   mounted () {
       this.checkPopUp();
-      const userID = getUserID()
-      console.log(userID)
+      // const userID = getUserID()
+      // console.log(userID)
   },
   // -----------------------
   methods: {
+    cleanCookies() {
+      this.$cookies.remove('acception');
+      this.$cookies.remove('userID');
+    },
+
     historyBotton() {
       this.$router.push({
         path: '/History',
         query: {
-          ignoreCookie: "No",
-          userID: getCookie("userID")
+          isAdmin: true,
+          // userID: getCookie("userID")
+          userID: this.$cookies.get('userID')
+
         }
       })
     },
     // cookie pop up 
     accept() {       // handle acceptance
       this.showPopUp = false;
-      setCookie("acception", "true", 5)
-      setCookie("userID", "114", 60)
+      // setCookie("acception", "true", 5)
+      this.$cookies.set('acception', true, '10s');
+
+      // setCookie("userID", "114", 60)
+      this.$cookies.set('userID', 114, '10s');
+
     },
     reject() {       // handle rejection
       this.showPopUp = false;
-      setCookie("acception", "false", 5)
-      console.log(getCookie("acception"))
+      // setCookie("acception", "false", 5)
+      this.$cookies.set('acception', false, '10s');
+      // console.log(getCookie("acception"))
     },
     checkPopUp() {
-      const acception = getCookie("acception")
-      if (acception == "") {
+      const acception = this.$cookies.isKey("acception")
+
+      if (!acception) {
         console.log("acception not exist: ")
         this.showPopUp = true
       }
