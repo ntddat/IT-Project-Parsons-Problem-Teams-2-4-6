@@ -71,7 +71,7 @@
       </div>
     </div>
     <div v-if="loading" class="loading-overlay">
-      <img src="../loading3.gif" width="50" height="50"lass="loading-icon"/>
+      <img src="../loading3.gif" width="50" height="50" lass="loading-icon"/>
       <p class="loading-text">{{ loadingWord }}</p>
     </div>
   </div>
@@ -182,28 +182,43 @@ export default {
       }
     },
     sendData() {
-      const payload = {
+      var payload;
+      if (this.$cookies.isKey("userID")) {
+        payload = {
+        topic: this.selectedTopic,
+        context: this.selectedContext,
+        userID : this.$cookies.get("userID"),
+        };
+      } else {
+        payload = {
         topic: this.selectedTopic,
         context: this.selectedContext
-      };
+        };
+      }
+       
       console.log('Sending data to backend:', payload);
 
       this.loading = true;
 
-      axios.post('http://localhost:8383/api/sendData', payload, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      axios.get('http://localhost:8383/api/getData', {
+        params: payload
       })
       .then(response => {
-        console.log('Data sent successfully:', response.data);
+        //console.log('Data received successfully:', response.data);
+        
+
+        // Push to Problem page, passing the received data via query parameters
         this.$router.push({ 
           path: '/Problem', 
-          query: { topic: this.selectedTopic, context: this.selectedContext }
+          query: { 
+            response: response,  // assuming the result is in response.data.result
+            topic: this.selectedTopic, 
+            context: this.selectedContext 
+          }
         });
       })
       .catch(error => {
-        console.error('Error sending data:', error);
+        console.error('Error fetching data:', error);
       })
       .finally(() => {
         this.loading = false; 

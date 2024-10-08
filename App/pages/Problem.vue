@@ -113,46 +113,8 @@
                 "print('Parsons')\n" +
                 "print('problems!')";                          
                       
-    let samples = [
-        // Sample 1: For loop with a list
-        () => {
-        const lists = {
-            fruits: "['apple', 'banana', 'cherry']",
-            animals: "['dog', 'cat', 'rabbit']",
-            cities: "['New York', 'London', 'Tokyo']"
-        };
-        const listName = getRandomElement(Object.keys(lists));
-        return `${listName} = ${lists[listName]}\n` +
-                `for item in ${listName}:\n` +
-                `  print(item)`;
-        },
 
-        // Sample 2: While loop with a counter
-        () => {
-        const counters = ['i', 'count', 'index'];
-        const limit = Math.floor(Math.random() * 10) + 1; // Random limit between 1 and 10
-        const counter = getRandomElement(counters);
-        return `${counter} = 0\n` +
-                `while ${counter} < ${limit}:\n` +
-                `  print(${counter})\n` +
-                `  ${counter} += 1`;
-        },
 
-        // Sample 3: Function to print items from a list
-        () => {
-        const lists = {
-            colors: "['red', 'green', 'blue']",
-            shapes: "['circle', 'square', 'triangle']",
-            cars: "['BMW', 'Toyota', 'Tesla']"
-        };
-        const listName = getRandomElement(Object.keys(lists));
-        return `def print_items(items):\n` +
-                `  for item in items:\n` +
-                `    print(item)\n\n` +
-                `${listName} = ${lists[listName]}\n` +
-                `print_items(${listName})`;
-        }
-    ];
 
     //let startTime;
     let intervalId;
@@ -161,7 +123,8 @@
     export default {
         data() {
             return {
-                
+                topic : '',
+                context : '' ,
             }
         },
         
@@ -173,8 +136,9 @@
         mounted() {
             this.midDragControllerDiv();
             this.horDragControllerDiv();
-            this.fetchStrings(); // Fetch initial strings on mount
+            //this.fetchStrings(); // Fetch initial strings on mount
             this.startTimer(); 
+            this.testInitializer();
         },
     
         methods: {
@@ -254,7 +218,17 @@
                     document.body.style.cursor = 'default';
                 });
             },
-            
+            initializer(){
+                this.topic = this.$route.query.topic;
+                this.context = this.$route.query.context;
+                var data =  this.$route.query.response.json;
+                //todo uncomment below code after merging with new server
+                //initialCode = data.question
+                initialCode = data.info.Code; // Update initial code
+                document.getElementById('questiondescription').textContent = data.info.Description;
+                document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
+                this.initializeParsonsWidget(initialCode); // Initialize Parsons widget with fetched code
+            },
 
             startTimer() {
                 elapsedTime = 0;
@@ -320,7 +294,26 @@
                     console.error('Error:', error);
                 }
             },
-
+            async testInitializer(){
+                const outputElement = document.getElementById('output');
+    
+                try {
+                    const response = await fetch('http://localhost:8383/info');
+    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+    
+                    const data = await response.json();
+                    initial = data.info.Code; // Update initial code
+                    document.getElementById('questiondescription').textContent = data.info.Description;
+                    // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
+                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
+                } catch (error) {
+                    console.error('Error fetching strings:', error);
+                    outputElement.textContent = 'Error fetching strings: ' + error.message;
+                }
+            },
             //todo 摆了
             async fetchStrings() {
                 const outputElement = document.getElementById('output');
