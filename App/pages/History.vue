@@ -177,7 +177,7 @@ export default {
             // console.log(typeof(ignoreCookie))
             console.log("isAdmin: "+ isAdmin)
             console.log("in cookie-acception: " + this.$cookies.get('acception'))
-        this.acceptCookie = isAdmin || this.$cookies.get('acception')
+        this.acceptCookie = isAdmin == 'true' || (this.$cookies.get('acception') == 'true')
             console.log("acceptCookie: " + this.acceptCookie)
     },
     data() {
