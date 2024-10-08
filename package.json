@@ -17,6 +17,7 @@
     "python-shell": "5.0.0",
     "string-format": "^2.0.0",
     "vue": "^3.4.29",
+    "vue-cookies": "^1.8.4",
     "vue-router": "^4.4.3"
   },
   "devDependencies": {
