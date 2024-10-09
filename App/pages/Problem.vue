@@ -1,4 +1,5 @@
 <template>
+    
     <body>
         <!-- 导航 + 计时 -->
         <div id=" top-panel">
@@ -120,11 +121,14 @@
     let intervalId;
     let elapsedTime;
     let timerLock = false;
+    import axios from 'axios';
     export default {
         data() {
             return {
                 topic : '',
                 context : '' ,
+                questionID : '',
+                loading: false,
             }
         },
         
@@ -138,7 +142,7 @@
             this.horDragControllerDiv();
             //this.fetchStrings(); // Fetch initial strings on mount
             this.startTimer(); 
-            this.testInitializer();
+            this.initializer();
         },
     
         methods: {
@@ -221,12 +225,17 @@
             initializer(){
                 this.topic = this.$route.query.topic;
                 this.context = this.$route.query.context;
-                var data =  this.$route.query.response.json;
+                var data =  JSON.parse(this.$route.query.response);
                 //todo uncomment below code after merging with new server
                 //initialCode = data.question
-                initialCode = data.info.Code; // Update initial code
-                document.getElementById('questiondescription').textContent = data.info.Description;
-                document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
+                this.questionInitializer(data);
+                
+            },
+            questionInitializer(data){
+                const initialCode = data.question.Code; // Update initial code
+                this.questionID = data.questionID;
+                document.getElementById('questiondescription').textContent =data.question.Description;
+                document.getElementById('topicdescription').textContent = data.question.ExpectedOutput;
                 this.initializeParsonsWidget(initialCode); // Initialize Parsons widget with fetched code
             },
 
@@ -294,52 +303,12 @@
                     console.error('Error:', error);
                 }
             },
-            async testInitializer(){
-                const outputElement = document.getElementById('output');
-    
-                try {
-                    const response = await fetch('http://localhost:8383/info');
-    
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-    
-                    const data = await response.json();
-                    initial = data.info.Code; // Update initial code
-                    document.getElementById('questiondescription').textContent = data.info.Description;
-                    // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
-                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
-                } catch (error) {
-                    console.error('Error fetching strings:', error);
-                    outputElement.textContent = 'Error fetching strings: ' + error.message;
-                }
-            },
-            //todo 摆了
-            async fetchStrings() {
-                const outputElement = document.getElementById('output');
-    
-                try {
-                    const response = await fetch('http://localhost:8383/api/question/getQuestion');
-    
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-    
-                    const data = await response.json();
-                    initial = data.info.Code; // Update initial code
-                    document.getElementById('questiondescription').textContent = data.info.Description;
-                    // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
-                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
-                } catch (error) {
-                    console.error('Error fetching strings:', error);
-                    outputElement.textContent = 'Error fetching strings: ' + error.message;
-                }
-            },
+            
+            
+            
             //todo regenerate-btn 的功能
             //todo window-regenerate-btn 的功能
-            getRandomElement(arr) {
-                return arr[Math.floor(Math.random() * arr.length)];
-            },
+            
 
             async regenerateTester(){
                 this.regenerate();
@@ -347,34 +316,41 @@
             },
 
             async regenerate(){
-                const url = 'http://localhost:8383/api/question/generateQuestion'; // Replace with your actual backend URL if deployed
-
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        topic: this.topic  ,
-                        context: this.context
-                    })
-                };
-
-                try {
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-    
-                    const data = await response.json();
-                    //initial = data.info.Code; // Update initial code
-                    document.getElementById('questiondescription').textContent = data.info.Description;
-                    // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
-                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
-                    
-                } catch (error) {
-                    console.error('Error:', error);
+                var payload;
+                if (this.$cookies.isKey("userID")) {
+                    payload = {
+                    topic: this.topic,
+                    context: this.context,
+                    userID : this.$cookies.get("userID"),
+                    };
+                } else {
+                    payload = {
+                    topic: this.topic,
+                    context: this.context
+                    };
                 }
+                
+                console.log('Sending data to backend:', payload);
+
+                this.loading = true;
+
+                axios.get('http://localhost:8383/api/question/generateQuestion', {
+                    params: payload,  // This sends topic, context, and userID as query parameters
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    //console.log('Data received successfully:', response.data);
+                    // Push to Problem page, passing the received data via query parameters
+                    this.questionInitializer(response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                })
+                .finally(() => {
+                    this.loading = false; 
+                });
             },
 
 
@@ -422,17 +398,17 @@
 
             //sending the result back to server
             //add more parameters
-            async sendAttempt(correct){
-                return;
-                //console.log(correct);
-                //todo change this to variables
-                //maybe use what is query to this page
+            async sendAttempt(correctness){
+                if(this.$cookies.get('acception') !== 'true'){
+                    return;
+                }
+                //todo change time to a variable
                 var pack = {
-                    questionNo: 1,
-                    studentId : 1,
-                    correctness : correct,
+                    questionID: this.questionID,
+                    studentId : this.$cookies.get('userID'),
+                    correct : correctness,
                     time : 1,
-                    topic : 1
+                    topic : this.topic
                 }
                 //this.refreshTimer();
                 const url = 'http://localhost:8383/api/question/submitAttempt'; // Replace with your actual backend URL if deployed
@@ -581,36 +557,10 @@
             },
 
 
-            //modified runCode, now does not automatically print output
+           
             
 
-            //this should be abandoned
-            async fetchResult(token) {
-                const resultUrl = `https://judge0-ce.p.rapidapi.com/submissions/${token}?base64_encoded=false&fields=*`;
-                const resultOptions = {
-                    method: 'GET',
-                    headers: {
-                        'x-rapidapi-key': 'a049464516msh0e7cc0897a082f0p19e4d0jsne39e0fb32884',
-                        'x-rapidapi-host': 'judge0-ce.p.rapidapi.com'
-                    }
-                };
-                try {
-                    let isPending = true;
-                    while (isPending) {
-                        const resultResponse = await fetch(resultUrl, resultOptions);
-                        const resultData = await resultResponse.json();
-                        if (resultData.status.description === "In Queue" || resultData.status.description === "Processing") {
-                            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-                        } else {
-                            isPending = false;
-                            //console.log(resultData);
-                            document.getElementById('output').textContent = resultData.stdout || resultData.stderr;
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error fetching result:', error);
-                }
-            }
+            
         }
       }
     </script>

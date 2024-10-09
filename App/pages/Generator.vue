@@ -151,10 +151,10 @@ export default {
     accept() {       // handle acceptance
       this.showPopUp = false;
       // setCookie("acception", "true", 5)
-      this.$cookies.set('acception', true, '10s');
+      this.$cookies.set('acception', true, '1d');
 
       // setCookie("userID", "114", 60)
-      this.$cookies.set('userID', 114, '10s');
+      this.$cookies.set('userID', 114, '1d');
 
     },
     reject() {       // handle rejection
@@ -230,7 +230,7 @@ export default {
         this.$router.push({ 
           path: '/Problem', 
           query: { 
-            response: response,  // assuming the result is in response.data.result
+            response: JSON.stringify(response.data),  // assuming the result is in response.data.result
             topic: this.selectedTopic, 
             context: this.selectedContext 
           }
