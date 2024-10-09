@@ -233,6 +233,7 @@
             },
             questionInitializer(data){
                 const initialCode = data.question.Code; // Update initial code
+                
                 this.questionID = data.questionID;
                 document.getElementById('questiondescription').textContent =data.question.Description;
                 document.getElementById('topicdescription').textContent = data.question.ExpectedOutput;

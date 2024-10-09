@@ -200,6 +200,10 @@ export default {
       }
     },
     sendData() {
+      if (!this.selectedTopic || !this.selectedContext) {
+        alert('Please select both a topic and a context before proceeding.');
+        return; // Stop execution if no topic or context is selected
+      }
       var payload;
       if (this.$cookies.isKey("userID")) {
         payload = {
