@@ -14,7 +14,17 @@ const questionService = {
 
   saveNewQuestion: async (questionID, topic, context, questionsDbName) => {
     try {
-       await questionRepo.createNewQuestion(questionID, topic, context, questionsDbName);
+      const createResult = await questionRepo.createNewQuestion(questionID, topic, context, questionsDbName);
+      if (!createResult.acknowledged) {
+        return {
+          success: false,
+          message: 'Error saving a new question',
+        };
+      }
+      return {
+        success: true,
+        message: 'Question saved successfully',
+      };
     } catch (e) {
       console.error('Error saving a new question:', e);
       return {
