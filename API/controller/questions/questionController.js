@@ -12,7 +12,6 @@ const questionController = {
   generateQuestion: async (req, res) => {
     try {
       const { topic, context, userID } = req.query; // Destructure the topic and context from req.body
-  
       if (!topic || !context) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
