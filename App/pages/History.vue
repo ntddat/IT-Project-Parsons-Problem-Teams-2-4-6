@@ -12,7 +12,12 @@
             </div>
         </nav>
 
-        <div id="cont_box" v-if="acceptCookie">
+        <div id="notacceptCookie" v-if="!acceptCookie">
+            <div id="cookie-request">You must accept the cookie if you want check this page</div>
+            <button @click="accept" id="accept-btn">Accept</button>
+        </div>
+        
+        <div id="cont_box" v-else>
             <!-- Profile Section -->
         <div class="profile-container">
                 <div class="profile-header">
@@ -86,7 +91,7 @@
                         {{ item.numQuestions }}
                     </div>
                     <div class="history-accuracy">
-                        {{ item.accuracy }}%
+                        {{ item.Accuracy }}%
                     </div>
                 </div>
                     <!-- Question details -->
@@ -158,11 +163,6 @@
 
 
         </div>
-
-        <div id="notacceptCookie" v-else>
-            <div id="cookie-request">You must accept the cookie if you want check this page</div>
-            <button @click="accept" id="accept-btn">Accept</button>
-        </div>
     </div>
 </template>
 
@@ -172,13 +172,20 @@
 export default {
     mounted () {
         const isAdmin = (this.$route.query.isAdmin);
-        this.userID = this.$route.query.userID
+        // this.userID = this.$route.query.userID
             // console.log("ignoreCookie: " + isAdmin + " ,UserID: " + this.userID)
             // console.log(typeof(ignoreCookie))
             console.log("isAdmin: "+ isAdmin)
             console.log("in cookie-acception: " + this.$cookies.get('acception'))
-        this.acceptCookie = isAdmin == 'true' || (this.$cookies.get('acception') == 'true')
+        this.acceptCookie = (isAdmin == 'true') || (this.$cookies.get('acception') == 'true')
             console.log("acceptCookie: " + this.acceptCookie)
+
+        if (this.acceptCookie && !this.$route.query.userID) {
+            this.userID = this.$cookies.get('userID')
+        }
+        else {
+            this.userID = this.$route.query.userID
+        }
     },
     data() {
         return {
@@ -304,9 +311,12 @@ export default {
         //     }
         // },
         accept() {
-            this.acceptCookie = true,
+            // this.acceptCookie = true,
             // setCookie("acception", "true", 5)
             this.$cookies.set('acception', 'true', '10s');
+            this.$cookies.set('userID', 0, '10s');
+            this.$router.go(0);
+
         },
         questionDropdown(index) {
         this.topicSummary[index].isExpanded = !this.topicSummary[index].isExpanded;
