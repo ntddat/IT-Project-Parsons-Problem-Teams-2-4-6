@@ -14,6 +14,7 @@ const questionService = {
 
   saveNewQuestion: async (questionID, topic, context, questionsDbName) => {
     try {
+      console.log('Saving new question:', questionID, topic, context);
       const createResult = await questionRepo.createNewQuestion(questionID, topic, context, questionsDbName);
       if (!createResult) {
         return {
@@ -36,7 +37,8 @@ const questionService = {
 
   updateQuestionDetails: async (questionID, time, correct, questionsDbName) => {
     try {
-      const updateResults = await questionRepo.updateQuestionDetails(questionID, time, correct, questionsDbName);
+      const newAttemptID = await questionRepo.generateNewAttemptID(questionID, questionsDbName);
+      const updateResults = await questionRepo.updateQuestionDetails(newAttemptID, questionID, time, correct, questionsDbName);
       if (!updateResults.acknowledged) {
         return {
           success: false,

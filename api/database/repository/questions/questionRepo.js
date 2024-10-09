@@ -133,8 +133,19 @@ const questionRepo = {
     }
   },
 
+  generateNewAttemptID: async (questionID, questionsDbName) => {
+    try {
+      const questionModel = await getQuestionModel(questionsDbName);
+      const question = await questionModel.findOne({ questionID: questionID });
+      return question.attempts.length + 1;
+    } catch (e) {
+      console.error("Error generating new attempt ID:", e);
+      throw e;
+    }
+  },
+
   // Updates the details of the question with this questionID
-  updateQuestionDetails: async (questionID, time, correct, questionsDbName) => {
+  updateQuestionDetails: async (attemptID, questionID, time, correct, questionsDbName) => {
     try {
       const questionModel = await getQuestionModel(questionsDbName);
       // Only updates the fields that are present in updatedDetails
@@ -150,7 +161,7 @@ const questionRepo = {
           },
           $push: {
             attempts: {
-              attemptID: { $add: [{ $size: "$attempts" }, 1] },
+              attemptID: attemptID,
               time: time,
               correct: correct,
             }

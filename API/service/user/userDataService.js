@@ -116,6 +116,7 @@ const userDataService = {
   updateUserAnalytics: async (userID, topic, correct, time, questionID, usersDbName) => {
     try {
       const result = await userDataRepo.updateUserAnalytics(userID, topic, correct, time, questionID, usersDbName);
+      console.log('Result of updateUserAnalytics:', result);
       if (!result.acknowledged) {
         return {
           success: false,

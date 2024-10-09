@@ -111,7 +111,7 @@ const userController = {
    * Request: { userID, topic, correct, time, questionID }
    * Response: { success, message }
    */
-  updateUserAnalytics: async (req, res, next) => {
+  updateUserAnalytics: async (req, res) => {
     try {
       const { userID, topic, correct, time, questionID } = req.body;
       if (!userID || !topic || correct === undefined || time === undefined || !questionID) {
@@ -120,6 +120,7 @@ const userController = {
           message: "Please provide a valid userID, topic, correct, time, and questionID",
         };
       }
+      console.log("Updating user analytics for user:", userID, "topic:", topic, "correct:", correct, "time:", time, "questionID:", questionID);
 
       const usersDbName = await getUsersDbName();
 
@@ -130,6 +131,7 @@ const userController = {
           message: result.message
         });
       }
+      console.log("User analytics updated successfully");
 
       return res.status(httpCodes.OK).json({
         success: true,

@@ -146,7 +146,7 @@ const questionController = {
         });
       }
       // next one in the middleware chain (this is actually a middleware!)
-      next();
+      return next();
 
     } catch (e) {
       console.error("Error updating question details:", e);
