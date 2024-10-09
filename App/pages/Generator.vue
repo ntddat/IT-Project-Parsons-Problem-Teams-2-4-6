@@ -217,9 +217,11 @@ export default {
 
       this.loading = true;
 
-      axios.get('http://localhost:8383/api/getData', {
-        params: payload
-      })
+      axios.post('http://localhost:8383/api/question/generateQuestion',payload, {
+        headers: {
+        'Content-Type': 'application/json'
+        }
+        })
       .then(response => {
         //console.log('Data received successfully:', response.data);
         
