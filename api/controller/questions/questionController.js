@@ -25,10 +25,10 @@ const questionController = {
       const questionID = await questionService.generateNewQuestionID(questionsDbName);
       
       const question = await askGemini(topic, context);
-      if (!question) {
+      if (!question.success) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,
-          message: "Error generating question"
+          message: "Error asking Gemini"
         });
       }
 
@@ -45,7 +45,7 @@ const questionController = {
         success: true,
         message: "Question generated successfully",
         questionID: questionID,
-        question: question
+        question: question.fixed_resp
       });
 
     } catch (e) {
