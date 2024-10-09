@@ -193,8 +193,8 @@ export default {
       axios.post('http://localhost:8383/api/question/generateQuestion', payload, {
         headers: {
           'Content-Type': 'application/json'
-        }
-      })
+        }, 
+      }, {withCredentials: true})
       .then(response => {
         console.log('Data sent successfully:', response.data);
         this.$router.push({ 

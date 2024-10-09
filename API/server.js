@@ -19,10 +19,15 @@ app.use(session({
   secret: process.env.SECRET_SESSION_KEY,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Should be true for HTTPS in production
+  cookie: { secure: false },
+  topic: '',
+  context: '',
+  userID: '', // Should be true for HTTPS in production
 }));
 
-app.use(cors());
+app.use(cors({
+  credentials: true,
+}));
 
 // Establishing connection to the database
 establishConnection();

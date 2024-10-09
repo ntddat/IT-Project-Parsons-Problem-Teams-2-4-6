@@ -19,6 +19,12 @@ export const getChatHistory = async (userID, dbName) => {
         {prompt: 1, question:1, _id:0}
     );
 
+    console.log("Database query result:", chatHistory);
+    if (!chatHistory || chatHistory.length === 0) {
+        console.log("No chat history found for userID:", userID);
+        return []; // Return empty array if no history is found
+    }
+
     let transformedHistory = []
     chatHistory.forEach((item) => {
         const user = {
@@ -42,7 +48,7 @@ export const getChatHistory = async (userID, dbName) => {
     });
 
     console.log(transformedHistory);
-    
+    return transformedHistory
 }
 
 

@@ -25,12 +25,35 @@ const questionController = {
       req.session.context = context;
       req.session.userID = userID;
 
-      console.log(req.session);
-    
+      req.session.cookie.maxAge = 10000000000;
+
+      console.log(req.session); 
+      console.log("ssdfsdf")
+      console.log("Session saved successfully.");
+      req.session.save();
       return res.status(httpCodes.OK).json({
-        success: true,
-        message: "Received topic, context, and userID",
+          success: true,
+          message: "Received topic, context, and userID"
+        });
+
+      /*
+      req.session.save((err) => {
+        if (err) {
+          console.error("Error saving session:", err);
+          return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: "Session save error"
+          });
+        }
+  
+        console.log("Session saved successfully.");
+        return res.status(httpCodes.OK).json({
+          success: true,
+          message: "Received topic, context, and userID"
+        });
       });
+        */
+
 
     } catch (e) {
       console.error("Error generating question:", e);
@@ -46,6 +69,7 @@ const questionController = {
   // Response: { success, message, questionID, question }
   getQuestion: async (req, res) => {
     try {
+      console.log("Session object:", req.session);
       const { topic, context, userID } = req.session;
       console.log(req.session.topic);
       console.log(req.session.context);

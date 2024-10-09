@@ -267,7 +267,7 @@
                 const outputElement = document.getElementById('output');
     
                 try {
-                    const response = await fetch('http://localhost:8383/api/question/getQuestion');
+                    const response = await fetch('http://localhost:8383/api/question/getQuestion', {credentials: 'include'});
     
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

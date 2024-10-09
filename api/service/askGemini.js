@@ -15,10 +15,11 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationCo
 async function askGemini(topic, context, userID) {
   // Starting a full chat
   const usersDbName = getUsersDbName();
-  const chatHistory = getChatHistory(userID, usersDbName)
+  const chatHistory = await getChatHistory(userID, usersDbName)
   const chat = model.startChat(chatHistory)
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
+  console.log("Chat History: ", chatHistory);
 
   while (!syntaxPassed) {
     // Generating a new prompt based on the given topic and context
