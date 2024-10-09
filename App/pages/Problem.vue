@@ -998,7 +998,8 @@
         display: flex;
         justify-content: center;
         gap: 20%;
-        margin-bottom: 10px; /* 将按钮组推到区域的底部 */
+        margin-top: 5px;
+        margin-bottom: 5px; 
     }
 
     #button-group i {
