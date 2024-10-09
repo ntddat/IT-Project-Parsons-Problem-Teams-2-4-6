@@ -218,12 +218,12 @@ export default {
 
       this.loading = true;
 
-      axios.get('http://localhost:8383/api/question/generateQuestion',{
-        params: payload,
+      axios.get('http://localhost:8383/api/question/generateQuestion', {
+        params: payload,  // This sends topic, context, and userID as query parameters
         headers: {
-        'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
         }
-        })
+      })
       .then(response => {
         //console.log('Data received successfully:', response.data);
         // Push to Problem page, passing the received data via query parameters
