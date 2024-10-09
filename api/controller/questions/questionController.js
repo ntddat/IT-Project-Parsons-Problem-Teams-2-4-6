@@ -11,7 +11,7 @@ const questionController = {
   // Response: { success, message }
   generateQuestion: async (req, res) => {
     try {
-      const { topic, context } = req.body; // Destructure the topic and context from req.body
+      const { topic, context, userID } = req.body; // Destructure the topic and context from req.body
   
       if (!topic || !context) {
         return res.status(httpCodes.BAD_REQUEST).json({
@@ -19,37 +19,7 @@ const questionController = {
           message: "Please provide a topic and context"
         })
       }
-
-      req.session.topic = topic;
-      req.session.context = context;
     
-      return res.status(httpCodes.OK).json({
-        success: true,
-        message: "Received topic and context",
-      });
-
-    } catch (e) {
-      console.error("Error generating question:", e);
-      return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: e.message
-      });
-    }
-  },
-
-  // Generates a question based on the topic and context stored in the session
-  // Request: {}
-  // Response: { success, message, questionID, question }
-  getQuestion: async (req, res) => {
-    try {
-      const { topic, context } = req.session;
-      if (!topic || !context) {
-        return res.status(httpCodes.BAD_REQUEST).json({
-          success: false,
-          message: "No topic and context found in session"
-        });
-      }
-
       const questionsDbName = await getQuestionsDbName();
     
       const questionID = await questionService.generateNewQuestionID(questionsDbName);
@@ -79,7 +49,7 @@ const questionController = {
       });
 
     } catch (e) {
-      console.error("Error getting question:", e);
+      console.error("Error generating question:", e);
       return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: e.message
