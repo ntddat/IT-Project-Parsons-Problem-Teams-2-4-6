@@ -406,7 +406,7 @@
                 //todo change time to a variable
                 var pack = {
                     questionID: this.questionID,
-                    studentId : this.$cookies.get('userID'),
+                    userID : this.$cookies.get('userID'),
                     correct : correctness,
                     time : 1,
                     topic : this.topic
