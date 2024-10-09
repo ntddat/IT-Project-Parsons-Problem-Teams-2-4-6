@@ -119,13 +119,13 @@ const questionRepo = {
   },
 
   createNewQuestion: async (questionID, topic, context, questionsDbName) => {
-    const questionModel = await getQuestionModel(questionsDbName);
-    const newQuestion = new questionModel({
-      questionID: questionID,
-      topic: topic,
-      context: context,
-    });
     try {
+      const questionModel = await getQuestionModel(questionsDbName);
+      const newQuestion = new questionModel({
+        questionID: questionID,
+        topic: topic,
+        context: context,
+      });
       return await newQuestion.save();
     } catch (e) {
       console.error("Error saving the question:", e);
