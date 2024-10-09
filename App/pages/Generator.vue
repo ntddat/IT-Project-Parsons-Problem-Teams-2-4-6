@@ -72,7 +72,7 @@
       </div>
     </div>
     <div v-if="loading" class="loading-overlay">
-      <img src="../loading3.gif" width="50" height="50"lass="loading-icon"/>
+      <img src="../loading3.gif" width="50" height="50" lass="loading-icon"/>
       <p class="loading-text">{{ loadingWord }}</p>
     </div>
   </div>
@@ -199,28 +199,43 @@ export default {
       }
     },
     sendData() {
-      const payload = {
+      var payload;
+      if (this.$cookies.isKey("userID")) {
+        payload = {
         topic: this.selectedTopic,
         context: this.selectedContext,
-        userID: getCookie("userID")
-      };
+        userID : this.$cookies.get("userID"),
+        };
+      } else {
+        payload = {
+        topic: this.selectedTopic,
+        context: this.selectedContext
+        };
+      }
+       
       console.log('Sending data to backend:', payload);
 
-      // Data is sent to the back end via HTTP requests
-      axios.post('http://localhost:8383/api/question/generateQuestion', payload, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      this.loading = true;
+
+      axios.get('http://localhost:8383/api/getData', {
+        params: payload
       })
       .then(response => {
-        console.log('Data sent successfully:', response.data);
+        //console.log('Data received successfully:', response.data);
+        
+
+        // Push to Problem page, passing the received data via query parameters
         this.$router.push({ 
           path: '/Problem', 
-          query: { topic: this.selectedTopic, context: this.selectedContext }
+          query: { 
+            response: response,  // assuming the result is in response.data.result
+            topic: this.selectedTopic, 
+            context: this.selectedContext 
+          }
         });
       })
       .catch(error => {
-        console.error('Error sending data:', error);
+        console.error('Error fetching data:', error);
       })
       .finally(() => {
         this.loading = false; 
@@ -341,10 +356,11 @@ export default {
   background: white;
   border: 1px solid #ccc;
   border-radius: 5px;
-  max-height: 150px;
+  max-height: 43vh; 
   overflow-y: auto;
   width: 100%;
 }
+
 
 .dropdown-item {
   font-size: 15px;

@@ -22,7 +22,7 @@
                     <div id="progress"></div>
                 </div> -->
                 <div id="time-elapsed">0 mins 0 seconds</div>
-                <a id="regenerate-btn" href="index.html"> 
+                <a id="regenerate-btn"> 
                         <button>Regenerate</button>
                 </a>
             </div>
@@ -86,6 +86,9 @@
                 <div id="button-container">
                     <button id="window-regenerate-btn">Regenerate</button>
                     <button id="window-retry-btn">Try Again</button>
+                    <button id="window-back-btn">
+                        <router-link to="/Generator" class="nav-link">Back Home</router-link>
+                    </button>
                 </div>
             </div>
 
@@ -97,6 +100,7 @@
     
     
     <script>
+    //todo remove these samples after testing
     let initial = "print('Hello')\n" +
                 "print('Parsons')\n" +
                 "print('problems!')";
@@ -104,6 +108,14 @@
     let testSample  = "fruits = ['apple', 'banana', 'cherry']\n" +
                                "for x in fruits :\n" +
                              "  print(x)";
+
+    let testSample2  = "print('Hello')\n" +
+                "print('Parsons')\n" +
+                "print('problems!')";                          
+                      
+
+
+
     //let startTime;
     let intervalId;
     let elapsedTime;
@@ -111,14 +123,22 @@
     export default {
         data() {
             return {
+                topic : '',
+                context : '' ,
             }
         },
-    
+        
+        // created(){
+        //     this.topic = this.$route.query.topic;
+        //     this.context = this.$route.query.context;
+        // },
+
         mounted() {
             this.midDragControllerDiv();
             this.horDragControllerDiv();
-            this.fetchStrings(); // Fetch initial strings on mount
+            //this.fetchStrings(); // Fetch initial strings on mount
             this.startTimer(); 
+            this.testInitializer();
         },
     
         methods: {
@@ -198,10 +218,21 @@
                     document.body.style.cursor = 'default';
                 });
             },
-            
+            initializer(){
+                this.topic = this.$route.query.topic;
+                this.context = this.$route.query.context;
+                var data =  this.$route.query.response.json;
+                //todo uncomment below code after merging with new server
+                //initialCode = data.question
+                initialCode = data.info.Code; // Update initial code
+                document.getElementById('questiondescription').textContent = data.info.Description;
+                document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
+                this.initializeParsonsWidget(initialCode); // Initialize Parsons widget with fetched code
+            },
 
             startTimer() {
                 elapsedTime = 0;
+                timerLock = false;
 
                 intervalId = setInterval(() => {
                     if(!timerLock){
@@ -222,7 +253,7 @@
 
             
             stopTimer() {
-                //clearInterval(intervalId); 
+                clearInterval(intervalId); 
                 timerLock = true;
             },
 
@@ -232,8 +263,9 @@
             
             refreshTimer() {
                 console.log("refreshed");
-                //this.stopTimer(); 
+                this.stopTimer(); 
                 elapsedTime = 0;
+                // activeTimer();
                 document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
             },
 
@@ -262,7 +294,27 @@
                     console.error('Error:', error);
                 }
             },
-
+            async testInitializer(){
+                const outputElement = document.getElementById('output');
+    
+                try {
+                    const response = await fetch('http://localhost:8383/info');
+    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+    
+                    const data = await response.json();
+                    initial = data.info.Code; // Update initial code
+                    document.getElementById('questiondescription').textContent = data.info.Description;
+                    // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
+                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
+                } catch (error) {
+                    console.error('Error fetching strings:', error);
+                    outputElement.textContent = 'Error fetching strings: ' + error.message;
+                }
+            },
+            //todo 摆了
             async fetchStrings() {
                 const outputElement = document.getElementById('output');
     
@@ -283,6 +335,48 @@
                     outputElement.textContent = 'Error fetching strings: ' + error.message;
                 }
             },
+            //todo regenerate-btn 的功能
+            //todo window-regenerate-btn 的功能
+            getRandomElement(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            },
+
+            async regenerateTester(){
+                this.regenerate();
+                // this.initializeParsonsWidget(testSample2);
+            },
+
+            async regenerate(){
+                const url = 'http://localhost:8383/api/question/generateQuestion'; // Replace with your actual backend URL if deployed
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        topic: this.topic  ,
+                        context: this.context
+                    })
+                };
+
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+    
+                    const data = await response.json();
+                    //initial = data.info.Code; // Update initial code
+                    document.getElementById('questiondescription').textContent = data.info.Description;
+                    // document.getElementById('topicdescription').textContent = data.info.ExpectedOutput;
+                    this.initializeParsonsWidget(initial); // Initialize Parsons widget with fetched code
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+
 
             refreshOutput(){
                 document.getElementById('output').textContent = ""
@@ -329,9 +423,10 @@
             //sending the result back to server
             //add more parameters
             async sendAttempt(correct){
-                // return ;
+                return;
                 //console.log(correct);
                 //todo change this to variables
+                //maybe use what is query to this page
                 var pack = {
                     questionNo: 1,
                     studentId : 1,
@@ -370,8 +465,9 @@
             },
 
             initializeParsonsWidget(question) {
-
-                question = testSample
+                //question = testSample;
+                console.log(question);
+                
                 
                 this.runCode(question).then(solution => {
 
@@ -410,13 +506,12 @@
                         // console.log("press submit");
                         var studentCode = this.getStudentCode(parson);
                         //runsubmit should be a no return function, this is now for testing
-                        //todo this resultMessage is not working
-                        
+                        this.stopTimer();
+
                         if(!this.emptyCheck(studentCode)){
                             // document.getElementById('resultMessage').style.display = 'block';
                             //await this.runSubmit(studentCode, solution);
                            // console.log("show box");
-                            this.stopTimer();
                             this.runSubmit(studentCode,solution);          
                             //this.refreshTimer();
                             //this.activeTimer();
@@ -429,17 +524,34 @@
                         this.startTimer();
                     });
 
-                    document.getElementById('escape-btn').addEventListener('click', function() {
-                        // 让 resultMessage 弹窗消失
+                    document.getElementById('window-retry-btn').addEventListener('click',() => {
+                        document.getElementById('resultMessage').style.display = 'none';
+                        parson.shuffleLines();
+                    });
+
+                    document.getElementById('escape-btn').addEventListener('click',() => {
                         document.getElementById('resultMessage').style.display = 'none';
                     });
  
+                    document.getElementById('regenerate-btn').addEventListener('click',() => {
+                        console.log('regenerating');
+                        this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
+                        this.regenerateTester();
+                        this.refreshTimer();
+                        this.startTimer();
+                    });
+
+                    document.getElementById('window-regenerate-btn').addEventListener('click', () => {
+                        document.getElementById('resultMessage').style.display = 'none';
+                        this.regenerateTester();
+                        this.refreshTimer();
+                        this.startTimer();
+                    });
                 })
             },
     
             
     
-            //todo change this to none-return and correspond calling statement after make sure its functioning
             async runSubmit(studentCode, solution) {
                 this.refreshOutput();
                 const studentAnswer = await this.runCode(studentCode);
@@ -457,7 +569,7 @@
                         document.getElementById('resultMessage').style.display = 'block'; // 显示弹窗
                         this.sendAttempt(1); // 提交正确的尝试
                     } else {
-                         console.log("not same");
+                        //  console.log("not same");
                         // console.log(solution.output);
                         // console.log(studentAnswer.output);
                         this.sendAttempt(0); // 提交错误的尝试
@@ -594,7 +706,7 @@
       font-size: 21px;
       font-weight: bold;
     }
-    .nav-links {
+    .nav-links:not(#window-back-btn .nav-link){
       display: flex;
       gap: 20px;
       width: auto; /* Set width to auto to adjust based on content */
@@ -605,7 +717,7 @@
       color: #333333;
       font-weight: bold;
     }
-    .nav-link:hover {
+    .nav-link:not(#window-back-btn .nav-link):hover {
       color: #156B3A;
     }
     
@@ -706,13 +818,14 @@
         justify-content: flex-start; /* Push the button-group to the bottom */
         margin-top: 0; /* 移除不必要的顶部间距 */
         margin-bottom: 0; /* 确保和#sortable之间的间距 */
-        scrollbar-gutter: stable;
+        min-height: 150px;
+        /* scrollbar-gutter: stable; */
     }
     /* 如果需要在鼠标悬停时显示滚动条 */    
-    #right-top:hover {
+    /*#right-top:hover {
         overflow: auto;
         scrollbar-gutter: stable;
-    }
+    }*/
     #sortable{
         flex-grow: 1;
         margin-left: 20px;
@@ -720,12 +833,10 @@
         margin-top: 0; /* 移除顶部不必要的间距 */
         padding: 0; /* 确保padding不会影响间距 */
         width: auto;
-        /* overflow-y: auto;
-        max-height: 500px; */
+        /* overflow-y: auto; */
+        min-height: 100px; 
     }
 
-    
-    /* 可拖动的水平分割线 */
     #horizontal-divider {
         width: 100%;
         height: 2px;
@@ -795,13 +906,13 @@
         box-sizing: border-box; /* 包括 padding 和 border 在元素总尺寸内 */
         font-size: 24px;
         font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-        overflow-y: hidden;
-        scrollbar-gutter: stable;
+        overflow-y: auto;
+        /* scrollbar-gutter: stable; */
     }
-    #calculated-value:hover {
+    /* #calculated-value:hover {
         overflow-y: auto;
         scrollbar-gutter: stable;
-    }
+    } */
     
     /* 分割线 */
     #divider {
@@ -858,14 +969,14 @@
         max-height: 10%;
     }
     #questiondescription{
-        overflow-y: hidden;
+        overflow-y: auto;
         max-height: calc(60%);
-        scrollbar-gutter: stable;
+        /* scrollbar-gutter: stable; */
     }
-    #questiondescription:hover {
+    /* #questiondescription:hover {
         overflow-y: auto;
         scrollbar-gutter: stable;
-    }
+    } */
     #sortableTrash {
         width: calc(100% - 20px);
         background: #37b0a200;
@@ -875,14 +986,14 @@
         /* padding: 20px; */
         /* box-shadow: 0 2px 8px rgba(131, 40, 40, 0.1); */
         flex-shrink: 0;
-        overflow-y: hidden;
-        scrollbar-gutter: stable;
+        overflow-y: auto;
+        /* scrollbar-gutter: stable; */
     }
     /* 鼠标悬浮时显示滚动条 */
-    #sortableTrash:hover {
+    /* #sortableTrash:hover {
         overflow: auto;
         scrollbar-gutter: stable;
-    }
+    } */
     
     
     
@@ -939,6 +1050,10 @@
         margin-bottom: 10px; /* 将按钮组推到区域的底部 */
     }
 
+    #button-group i {
+        font-size: 14px;
+    }
+
     #button-container {
         display: flex;
         flex-direction: row; 
@@ -956,6 +1071,7 @@
         transition: all 0.3s ease;
         font-size: 18px;
         cursor: pointer;
+        font-weight: 500;
     }
     #button-container button:hover{
         background-color: #dd8b33f4;
@@ -963,6 +1079,12 @@
     #resultMessage p{
         margin: 0;
         margin-top: 15px;
+    }
+    #window-back-btn .nav-link{
+        text-decoration: none;
+        /* color: #333333; */
+        font-size: 18px;
+        font-weight: 500;
     }
     #escape-btn{
         width: 25px;
@@ -1035,7 +1157,7 @@
             font-weight: 700;
         }
     }
-    @media (max-width: 787px) {
+    @media (max-width: 896px) {
         .top{
             height: 40px;
         }
@@ -1072,7 +1194,7 @@
         #regenerate-btn button {
             width: 100px;
             font-size: 14px;
-            padding: 3px;
+            padding: 6px;
         }
     
         #right-panel {
@@ -1094,7 +1216,7 @@
             width: 80px; 
             font-size: 12px;
             padding: 5px;
-            margin-top: 50px;
+            margin-top: 15px;
         }
         
         /* 调整按钮内部的图标大小 */
