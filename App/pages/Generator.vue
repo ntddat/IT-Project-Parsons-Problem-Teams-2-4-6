@@ -133,13 +133,14 @@ export default {
     cleanCookies() {
       this.$cookies.remove('acception');
       this.$cookies.remove('userID');
+      this.$router.go(0);
     },
 
     historyBotton() {
       this.$router.push({
         path: '/History',
         query: {
-          isAdmin: true,
+          isAdmin: false,
           // userID: getCookie("userID")
           userID: this.$cookies.get('userID')
 
