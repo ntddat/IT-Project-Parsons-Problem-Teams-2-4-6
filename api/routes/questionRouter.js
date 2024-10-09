@@ -6,7 +6,7 @@ import userController from '../controller/user/userDataController.js';
 const questionRouter = express.Router();
 
 // send answers to the problems page
-questionRouter.post('/generateQuestion', questionController.generateQuestion);
+questionRouter.get('/generateQuestion', questionController.generateQuestion);
 questionRouter.post('/runPython', questionController.runPython);
 questionRouter.post('/submitAttempt', 
   questionController.updateQuestionDetails, 
