@@ -2,7 +2,6 @@
 // Importing packages
 import dotenv from 'dotenv';
 import express, { static as expressStatic, json } from 'express';
-import session from 'express-session';
 import format from 'string-format';
 import cors from 'cors';
 // Importing our modules
@@ -14,27 +13,13 @@ const app = express()
 
 app.use(express.json()); // Parsing incoming JSON
 
-// Session middleware
-app.use(session({
-  secret: process.env.SECRET_SESSION_KEY,
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false },
-  topic: '',
-  context: '',
-  userID: '', // Should be true for HTTPS in production
-}));
-
-app.use(cors({
-  credentials: true,
-}));
+app.use(cors());
 
 // Establishing connection to the database
 establishConnection();
 
 // Constants
 const port = 8383
-
 
 app.use(expressStatic('App'))
 //Expects to receive json in the app.post method

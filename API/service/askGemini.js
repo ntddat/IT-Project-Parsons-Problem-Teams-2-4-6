@@ -12,12 +12,9 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationCo
 // TODO: Separate compiler part into separate file, then use that for merging part
 async function askGemini(topic, context) {
   // Starting a full chat
-  const usersDbName = getUsersDbName();
-  const chatHistory = await getChatHistory(userID, usersDbName)
-  const chat = model.startChat(chatHistory)
+  const chat = model.startChat({ history: [] })
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
-  console.log("Chat History: ", chatHistory);
 
   while (!syntaxPassed) {
     // Generating a new prompt based on the given topic and context
