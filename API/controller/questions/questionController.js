@@ -19,7 +19,6 @@ const questionController = {
           message: "Please provide a topic and context"
         })
       }
-    
       const questionsDbName = await getQuestionsDbName();
     
       const questionID = await questionService.generateNewQuestionID(questionsDbName);
