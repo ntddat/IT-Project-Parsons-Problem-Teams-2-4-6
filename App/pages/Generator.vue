@@ -218,7 +218,7 @@ export default {
 
       this.loading = true;
 
-      axios.post('http://localhost:8383/api/question/generateQuestion',payload, {
+      axios.get('http://localhost:8383/api/question/generateQuestion',payload, {
         headers: {
         'Content-Type': 'application/json'
         }
