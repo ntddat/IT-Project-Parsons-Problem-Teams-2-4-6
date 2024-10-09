@@ -140,7 +140,7 @@ export default {
       this.$router.push({
         path: '/History',
         query: {
-          isAdmin: false,
+          isAdmin: true,
           // userID: getCookie("userID")
           userID: this.$cookies.get('userID')
 
@@ -218,15 +218,14 @@ export default {
 
       this.loading = true;
 
-      axios.post('http://localhost:8383/api/question/generateQuestion',payload, {
+      axios.get('http://localhost:8383/api/question/generateQuestion',{
+        params: payload,
         headers: {
         'Content-Type': 'application/json'
         }
         })
       .then(response => {
         //console.log('Data received successfully:', response.data);
-        
-
         // Push to Problem page, passing the received data via query parameters
         this.$router.push({ 
           path: '/Problem', 
