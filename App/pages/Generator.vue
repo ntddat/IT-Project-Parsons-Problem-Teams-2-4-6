@@ -201,13 +201,13 @@ export default {
     sendData() {
       const payload = {
         topic: this.selectedTopic,
-        context: this.selectedContext
+        context: this.selectedContext,
+        userID: getCookie("userID")
       };
       console.log('Sending data to backend:', payload);
 
-      this.loading = true;
-
-      axios.post('http://localhost:8383/api/sendData', payload, {
+      // Data is sent to the back end via HTTP requests
+      axios.post('http://localhost:8383/api/question/generateQuestion', payload, {
         headers: {
           'Content-Type': 'application/json'
         }
