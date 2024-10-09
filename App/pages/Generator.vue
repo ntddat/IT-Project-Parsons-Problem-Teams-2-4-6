@@ -80,6 +80,7 @@
 <script>
 import axios from 'axios';
 import {getCookie, setCookie} from "../libs/cookie.js"
+import { getUserID } from "../libs/user.js"
 
 export default {
   name: 'Generator',
@@ -121,8 +122,10 @@ export default {
     };
   },
 
-  beforeMount () {
+  mounted () {
       this.checkPopUp();
+      const userID = getUserID()
+      console.log(userID)
   },
   // -----------------------
   methods: {
@@ -200,7 +203,7 @@ export default {
 
       this.loading = true;
 
-      axios.get('http://localhost:8383/api/getData', {
+      axios.get('http://localhost:8383/api/question/generateQuestion', {
         params: payload
       })
       .then(response => {

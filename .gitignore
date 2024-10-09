@@ -16,9 +16,6 @@ runs/
 # Ignore node_modules
 node_modules/
 
-# Ignore database scripts
-databaseScripts/*.js
-
 # Ignore script generated for PythonShell
 script.py
 test.py
