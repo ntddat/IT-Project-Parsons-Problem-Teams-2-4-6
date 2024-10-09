@@ -33,7 +33,7 @@ const questionController = {
       }
 
       // save this question to the database
-      const saveResult = await questionService.saveNewQuestion(topic, context, questionsDbName);
+      const saveResult = await questionService.saveNewQuestion(questionID, topic, context, questionsDbName);
       if (!saveResult.success) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,
