@@ -86,14 +86,13 @@ export default {
         return {
             userName: "Admin",
             accuracy: 60,
-            exercises: 8,
+            exercises: 7,
             // Sample data with more rows to demonstrate scrolling
             history: [
                 { title: "Decision Tree Classifier", practice: 90, accuracy: 77 },
                 { title: "Linear Regression", practice: 100, accuracy: 80 },
                 { title: "Correlation", practice: 78, accuracy: 65 },
                 { title: "NMI", practice: 133, accuracy: 70 },
-                { title: "Correlation", practice: 60, accuracy: 90 },
                 { title: "DataFrame", practice: 45, accuracy: 88 },
                 { title: "Sentence splitting using nltk", practice: 75, accuracy: 85 },
                 { title: "Reading/Writing CSV files", practice: 50, accuracy: 82 }
