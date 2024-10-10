@@ -4,6 +4,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
 import { generatePrompt } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
+import chatHistoryRepo from '../database/repository/questions/chatHistoryRepo.js';
+import { getQuestionsDbName } from '../utils/functions/dbName.js';
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -11,10 +13,12 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: {temperature: 1.0 }});
 
 // TODO: Separate compiler part into separate file, then use that for merging part
-async function askGemini(topic, context) {
+async function askGemini(topic, context, userID) {
   try {
     // Starting a full chat
-    const chat = model.startChat({ history: [] })
+    const questionsDbName = await getQuestionsDbName();
+    const history = ((userID) ? (await chatHistoryRepo.getChatHistory(userID, questionsDbName)) : []);
+    const chat = model.startChat({ history })
     let syntaxPassed = false;
     let prompt, result, resp, fixed_resp;
 
