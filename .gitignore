@@ -51,3 +51,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+#sklearn
+sklearn-env/
