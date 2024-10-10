@@ -139,74 +139,106 @@ const userDataRepo = {
   updateUserAnalytics: async (userID, topic, correct, time, questionID, usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
+      // First update: save the attempted question into the question SET (unique) of the topic
+      await userDataModel.updateOne(
+        { userID: userID },
+        {
+          $addToSet: {
+            "topicSummary.$[element].attemptedQuestions": questionID,
+          },
+          $inc: {
+            totalTime: time,
+            "topicSummary.$[element].totalTime": time,
+          },
+        },
+        {
+          arrayFilters: [
+            {
+              "element.topic": topic
+            }
+          ]
+        }
+      );
+
+      if (correct) {
+        await userDataModel.updateOne(
+          { userID: userID },
+          {
+            $addToSet: {
+              "topicSummary.$[element].correctQuestions": questionID,
+            },
+            $inc: {
+              totalTime: time,
+              "topicSummary.$[element].totalTime": time,
+            },
+          },
+          {
+            arrayFilters: [
+              {
+                "element.topic": topic
+              }
+            ]
+          }
+        );
+      }
+
+      const updatedTopic = await userDataModel.findOne(
+        { userID: userID, "topicSummary.topic": topic },
+        { "topicSummary.$": 1 }
+      ); // shows the updated topicSummary for that topic ONLY
+
+      const selectedTopic = updatedTopic.topicSummary[0];
+      const numQuestionsTopic = selectedTopic.attemptedQuestions.length;
+      const numCorrectTopic = selectedTopic.correctQuestions.length;
+      const accuracyTopic = numQuestionsTopic === 0 ? 0 : Math.round((numCorrectTopic / numQuestionsTopic) * 100 * 100) / 100;
+
+      // Second update: update the number of questions and correct in the topic
+      await userDataModel.updateOne(
+        { userID: userID },
+        {
+          $set: {
+            "topicSummary.$[element].numQuestions": numQuestionsTopic,
+            "topicSummary.$[element].numCorrect": numCorrectTopic,
+            "topicSummary.$[element].accuracy": accuracyTopic,
+          }
+        },
+        {
+          arrayFilters: [
+            {
+              "element.topic": topic
+            }
+          ]
+        }
+      );
+
+      const updatedUser = await userDataModel.findOne({ userID: userID });
+      let totalNumQuestions = 0;
+      let totalNumCorrect = 0;
+
+      updatedUser.topicSummary.forEach((topic) => {
+        totalNumQuestions += topic.numQuestions || 0; // Ensure `numQuestions` is defined
+        totalNumCorrect += topic.numCorrect || 0;     // Ensure `numCorrect` is defined
+      });
+
+      const overallAccuracy = totalNumQuestions === 0 ? 0 
+        : Math.round((totalNumCorrect / totalNumQuestions) * 100 * 100) / 100; // Rounded to 2 decimal places
+
+      // Third update: update the total number of questions and correct in the user's data, and accuracy of the topic and the overall user
       return await userDataModel.updateOne(
         { userID: userID },
-        [
-          {
-            $set: {
-              topicSummary: {
-                $map: {
-                  input: "$topicSummary",
-                  as: "summary",
-                  in: {
-                    $cond: {
-                      if: { $eq: ["$$summary.topic", topic] },
-                      then: {
-                        topic: "$$summary.topic",
-                        attemptedQuestions: {
-                          $addToSet: { questionID: questionID } // Adding to set for attemptedQuestions
-                        },
-                        correctQuestions: {
-                          $cond: {
-                            if: { $eq: [correct, true] },
-                            then: { $addToSet: { questionID: questionID } }, // add only if correct
-                            else: "$$REMOVE" // dont add
-                          }
-                        },
-                        totalTime: { $add: ["$$summary.totalTime", time] },
-                        numCorrect: { $size: "$$summary.correctQuestions" },
-                        numQuestions: { $size: "$$summary.attemptedQuestions" },
-                        accuracy: {
-                          $cond: [
-                            { $eq: [{ $size: "$$summary.attemptedQuestions" }, 0] }, 0,
-                            { $round: [{$multiply: [{ $divide: [
-                              { $size: "$$summary.correctQuestions" }, { $size: "$$summary.attemptedQuestions" }
-                            ] }, 100] }]} // percentage
-                          ]
-                        }
-                      },
-                      else: "$$summary" // return the original document
-                    }
-                  }
-                }
-              },
-              numQuestions: {
-                $reduce: {
-                  input: "$topicSummary",
-                  initialValue: 0,
-                  in: { $add: ["$$value", "$$this.numQuestions"] } // Sum all numQuestions in each topic
-                }
-              },
-              accuracy: {
-                $cond: [
-                  { $eq: ["$numQuestions", 0] }, 0, // if no questions, accuracy is 0
-                  { $round: [{$multiply: [{ $divide: [
-                    {$reduce: {
-                      input: "$topicSummary",
-                      initialValue: 0,
-                      in: { $add: ["$$value", "$$this.numCorrect"] } // Sum all numCorrect in each topic
-                    }}, 
-                    {$reduce: {
-                      input: "$topicSummary",
-                      initialValue: 0,
-                      in: { $add: ["$$value", "$$this.numQuestions"] } // Sum all numQuestions in each topic
-                    }}
-                  ] }, 100] }]} // percentage
-                ]
-              }
+        {
+          $set: {
+            numQuestions: totalNumQuestions,
+            accuracy: overallAccuracy,
+          },
+        },
+        {
+          arrayFilters: [
+            {
+              "element.topic": topic
             }
-          }
-        ]
+          ]
+        }
       );
     } catch (e) {
       console.error("Error updating user data:", e);

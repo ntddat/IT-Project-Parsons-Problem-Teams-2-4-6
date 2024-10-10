@@ -15,8 +15,8 @@ const UserDataSchema = new Schema({
       numCorrect: { type: Number, default: 0, required: true },
       accuracy: { type: Number, default: 0, required: true },
       totalTime: { type: Number, default: 0, required: true },
-      attemptedQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
-      correctQuestions: { type: [{ questionID: { type: Number, required: true }, }], default: [] },
+      attemptedQuestions: { type: [Number], default: [] },
+      correctQuestions: { type: [Number], default: [] },
     },
   ],
 }, { collection: "user_data" });
