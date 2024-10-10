@@ -24,6 +24,7 @@ async function askGemini(topic, context, userID) {
 
     while (!syntaxPassed) {
       prompt = generatePrompt(topic, context);
+      console.log(prompt);
       //Attempt to prompt gemini, if it fails prompt again
       try {
         result = await chat.sendMessage(prompt);
