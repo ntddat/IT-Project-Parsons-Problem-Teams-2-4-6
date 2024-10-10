@@ -81,7 +81,7 @@
 <script>
 import axios from 'axios';
 // import {getCookie, setCookie} from "../libs/cookie.js"
-// import { getUserID } from "../libs/user.js"
+import { getUserID } from "../libs/user.js"
 
 export default {
   name: 'Generator',
@@ -127,6 +127,8 @@ export default {
       this.checkPopUp();
       // const userID = getUserID()
       // console.log(userID)
+      // console.log("typeof ID: " + typeof(userID))
+      
   },
   // -----------------------
   methods: {
@@ -148,13 +150,17 @@ export default {
       })
     },
     // cookie pop up 
-    accept() {       // handle acceptance
+    async accept() {       // handle acceptance
       this.showPopUp = false;
       // setCookie("acception", "true", 5)
       this.$cookies.set('acception', true, '1d');
 
       // setCookie("userID", "114", 60)
-      this.$cookies.set('userID', 114, '1d');
+      // this.$cookies.set('userID', 114, '1d');
+      const userID = await getUserID()
+      console.log(userID)
+      this.$cookies.set('userID', userID, '1d');
+      console.log("get ID: " + userID)
 
     },
     reject() {       // handle rejection
@@ -163,7 +169,7 @@ export default {
       this.$cookies.set('acception', false, '10s');
       // console.log(getCookie("acception"))
     },
-    checkPopUp() {
+    async checkPopUp() {
       const acception = this.$cookies.isKey("acception")
 
       if (!acception) {
@@ -207,14 +213,15 @@ export default {
       var payload;
       if (this.$cookies.isKey("userID")) {
         payload = {
-        topic: this.selectedTopic,
-        context: this.selectedContext,
-        userID : this.$cookies.get("userID"),
+          topic: this.selectedTopic,
+          context: this.selectedContext,
+          userID : this.$cookies.get("userID"),
         };
+        console.log(payload.userID);
       } else {
         payload = {
-        topic: this.selectedTopic,
-        context: this.selectedContext
+          topic: this.selectedTopic,
+          context: this.selectedContext
         };
       }
        

@@ -10,10 +10,12 @@ export async function getUserID() {
     try {
         const response = await fetch(url,options);
         const data = await response.json();
-        return data;
+        // console.log(data.userID.userID);
+        return data.userID.userID;
         // return response
-    }catch (error){
+    } catch (error){
         console.error('Error:',error);
+        return await getUserID();
     }
 }
 

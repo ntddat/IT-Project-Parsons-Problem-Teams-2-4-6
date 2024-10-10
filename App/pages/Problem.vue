@@ -86,7 +86,7 @@
                 <p>Correct answer! Congratulations!</p>
                 <div id="button-container">
                     <button id="window-regenerate-btn" class="finish-button">Regenerate</button>
-                    <button id="window-retry-btn"class="finish-button">Try Again</button>
+                    <button id="window-retry-btn" class="finish-button">Try Again</button>
                     <button id="window-back-btn" class="finish-button" @click="goBackHome">Back Home</button>
                 </div>
             </div>
@@ -424,6 +424,7 @@
                 };
                 //not sure if we need a response for this, maybe we need?
                 try {
+                    console.log(pack);
                     const response = await fetch(url, options);
                     const result = await response.json(); // Convert the response to JSON
                     console.log(result); // Output the response to the console
@@ -498,8 +499,8 @@
 
                     document.getElementById('reset-btn').addEventListener('click', () => {
                         parson.shuffleLines(); // Reshuffle the blocks for a new attempt
-                        this.refreshTimer();
-                        this.startTimer();
+                        // this.refreshTimer();
+                        // this.startTimer();
                     });
 
                     document.getElementById('window-retry-btn').addEventListener('click',() => {
@@ -998,7 +999,8 @@
         display: flex;
         justify-content: center;
         gap: 20%;
-        margin-bottom: 10px; /* 将按钮组推到区域的底部 */
+        margin-top: 5px;
+        margin-bottom: 5px; 
     }
 
     #button-group i {
