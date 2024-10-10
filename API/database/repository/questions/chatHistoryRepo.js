@@ -3,24 +3,24 @@ import { getDatabaseConnection } from "../../connection.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const getChatHistory = async (userID, dbName) => {
+export const getChatHistory = async (userID, questionsDbName) => {
     const chatHistoryCollection = process.env.CHAT_HISTORY_COLLECTION;
     if (!chatHistoryCollection) {
         throw new Error("Error getting chat history");
     }
-    const dbConnection = getDatabaseConnection(dbName)
-    const chatHisoryModel = dbConnection.model(
+    const dbConnection = await getDatabaseConnection(questionsDbName)
+    const chatHistoryModel = dbConnection.model(
         chatHistoryCollection,
         ChatHistorySchema
     );
 
-    const chatHistory = await chatHisoryModel.find(
-        {userID: userID},
+    const chatHistory = await chatHistoryModel.find(
+        {userID: 1},
         {prompt: 1, question:1, _id:0}
     );
-
+    console.log(chatHistory)
     let transformedHistory = []
-    chatHistory.forEach((item) => {
+    chatHistory.map((item) => {
         const user = {
             role: "user",
             parts: [
@@ -41,7 +41,10 @@ export const getChatHistory = async (userID, dbName) => {
         transformedHistory.push(user, model)
     });
 
-    console.log(transformedHistory);
+    console.log(transformedHistory[0].parts);
+    // console.log(userID)
+    // console.log("testing")
+    return transformedHistory;
     
 }
 

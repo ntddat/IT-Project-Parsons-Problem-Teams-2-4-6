@@ -23,7 +23,7 @@ const questionController = {
     
       const questionID = await questionService.generateNewQuestionID(questionsDbName);
       
-      const question = await askGemini(topic, context);
+      const question = await askGemini(topic, context, userID);
       if (!question.success) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,
