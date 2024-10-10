@@ -120,7 +120,6 @@ const userController = {
           message: "Please provide a valid userID, topic, correct, time, and questionID",
         };
       }
-      console.log("Updating user analytics for user:", userID, "topic:", topic, "correct:", correct, "time:", time, "questionID:", questionID);
 
       const usersDbName = await getUsersDbName();
 
