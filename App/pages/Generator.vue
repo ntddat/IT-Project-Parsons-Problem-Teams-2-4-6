@@ -148,21 +148,15 @@ export default {
     // cookie pop up 
     async accept() {       // handle acceptance
       this.showPopUp = false;
-      // setCookie("acception", "true", 5)
-      this.$cookies.set('acception', true, '1d');
-
-      // setCookie("userID", "114", 60)
-      // this.$cookies.set('userID', 114, '1d');
+      this.$cookies.set('acception', true, '3m');
       const userID = await getUserID()
       console.log(userID)
-      this.$cookies.set('userID', userID, '1d');
+      this.$cookies.set('userID', userID, '3m');
       console.log("get ID: " + userID)
     },
     reject() {       // handle rejection
       this.showPopUp = false;
-      // setCookie("acception", "false", 5)
-      this.$cookies.set('acception', false, '10s');
-      // console.log(getCookie("acception"))
+      this.$cookies.set('acception', false, '7d');
     },
 
     async checkPopUp() {
@@ -174,12 +168,11 @@ export default {
       }
       else {
         console.log("acception already exist: " + acception)
-
-        // const userID = this.$cookies.get('userID')
-        // console.log("UserID: "+ userID + "type: " + typeof(userID))
-        // const datas = await getUserHistory(userID) 
-        // console.log(datas.userData.accuracy)
-
+        // if accept the cookie, then refresh the cookies
+        if (acception == 'true') {
+          this.$cookies.set('acception', true, '3m');
+          this.$cookies.set('userID', this.$cookies.get('userID'), '3m');
+        }
         this.showPopUp = false
       }
     },
