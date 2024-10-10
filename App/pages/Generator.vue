@@ -81,7 +81,7 @@
 <script>
 import axios from 'axios';
 // import {getCookie, setCookie} from "../libs/cookie.js"
-import { getUserID } from "../libs/user.js"
+import { getUserID, getUserHistory } from "../libs/user.js"
 
 export default {
   name: 'Generator',
@@ -125,10 +125,6 @@ export default {
 
   mounted () {
       this.checkPopUp();
-      // const userID = getUserID()
-      // console.log(userID)
-      // console.log("typeof ID: " + typeof(userID))
-      
   },
   // -----------------------
   methods: {
@@ -142,7 +138,7 @@ export default {
       this.$router.push({
         path: '/History',
         query: {
-          isAdmin: true,
+          isAdmin: false,
           // userID: getCookie("userID")
           userID: this.$cookies.get('userID')
 
@@ -169,6 +165,7 @@ export default {
       this.$cookies.set('acception', false, '10s');
       // console.log(getCookie("acception"))
     },
+
     async checkPopUp() {
       const acception = this.$cookies.isKey("acception")
 
@@ -178,9 +175,15 @@ export default {
       }
       else {
         console.log("acception already exist: " + acception)
+
+        const userID = this.$cookies.get('userID')
+        console.log("UserID: "+ userID)
+        
+        getUserHistory(userID) //
         this.showPopUp = false
       }
     },
+
     toggleDropdown1(event) {
       this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
       this.isContextDropdownVisible = false;

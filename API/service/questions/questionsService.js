@@ -14,7 +14,6 @@ const questionService = {
 
   saveNewQuestion: async (questionID, topic, context, questionsDbName) => {
     try {
-      console.log('Saving new question:', questionID, topic, context);
       const createResult = await questionRepo.createNewQuestion(questionID, topic, context, questionsDbName);
       if (!createResult) {
         return {

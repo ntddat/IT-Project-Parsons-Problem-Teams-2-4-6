@@ -1,5 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { outputParserJson } from './OutputParser.js';
+
+// Importing our modules
+import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
 import { generatePrompt } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
 import { getChatHistory } from '../database/repository/questions/chatHistoryRepo.js';
@@ -9,7 +11,6 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Choosing Gemini model
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: {temperature: 1.0 }});
-
 
 // TODO: Separate compiler part into separate file, then use that for merging part
 async function askGemini(topic, context, userID) {
@@ -22,24 +23,49 @@ async function askGemini(topic, context, userID) {
     let prompt, result, resp, fixed_resp;
 
     while (!syntaxPassed) {
-      // Generating a new prompt based on the given topic and context
       prompt = generatePrompt(topic, context);
-      result = await chat.sendMessage(prompt);
-      resp = result.response.text();
-      console.log(resp);
+      //Attempt to prompt gemini, if it fails prompt again
+      try {
+        result = await chat.sendMessage(prompt);
+        resp = result.response.text();
+        console.log(resp);
+      } catch (error) {
+        console.error(error);
+        continue;
+      }
+      
 
       // Parsing the JSON response from Gemini
-      fixed_resp = outputParserJson(resp);
+      try {
+        fixed_resp = outputParserJson(resp);
+      } catch (error) {
+        console.error(error);
+        continue;
+      }
 
       console.log(fixed_resp);
-      console.log(fixed_resp.Code);
       
       // Checking if the generated code is syntactically correct
-      fixed_resp.Code = fixed_resp.Code.join('\n');
-      createCSV(fixed_resp.CSV, fixed_resp.CSVName);
-      syntaxPassed = await syntaxCheck(fixed_resp.Code);
+      try {
+        createCSV(fixed_resp.CSV, fixed_resp.CSVName);
+      } catch (error) {
+        console.error(error);
+        continue;
+      }
+      
+      try {
+        console.log("Type: " + typeof(fixed_resp.Code));
+        syntaxPassed = await syntaxCheck(fixed_resp.Code);
+      } catch (error) {
+        syntaxPassed = false;
+        console.error("Failed to perform syntax check: ", error);
+      }
+      
       console.log("Syntax check success?: " + syntaxPassed + "\n");
     }
+    fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
+    fixed_resp.Code = processString(fixed_resp.Code); 
+    fixed_resp.Code = fixed_resp.Code.join('\n');
 
     return {
       success: true,

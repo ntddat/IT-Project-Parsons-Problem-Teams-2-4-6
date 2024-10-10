@@ -62,7 +62,7 @@ const userController = {
   /**
    * Request: { userID }
    * Response: { success, message, userData }
-   * userData: { accuracy, numQuestions, attemptsSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, numAttempts } ] } ] }
+   * userData: { accuracy, numQuestions, topicSummary: [ { topic, questions: [ { questionID, topic, context, correct, totalTime, numAttempts } ] } ] }
    */
   getUserData: async (req, res) => {
     try {
@@ -73,9 +73,17 @@ const userController = {
           message: "Please provide an userID"
         });
       }
+      const userIDInt = parseInt(userID);
+      if (!userIDInt) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: "Please provide an integer userID"
+        });
+      }
+
       const usersDbName = await getUsersDbName();
       // fetch user data
-      const userData = await userDataService.getUserData(userID, usersDbName);
+      const userData = await userDataService.getUserData(userIDInt, usersDbName);
       if (!userData.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
@@ -84,7 +92,7 @@ const userController = {
       }
       const questionsDbName = await getQuestionsDbName();
       // adds question detailsx to the user data
-      const modifiedUserData = await userDataService.addQuestionDetailsToUserData(userData, questionsDbName);
+      const modifiedUserData = await userDataService.addQuestionDetailsToUserData(userData.userData, questionsDbName);
       if (!modifiedUserData.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
@@ -94,9 +102,8 @@ const userController = {
     
       return res.status(httpCodes.OK).json({
         success: true,
-        message: result.message,
-        // takes data straight from the user object, with question details added
-        userData: modifiedUserData
+        message: "User data retrieved successfully",
+        userData: modifiedUserData.userData
       });
     } catch (e) {
       console.error("Error getting user data:", e);
@@ -130,8 +137,6 @@ const userController = {
           message: result.message
         });
       }
-      console.log("User analytics updated successfully");
-
       return res.status(httpCodes.OK).json({
         success: true,
         message: result.message

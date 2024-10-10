@@ -1,4 +1,3 @@
-
 /**    
   * @function outputParserJson    
   * Takes the response from Gemini API, presumably in the format
@@ -12,23 +11,18 @@ export function outputParserJson(output) {
   const regexJsonParser = /```json\n([\s\S]*?)```/g;
   let doParse = regexJsonParser.exec(output);
   if (doParse === null) {
-    throw new Error("Invalid output format");
+    throw messages.INVALID_OUTPUT_FORMAT;
     
   }
   let parsedData = doParse[1];
-  console.log(parsedData);
   parsedData = JSON.parse(parsedData); 
-  console.log("PARSED DATA:\n");
-  console.log(parsedData);
-  parsedData.Code = replaceSpacesWithTabs(parsedData.Code);
-  console.log("TABS ADDED IN\n:")
-  console.log(parsedData)
-  parsedData.Code = processString(parsedData.Code);
+  //parsedData.Code = replaceSpacesWithTabs(parsedData.Code);
+  //parsedData.Code = processString(parsedData.Code);
   return parsedData;
 }
 
 //THIS FUNCTION WAS GENERATED WITH CHATGPT
-function replaceSpacesWithTabs(inputString) {
+export function replaceSpacesWithTabs(inputString) {
   let result = '';
   let insideBrackets = false;
   let bracketsStack = [];
@@ -71,7 +65,7 @@ function replaceSpacesWithTabs(inputString) {
  * code to be parsed to the interactive problem
  */
 
-function processString(string) {
+export function processString(string) {
   let commentFlag = false;
   let commentFlag2 = false;
   let endCommentString = '';
