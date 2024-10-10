@@ -66,7 +66,7 @@ const userController = {
    */
   getUserData: async (req, res) => {
     try {
-      const { userID } = req.body;
+      const { userID } = req.query;
       if (!userID) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
