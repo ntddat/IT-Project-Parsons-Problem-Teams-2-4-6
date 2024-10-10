@@ -11,7 +11,7 @@
             </div>
             <div class="nav-links">
                 <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
-                <router-link to="/history" class="nav-link">History</router-link>
+                <div @click="historyBotton" class="nav-link">History</div>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
             </div>
             </nav>
@@ -142,6 +142,7 @@
                 questionID : '',
                 loading: false,
                 sharelink: '',
+                prevAnswerCode: '',
             }
         },
         
@@ -159,6 +160,16 @@
         },
     
         methods: {
+            historyBotton() {
+                this.$router.push({
+                    path: '/History',
+                    query: {
+                    isAdmin: false,
+                    userID: this.$cookies.get('userID')
+                    }
+                })
+            },
+
             goBackHome() {
                 this.$router.push('/Generator'); // 跳转到 "/Generator" 页面
             },
@@ -298,6 +309,15 @@
                 elapsedTime = 0;
                 // activeTimer();
                 document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
+            },
+
+            duplicateCheck(code){
+                if (code == this.prevAnswerCode){
+                    alert("code is same as previous");
+                    return false;
+                }
+                this.prevAnswerCode = code;
+                return true;
             },
 
             async runCode(code) {
@@ -516,15 +536,12 @@
                         var studentCode = this.getStudentCode(parson);
                         //runsubmit should be a no return function, this is now for testing
                         this.stopTimer();
-
-                        if(!this.emptyCheck(studentCode)){
-                            // document.getElementById('resultMessage').style.display = 'block';
-                            //await this.runSubmit(studentCode, solution);
-                           // console.log("show box");
-                            this.runSubmit(studentCode,solution);          
-                            //this.refreshTimer();
-                            //this.activeTimer();
+                        const submitButton = document.getElementById('submit-btn');
+                        submitButton.disabled = true;
+                        if(!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)){
+                            this.runSubmit(studentCode,solution);       
                         }
+                        submitButton.disabled = false;
                     });
 
                     document.getElementById('reset-btn').addEventListener('click', () => {
@@ -563,6 +580,7 @@
             
     
             async runSubmit(studentCode, solution) {
+                
                 this.refreshOutput();
                 const studentAnswer = await this.runCode(studentCode);
                 // console.log("studentanswer", studentAnswer);
@@ -588,13 +606,8 @@
                     console.log("Error occurred:", studentAnswer.error);
                     this.sendAttempt(0); // 提交错误的尝试
                 }
+                
             },
-
-
-           
-            
-
-            
         }
       }
     </script>
