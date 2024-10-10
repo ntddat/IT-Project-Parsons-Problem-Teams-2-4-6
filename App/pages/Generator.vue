@@ -79,9 +79,13 @@
 </template>
 
 <script>
+
 import axios from 'axios';
-// import {getCookie, setCookie} from "../libs/cookie.js"
+
 import { getUserID } from "../libs/user.js"
+import LZString from 'lz-string';
+import { compress } from 'lz-string';
+
 
 export default {
   name: 'Generator',
@@ -125,6 +129,8 @@ export default {
 
   mounted () {
       this.checkPopUp();
+      // const userID = getUserID()
+      // console.log(userID)
   },
   // -----------------------
   methods: {
@@ -141,7 +147,6 @@ export default {
           isAdmin: false,
           // userID: getCookie("userID")
           userID: this.$cookies.get('userID')
-
         }
       })
     },
@@ -150,20 +155,19 @@ export default {
       this.showPopUp = false;
       this.$cookies.set('acception', true, '3m');
       const userID = await getUserID()
-      console.log(userID)
+      // console.log(userID)
       this.$cookies.set('userID', userID, '3m');
-      console.log("get ID: " + userID)
+      // console.log("get ID: " + userID)
     },
     reject() {       // handle rejection
       this.showPopUp = false;
       this.$cookies.set('acception', false, '7d');
     },
-
-    async checkPopUp() {
+    checkPopUp() {
       const acception = this.$cookies.isKey("acception")
 
       if (!acception) {
-        console.log("acception not exist: ")
+        // console.log("acception not exist: ")
         this.showPopUp = true
       }
       else {
@@ -176,7 +180,6 @@ export default {
         this.showPopUp = false
       }
     },
-
     toggleDropdown1(event) {
       this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
       this.isContextDropdownVisible = false;
@@ -209,15 +212,14 @@ export default {
       var payload;
       if (this.$cookies.isKey("userID")) {
         payload = {
-          topic: this.selectedTopic,
-          context: this.selectedContext,
-          userID : this.$cookies.get("userID"),
+        topic: this.selectedTopic,
+        context: this.selectedContext,
+        userID : this.$cookies.get("userID"),
         };
-        console.log(payload.userID);
       } else {
         payload = {
-          topic: this.selectedTopic,
-          context: this.selectedContext
+        topic: this.selectedTopic,
+        context: this.selectedContext
         };
       }
        
@@ -234,10 +236,13 @@ export default {
       .then(response => {
         //console.log('Data received successfully:', response.data);
         // Push to Problem page, passing the received data via query parameters
+        const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(response.data));
+        console.log(compressedData);
         this.$router.push({ 
           path: '/Problem', 
           query: { 
-            response: JSON.stringify(response.data),  // assuming the result is in response.data.result
+            shareLink: compressedData,
+            // response: JSON.stringify(response.data),  // assuming the result is in response.data.result
             topic: this.selectedTopic, 
             context: this.selectedContext 
           }
