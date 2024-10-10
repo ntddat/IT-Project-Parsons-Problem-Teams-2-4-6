@@ -44,12 +44,25 @@ const chatHistoryRepo = {
     
       transformedHistory.push(user, model)
     });
-
-    console.log(transformedHistory[0].parts);
-    // console.log(userID)
-    // console.log("testing")
     return transformedHistory;
   },
+  createNewChatHistory: async (userID, topic, question, context, prompt, questionsDbName) => {
+    try {
+        const chatHistoryModel = await getChatHistoryModel(questionsDbName);
+        const newChatHistory = new chatHistoryModel({
+            userID: userID,
+            topic: topic,
+            context: context,
+            question: question,
+            prompt: prompt,
+        });
+        return await newChatHistory.save();
+    } catch (e) {
+        console.error("Error saving the chat history", e);
+        throw e;
+    }
+  },
+  
 }
 
 export default chatHistoryRepo;
