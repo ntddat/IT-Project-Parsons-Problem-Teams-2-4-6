@@ -81,7 +81,7 @@
 <script>
 import axios from 'axios';
 // import {getCookie, setCookie} from "../libs/cookie.js"
-import { getUserID, getUserHistory } from "../libs/user.js"
+import { getUserID } from "../libs/user.js"
 
 export default {
   name: 'Generator',

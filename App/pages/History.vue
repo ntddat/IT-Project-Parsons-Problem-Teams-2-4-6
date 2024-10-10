@@ -327,7 +327,7 @@ export default {
             this.accuracy = datas.userData.accuracy
             this.exercises = datas.userData.numQuestions
             this.topicSummary = datas.userData.topicSummary
-            console.log(datas.userData.accuracy)
+            // console.log(datas.userData.accuracy)
         },
 
         async accept() {
