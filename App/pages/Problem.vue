@@ -979,7 +979,7 @@
         scrollbar-gutter: stable;
     } */
     #sortableTrash {
-        width: calc(100% - 20px);
+        width: 100%;
         background: #13d4bd00;
         max-height: 50%;
         /* border: 1px solid #dcdcdc; */
