@@ -143,6 +143,7 @@
                 loading: false,
                 sharelink: '',
                 prevAnswerCode: '',
+                loadingWord: "Regenerating questions may take some time, please be patient...",
             }
         },
         
@@ -1154,7 +1155,8 @@
         #button-group button{
             font-size: 12px;
             padding: 5px;
-            margin-top: 50px;
+            margin-top: 5px;
+            margin-bottom: 5px;
             font-weight: 700;
         }
     }
@@ -1269,5 +1271,21 @@
     }
     .finish-button{
         background-color: #156B3A;
+    }
+
+    #loading-overlay {
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+        position: absolute; 
+        top: 50%; 
+        left: 50%;
+        transform: translate(-50%, -50%); 
+        z-index: 9999; 
+    }
+
+    .loading-icon {
+        margin-bottom: 10px; 
     }
     </style>

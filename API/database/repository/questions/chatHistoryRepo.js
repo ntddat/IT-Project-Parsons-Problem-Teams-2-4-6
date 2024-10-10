@@ -45,7 +45,6 @@ const chatHistoryRepo = {
       transformedHistory.push(user, model)
     });
 
-    console.log(transformedHistory[0].parts);
     // console.log(userID)
     // console.log("testing")
     return transformedHistory;
