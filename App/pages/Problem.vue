@@ -540,7 +540,9 @@
                         submitButton.disabled = true;
                         if(!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)){
                             this.runSubmit(studentCode,solution);       
+                            this.refreshTimer();
                         }
+                        this.startTimer();
                         submitButton.disabled = false;
                     });
 
