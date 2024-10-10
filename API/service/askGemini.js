@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
 import { generatePrompt } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
-import { getChatHistory } from '../database/repository/questions/chatHistoryRepo.js';
+import chatHistoryRepo from '../database/repository/questions/chatHistoryRepo.js';
 import { getQuestionsDbName } from '../utils/functions/dbName.js';
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
@@ -17,7 +17,7 @@ async function askGemini(topic, context, userID) {
   try {
     // Starting a full chat
     const questionsDbName = await getQuestionsDbName();
-    const history = await getChatHistory(1, questionsDbName)
+    const history = await chatHistoryRepo.getChatHistory(1, questionsDbName)
     const chat = model.startChat({history})
     let syntaxPassed = false;
     let prompt, result, resp, fixed_resp;
