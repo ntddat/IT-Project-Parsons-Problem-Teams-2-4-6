@@ -204,8 +204,8 @@ export default {
             // acceptCookie: true,
             userName: "Student",
             userID: null,
-            accuracy: 60,
-            exercises: 5,
+            accuracy: null,
+            exercises: null,
             topicSummary: null
             // topicSummary: [
             // {Topic: "Decision Tree Classifier", numQuestions: 2, Accuracy: 50, 
@@ -333,9 +333,9 @@ export default {
         async accept() {
             // this.acceptCookie = true,
             // setCookie("acception", "true", 5)
-            this.$cookies.set('acception', true, '1d');
+            this.$cookies.set('acception', true, '3m');
             this.userID = await getUserID()
-            this.$cookies.set('userID', this.userID, '1d');
+            this.$cookies.set('userID', this.userID, '3m');
             this.$router.go(0);
         },
         questionDropdown(index) {

@@ -79,13 +79,13 @@
 </template>
 
 <script>
+
 import axios from 'axios';
-import { compress } from 'lz-string';
-// import {getCookie, setCookie} from "../libs/cookie.js"
-// import { getUserID } from "../libs/user.js"
 
-
+import { getUserID } from "../libs/user.js"
 import LZString from 'lz-string';
+import { compress } from 'lz-string';
+
 
 export default {
   name: 'Generator',
@@ -144,38 +144,39 @@ export default {
       this.$router.push({
         path: '/History',
         query: {
-          isAdmin: true,
+          isAdmin: false,
           // userID: getCookie("userID")
           userID: this.$cookies.get('userID')
-
         }
       })
     },
     // cookie pop up 
-    accept() {       // handle acceptance
+    async accept() {       // handle acceptance
       this.showPopUp = false;
-      // setCookie("acception", "true", 5)
-      this.$cookies.set('acception', true, '1d');
-
-      // setCookie("userID", "114", 60)
-      this.$cookies.set('userID', 114, '1d');
-
+      this.$cookies.set('acception', true, '3m');
+      const userID = await getUserID()
+      // console.log(userID)
+      this.$cookies.set('userID', userID, '3m');
+      // console.log("get ID: " + userID)
     },
     reject() {       // handle rejection
       this.showPopUp = false;
-      // setCookie("acception", "false", 5)
-      this.$cookies.set('acception', false, '10s');
-      // console.log(getCookie("acception"))
+      this.$cookies.set('acception', false, '7d');
     },
     checkPopUp() {
       const acception = this.$cookies.isKey("acception")
 
       if (!acception) {
-        console.log("acception not exist: ")
+        // console.log("acception not exist: ")
         this.showPopUp = true
       }
       else {
         console.log("acception already exist: " + acception)
+        // if accept the cookie, then refresh the cookies
+        if (acception == 'true') {
+          this.$cookies.set('acception', true, '3m');
+          this.$cookies.set('userID', this.$cookies.get('userID'), '3m');
+        }
         this.showPopUp = false
       }
     },

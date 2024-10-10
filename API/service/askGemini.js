@@ -12,6 +12,28 @@ const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 // Choosing Gemini model
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: {temperature: 1.0 }});
 
+async function saveChatHistory(userID, topic, question, context, prompt, questionsDbName) {
+  try {
+    const createChatHistory = await chatHistoryRepo.createNewChatHistory(userID, topic, context, prompt, question, questionsDbName);
+    if (!createChatHistory) {
+      return {
+        success: false,
+        message: 'Error saving a new Chat History',
+      };
+    }
+    return {
+      success: true,
+      message: 'Chat History saved successfully',
+    };
+  } catch (e) {
+    console.error('Error saving Chat History', e);
+    return {
+      success: false,
+      message: 'Error saving a new Chat History',
+    };
+  }
+}
+
 // TODO: Separate compiler part into separate file, then use that for merging part
 async function askGemini(topic, context, userID) {
   try {
@@ -67,6 +89,9 @@ async function askGemini(topic, context, userID) {
     fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
     fixed_resp.Code = processString(fixed_resp.Code); 
     fixed_resp.Code = fixed_resp.Code.join('\n');
+
+    // i need to store the code and prompt here.
+    saveChatHistory(userID, topic, resp, context, prompt, questionsDbName);
 
     return {
       success: true,
