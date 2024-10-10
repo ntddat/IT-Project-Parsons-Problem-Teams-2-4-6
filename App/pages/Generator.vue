@@ -80,8 +80,12 @@
 
 <script>
 import axios from 'axios';
+import { compress } from 'lz-string';
 // import {getCookie, setCookie} from "../libs/cookie.js"
-import { getUserID } from "../libs/user.js"
+// import { getUserID } from "../libs/user.js"
+
+
+import LZString from 'lz-string';
 
 export default {
   name: 'Generator',
@@ -125,6 +129,8 @@ export default {
 
   mounted () {
       this.checkPopUp();
+      // const userID = getUserID()
+      // console.log(userID)
   },
   // -----------------------
   methods: {
@@ -138,7 +144,7 @@ export default {
       this.$router.push({
         path: '/History',
         query: {
-          isAdmin: false,
+          isAdmin: true,
           // userID: getCookie("userID")
           userID: this.$cookies.get('userID')
 
@@ -146,17 +152,14 @@ export default {
       })
     },
     // cookie pop up 
-    async accept() {       // handle acceptance
+    accept() {       // handle acceptance
       this.showPopUp = false;
       // setCookie("acception", "true", 5)
       this.$cookies.set('acception', true, '1d');
 
       // setCookie("userID", "114", 60)
-      // this.$cookies.set('userID', 114, '1d');
-      const userID = await getUserID()
-      console.log(userID)
-      this.$cookies.set('userID', userID, '1d');
-      console.log("get ID: " + userID)
+      this.$cookies.set('userID', 114, '1d');
+
     },
     reject() {       // handle rejection
       this.showPopUp = false;
@@ -164,8 +167,7 @@ export default {
       this.$cookies.set('acception', false, '10s');
       // console.log(getCookie("acception"))
     },
-
-    async checkPopUp() {
+    checkPopUp() {
       const acception = this.$cookies.isKey("acception")
 
       if (!acception) {
@@ -174,16 +176,9 @@ export default {
       }
       else {
         console.log("acception already exist: " + acception)
-
-        // const userID = this.$cookies.get('userID')
-        // console.log("UserID: "+ userID + "type: " + typeof(userID))
-        // const datas = await getUserHistory(userID) 
-        // console.log(datas.userData.accuracy)
-
         this.showPopUp = false
       }
     },
-
     toggleDropdown1(event) {
       this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
       this.isContextDropdownVisible = false;
@@ -216,15 +211,14 @@ export default {
       var payload;
       if (this.$cookies.isKey("userID")) {
         payload = {
-          topic: this.selectedTopic,
-          context: this.selectedContext,
-          userID : this.$cookies.get("userID"),
+        topic: this.selectedTopic,
+        context: this.selectedContext,
+        userID : this.$cookies.get("userID"),
         };
-        console.log(payload.userID);
       } else {
         payload = {
-          topic: this.selectedTopic,
-          context: this.selectedContext
+        topic: this.selectedTopic,
+        context: this.selectedContext
         };
       }
        
@@ -241,10 +235,13 @@ export default {
       .then(response => {
         //console.log('Data received successfully:', response.data);
         // Push to Problem page, passing the received data via query parameters
+        const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(response.data));
+        console.log(compressedData);
         this.$router.push({ 
           path: '/Problem', 
           query: { 
-            response: JSON.stringify(response.data),  // assuming the result is in response.data.result
+            shareLink: compressedData,
+            // response: JSON.stringify(response.data),  // assuming the result is in response.data.result
             topic: this.selectedTopic, 
             context: this.selectedContext 
           }
