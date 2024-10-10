@@ -44,6 +44,10 @@ const chatHistoryRepo = {
     
       transformedHistory.push(user, model)
     });
+
+    console.log(transformedHistory[0].parts);
+    // console.log(userID)
+    // console.log("testing")
     return transformedHistory;
   },
   createNewChatHistory: async (userID, topic, question, context, prompt, questionsDbName) => {

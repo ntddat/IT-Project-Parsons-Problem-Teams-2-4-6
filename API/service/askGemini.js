@@ -39,8 +39,8 @@ async function askGemini(topic, context, userID) {
   try {
     // Starting a full chat
     const questionsDbName = await getQuestionsDbName();
-    const history = await chatHistoryRepo.getChatHistory(1, questionsDbName)
-    const chat = model.startChat({history})
+    const history = ((userID) ? (await chatHistoryRepo.getChatHistory(userID, questionsDbName)) : []);
+    const chat = model.startChat({ history })
     let syntaxPassed = false;
     let prompt, result, resp, fixed_resp;
 
