@@ -315,10 +315,10 @@
             duplicateCheck(code){
                 if (code == this.prevAnswerCode){
                     alert("code is same as previous");
-                    return false;
+                    return true;
                 }
                 this.prevAnswerCode = code;
-                return true;
+                return false;
             },
 
             async runCode(code) {
