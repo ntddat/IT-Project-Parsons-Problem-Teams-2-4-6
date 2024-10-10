@@ -157,7 +157,6 @@ export default {
       console.log(userID)
       this.$cookies.set('userID', userID, '1d');
       console.log("get ID: " + userID)
-
     },
     reject() {       // handle rejection
       this.showPopUp = false;
@@ -176,10 +175,11 @@ export default {
       else {
         console.log("acception already exist: " + acception)
 
-        const userID = this.$cookies.get('userID')
-        console.log("UserID: "+ userID)
-        
-        getUserHistory(userID) //
+        // const userID = this.$cookies.get('userID')
+        // console.log("UserID: "+ userID + "type: " + typeof(userID))
+        // const datas = await getUserHistory(userID) 
+        // console.log(datas.userData.accuracy)
+
         this.showPopUp = false
       }
     },

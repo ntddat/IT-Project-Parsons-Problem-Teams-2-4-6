@@ -12,7 +12,7 @@
             </div>
         </nav>
 
-        <div id="notacceptCookie" v-if="!acceptCookie">
+        <div id="notacceptCookie" v-if="!notShowPopWin">
             <div id="cookie-request">You must accept the cookie if you want check this page</div>
             <button @click="accept" id="accept-btn">Accept</button>
         </div>
@@ -85,13 +85,13 @@
                 <li  v-for="(item, index) in topicSummary" :key="index" >
                 <div @click="questionDropdown(index)" class="history-item">
                     <div class="history-topic">
-                        <img class="tubiao" src="/App/tubiao.png" /> {{ item.Topic }}
+                        <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
                     </div>
                     <div class="history-practice">
                         {{ item.numQuestions }}
                     </div>
                     <div class="history-accuracy">
-                        {{ item.Accuracy }}%
+                        {{ item.accuracy }}%
                     </div>
                 </div>
                     <!-- Question details -->
@@ -173,129 +173,142 @@ import { getUserID, getUserHistory } from "../libs/user.js"
 export default {
     mounted () {
         const isAdmin = (this.$route.query.isAdmin);
-            console.log("isAdmin: "+ isAdmin + " type: " + typeof(isAdmin))
-            console.log("cookie-acception: " + this.$cookies.get('acception'))
-        this.acceptCookie = (isAdmin == 'true') || (this.$cookies.get('acception') == 'true')
-            console.log("acceptCookie: " + this.acceptCookie)
+            // console.log("isAdmin: "+ isAdmin + " type: " + typeof(isAdmin))
+            // console.log("cookie-acception: " + this.$cookies.get('acception'))
+        this.notShowPopWin = (isAdmin == 'true') || (this.$cookies.get('acception') == 'true')
+            // console.log("acceptCookie: " + this.acceptCookie)
         
-        
-        if (this.acceptCookie && !this.$route.query.userID) {
+        // use different methods get user id
+        if (this.notShowPopWin && !this.$route.query.userID) {
             this.userID = this.$cookies.get('userID')
+            // console.log("get id from cookie")
         }
         else {
             this.userID = this.$route.query.userID
+            // console.log("get id from previous page")
         }
+
+        // id user id exist, then get userdata
+        if (this.userID) {
+            this.setUserData()
+        }
+
+        // const userID = this.$cookies.get('userID')
+        // console.log("UserID: "+ userID + "type: " + typeof(userID))
+        // const datas = await getUserHistory(userID) 
+        // console.log(datas.userData.accuracy)
     },
     data() {
         return {
-            acceptCookie: null,
+            notShowPopWin: null,
             // acceptCookie: true,
             userName: "Student",
             userID: null,
             accuracy: 60,
             exercises: 5,
-            topicSummary: [
-            {Topic: "Decision Tree Classifier", numQuestions: 2, Accuracy: 50, 
-                attemptedQuestions: [
-                    {
-                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: true },
-                            { attemptID: 3, time: 256, correct: false },
-                        ]
-                    },
-                    {
-                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: false },
-                            { attemptID: 3, time: 256, correct: false },
-                            { attemptID: 4, time: 256, correct: false }
-                        ]
-                    }
-                ]},
-            { Topic: "Linear Regression", numQuestions: 100, Accuracy: 80, 
-                attemptedQuestions: [
-                    {
-                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: true },
-                            { attemptID: 3, time: 256, correct: false },
-                        ]
-                    },
-                    {
-                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: false },
-                            { attemptID: 3, time: 256, correct: false },
-                            { attemptID: 4, time: 256, correct: false }
-                        ]
-                    }
-                ]},
-            { Topic: "Correlation", numQuestions: 78, Accuracy: 65, 
-                attemptedQuestions: [
-                    {
-                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: true },
-                            { attemptID: 3, time: 256, correct: false },
-                        ]
-                    },
-                    {
-                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: false },
-                            { attemptID: 3, time: 256, correct: false },
-                            { attemptID: 4, time: 256, correct: false }
-                        ]
-                    }
-                ]},
-            { Topic: "NMI", numQuestions: 133, Accuracy: 70, 
-                attemptedQuestions: [
-                    {
-                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: true },
-                            { attemptID: 3, time: 256, correct: false },
-                        ]
-                    },
-                    {
-                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: false },
-                            { attemptID: 3, time: 256, correct: false },
-                            { attemptID: 4, time: 256, correct: false }
-                        ]
-                    }
-                ]},
-            { Topic: "Correlation", numQuestions: 60, Accuracy: 90, 
-                attemptedQuestions: [
-                    {
-                        questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: true },
-                            { attemptID: 3, time: 256, correct: false },
-                        ]
-                    },
-                    {
-                        questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-                        attempts: [
-                            { attemptID: 1, time: 345, correct: false },
-                            { attemptID: 2, time: 245, correct: false },
-                            { attemptID: 3, time: 256, correct: false },
-                            { attemptID: 4, time: 256, correct: false }
-                        ]
-                    }
-                ]}
-            ]
+            topicSummary: null
+            // topicSummary: [
+            // {Topic: "Decision Tree Classifier", numQuestions: 2, Accuracy: 50, 
+            //     attemptedQuestions: [
+            //         {
+            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: true },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //             ]
+            //         },
+            //         {
+            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: false },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //                 { attemptID: 4, time: 256, correct: false }
+            //             ]
+            //         }
+            //     ]},
+            // { Topic: "Linear Regression", numQuestions: 100, Accuracy: 80, 
+            //     attemptedQuestions: [
+            //         {
+            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: true },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //             ]
+            //         },
+            //         {
+            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: false },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //                 { attemptID: 4, time: 256, correct: false }
+            //             ]
+            //         }
+            //     ]},
+            // { Topic: "Correlation", numQuestions: 78, Accuracy: 65, 
+            //     attemptedQuestions: [
+            //         {
+            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: true },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //             ]
+            //         },
+            //         {
+            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: false },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //                 { attemptID: 4, time: 256, correct: false }
+            //             ]
+            //         }
+            //     ]},
+            // { Topic: "NMI", numQuestions: 133, Accuracy: 70, 
+            //     attemptedQuestions: [
+            //         {
+            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: true },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //             ]
+            //         },
+            //         {
+            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: false },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //                 { attemptID: 4, time: 256, correct: false }
+            //             ]
+            //         }
+            //     ]},
+            // { Topic: "Correlation", numQuestions: 60, Accuracy: 90, 
+            //     attemptedQuestions: [
+            //         {
+            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: true },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //             ]
+            //         },
+            //         {
+            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
+            //             attempts: [
+            //                 { attemptID: 1, time: 345, correct: false },
+            //                 { attemptID: 2, time: 245, correct: false },
+            //                 { attemptID: 3, time: 256, correct: false },
+            //                 { attemptID: 4, time: 256, correct: false }
+            //             ]
+            //         }
+            //     ]}
+            // ]
         };
     },
     methods: {
@@ -309,6 +322,14 @@ export default {
         //         this.acceptCookie = false
         //     }
         // },
+        async setUserData() {
+            const datas = await getUserHistory(this.userID) 
+            this.accuracy = datas.userData.accuracy
+            this.exercises = datas.userData.numQuestions
+            this.topicSummary = datas.userData.topicSummary
+            console.log(datas.userData.accuracy)
+        },
+
         async accept() {
             // this.acceptCookie = true,
             // setCookie("acception", "true", 5)

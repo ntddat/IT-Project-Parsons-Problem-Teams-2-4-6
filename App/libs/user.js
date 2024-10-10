@@ -32,12 +32,12 @@ export async function getUserHistory(userID) {
     try {
         const response = await fetch(url,options);
         const data = await response.json();
-        console.log("Get istory:---------------------")
-        console.log("History: " + data)
-        console.log("Finish:---------------------")
+        // console.log("Get history:---------------------")
+        // console.log("History: " + data)
+        // console.log("Finish:---------------------")
         return data;
-        // return response
     } catch (error) {
         console.error('Error:',error);
+        return await getUserHistory(userID);
     }
 }
