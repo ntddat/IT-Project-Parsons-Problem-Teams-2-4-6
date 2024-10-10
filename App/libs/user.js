@@ -20,21 +20,24 @@ export async function getUserID() {
 }
 
 export async function getUserHistory(userID) {
-    const url = 'http://localhost:8383/api/user/userData';
-
+    // const url = 'http://localhost:8383/api/user/userData';
+    const url = `http://localhost:8383/api/user/userData?userID=${userID}`;
     const options = {
         method: 'GET',
         headers:{
             "Content-Type": "application/json"
         },
-        body: userID
+
     };
     try {
         const response = await fetch(url,options);
         const data = await response.json();
+        console.log("Get istory:---------------------")
+        console.log("History: " + data)
+        console.log("Finish:---------------------")
         return data;
         // return response
-        }catch (error){
-            console.error('Error:',error);
-        }
+    } catch (error) {
+        console.error('Error:',error);
+    }
 }

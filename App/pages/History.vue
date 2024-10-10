@@ -168,18 +168,17 @@
 
 <script>
 // import {getCookie, setCookie} from "../libs/cookie.js"
+import { getUserID, getUserHistory } from "../libs/user.js"
 
 export default {
     mounted () {
         const isAdmin = (this.$route.query.isAdmin);
-        // this.userID = this.$route.query.userID
-            // console.log("ignoreCookie: " + isAdmin + " ,UserID: " + this.userID)
-            // console.log(typeof(ignoreCookie))
-            console.log("isAdmin: "+ isAdmin)
-            console.log("in cookie-acception: " + this.$cookies.get('acception'))
+            console.log("isAdmin: "+ isAdmin + " type: " + typeof(isAdmin))
+            console.log("cookie-acception: " + this.$cookies.get('acception'))
         this.acceptCookie = (isAdmin == 'true') || (this.$cookies.get('acception') == 'true')
             console.log("acceptCookie: " + this.acceptCookie)
-
+        
+        
         if (this.acceptCookie && !this.$route.query.userID) {
             this.userID = this.$cookies.get('userID')
         }
@@ -310,13 +309,13 @@ export default {
         //         this.acceptCookie = false
         //     }
         // },
-        accept() {
+        async accept() {
             // this.acceptCookie = true,
             // setCookie("acception", "true", 5)
-            this.$cookies.set('acception', 'true', '10s');
-            this.$cookies.set('userID', 0, '10s');
+            this.$cookies.set('acception', true, '1d');
+            this.userID = await getUserID()
+            this.$cookies.set('userID', this.userID, '1d');
             this.$router.go(0);
-
         },
         questionDropdown(index) {
         this.topicSummary[index].isExpanded = !this.topicSummary[index].isExpanded;
