@@ -312,6 +312,16 @@
                 document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
             },
 
+            blockSubmission(){
+                const submitButton = document.getElementById('submit-btn');
+                submitButton.disabled = true;
+            },
+
+            activeSubmission(){
+                const submitButton = document.getElementById('submit-btn');
+                submitButton.disabled = false;
+            },
+
             duplicateCheck(code){
                 if (code == this.prevAnswerCode){
                     alert("code is same as previous");
@@ -353,15 +363,10 @@
             //todo window-regenerate-btn 的功能
             
 
-            async regenerateTester(){
-                
-                this.regenerate();
-                
-                // this.initializeParsonsWidget(testSample2);
-            },
 
             async regenerate(){
-                
+                this.stopTimer();
+                this.blockSubmission();
                 var payload;
                 if (this.$cookies.isKey("userID")) {
                     payload = {
@@ -403,6 +408,9 @@
                     document.getElementById('left-content').style.display = 'flex';
                     document.getElementById('sortableTrash').style.display = 'flex';
                     // document.getElementById('loading-overlay').style.display = 'none';  
+                    this.refreshTimer();
+                    this.startTimer();
+                    this.activeSubmission();
                 });
             },
 
@@ -537,14 +545,13 @@
                         var studentCode = this.getStudentCode(parson);
                         //runsubmit should be a no return function, this is now for testing
                         this.stopTimer();
-                        const submitButton = document.getElementById('submit-btn');
-                        submitButton.disabled = true;
+                        this.blockSubmission();
                         if(!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)){
                             this.runSubmit(studentCode,solution);       
                             this.refreshTimer();
                         }
                         this.startTimer();
-                        submitButton.disabled = false;
+                        this.activeSubmission();
                     });
 
                     document.getElementById('reset-btn').addEventListener('click', () => {
@@ -566,16 +573,14 @@
                         
                         console.log('regenerating');
                         this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
-                        this.regenerateTester();
-                        this.refreshTimer();
-                        this.startTimer();
+                        this.regenerate();
+                        
                     });
 
                     document.getElementById('window-regenerate-btn').addEventListener('click', () => {
                         document.getElementById('resultMessage').style.display = 'none';
-                        this.regenerateTester();
-                        this.refreshTimer();
-                        this.startTimer();
+                        this.regenerate();
+                        
                     });
                 })
             },
@@ -604,10 +609,12 @@
                         // console.log(solution.output);
                         // console.log(studentAnswer.output);
                         this.sendAttempt(0); // 提交错误的尝试
+                        alert("your output is different with correct output");
                     }
                 } else {
                     console.log("Error occurred:", studentAnswer.error);
                     this.sendAttempt(0); // 提交错误的尝试
+                    alert("There is error in your code");
                 }
                 
             },
