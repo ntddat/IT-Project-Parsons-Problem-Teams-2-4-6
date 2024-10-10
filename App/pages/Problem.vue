@@ -128,6 +128,8 @@
 
 
     //let startTime;
+    import LZString from 'lz-string';
+    import { compress } from 'lz-string';
     let intervalId;
     let elapsedTime;
     let timerLock = false;
@@ -139,6 +141,7 @@
                 context : '' ,
                 questionID : '',
                 loading: false,
+                sharelink: '',
             }
         },
         
@@ -238,10 +241,13 @@
             initializer(){
                 this.topic = this.$route.query.topic;
                 this.context = this.$route.query.context;
-                var data =  JSON.parse(this.$route.query.response);
+                
+                var compressedData = this.$route.query.shareLink;
+                // var data =  JSON.parse(this.$route.query.response);
+                this.sharelink = JSON.parse(LZString.decompressFromEncodedURIComponent(compressedData));
                 //todo uncomment below code after merging with new server
                 //initialCode = data.question
-                this.questionInitializer(data);
+                this.questionInitializer(this.sharelink);
                 
             },
             questionInitializer(data){
