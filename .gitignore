@@ -2,6 +2,8 @@
 # Ignore generated CSV files
 *.csv
 .csv
+*.txt
+.txt
 
 # Ignoring .env files (for the API key)
 .env
