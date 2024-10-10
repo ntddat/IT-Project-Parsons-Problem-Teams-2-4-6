@@ -62,14 +62,13 @@ const userDataService = {
       return {
         success: true,
         message: "User data retrieved successfully",
-        userData: userData,
+        userData: user,
       };
     } catch (e) {
       console.error("Error getting user details:", e);
       return {
         success: false,
         message: "Error getting user details",
-        userData: {},
       };
     }
   },
@@ -77,8 +76,8 @@ const userDataService = {
   addQuestionDetailsToUserData: async (userData, questionsDbName) => {
     try {
       // squash everything into a giant list of questionIDs
-      const allQuestionIDs = userData.attemptsSummary.reduce((acc, topic) => {
-        return acc.concat(topic.attemptedQuestions.map(question => question.questionID));
+      const allQuestionIDs = userData.topicSummary.reduce((acc, topic) => {
+        return acc.concat(topic.attemptedQuestions.map(question => question));
       }, []); // accumulate all question IDs into this empty array
 
       const questionDetails = await questionRepo.getQuestionDetailsFromArray(allQuestionIDs, questionsDbName); // fetch everything
@@ -91,13 +90,12 @@ const userDataService = {
       // merge everything together
       const enrichedUserData = {
         ...userData,
-        attemptsSummary: userData.attemptsSummary.map(topic => ({
+        topicSummary: userData.topicSummary.map(topic => ({
           ...topic,
-          attemptedQuestions: topic.attemptedQuestions.map(question => ({
-            questionID: question.questionID,
-            details: questionDetailsMap[question.questionID] || {}, // if the question doesn't exist, return an empty object
-          }))
-        }))
+          attemptedQuestions: topic.attemptedQuestions.map(question => (
+            (questionDetailsMap[question]) ? questionDetailsMap[question] : {}  // if the question doesn't exist, return an empty object))
+          )),
+        }), ),
       };
       return {
         success: true,
@@ -116,7 +114,6 @@ const userDataService = {
   updateUserAnalytics: async (userID, topic, correct, time, questionID, usersDbName) => {
     try {
       const result = await userDataRepo.updateUserAnalytics(userID, topic, correct, time, questionID, usersDbName);
-      console.log('Result of updateUserAnalytics:', result);
       if (!result.acknowledged) {
         return {
           success: false,
