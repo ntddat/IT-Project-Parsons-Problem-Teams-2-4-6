@@ -16,8 +16,9 @@ app.use(cors());
 // Importing our modules
 import { establishConnection } from './database/connection.js';
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./service/OutputParser.js";
-import { generatePrompt } from "./utils/constants/TopicsContexts.js";
 import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
+import { findClosestTopic } from "./utils/constants/TopicsContexts.js";
+import { generatePrompt } from './service/prompts.js';
 import { createCSV, syntaxCheck } from "./utils/compiler.js";
 
 // Establishing connection to the database
@@ -32,9 +33,14 @@ var answer = "Haven't queried yet";
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
 // Choosing Gemini model
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig: {temperature: 1.0 }});
+const model = genAI.getGenerativeModel({ 
+  model: "gemini-1.5-flash", 
+  generationConfig: {temperature: 1.0} 
+});
 
-// TODO: Separate compiler part into separate file, then use that for merging part
+// implement a simple delay to not exhaust API
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 async function askGemini(topic, context) {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
