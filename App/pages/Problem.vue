@@ -681,7 +681,7 @@
         flex-direction: row;
         position: relative;
         margin-top: 0;
-        max-height: 88vh;
+        max-height: 89vh;
     }
     #top-panel{
         width: 100%;
@@ -840,7 +840,7 @@
         padding: 0; /* 确保padding不会影响间距 */
         width: auto;
         /* overflow-y: auto;         */
-        max-height: 80%;
+        max-height: 80%-60px;
         min-height: calc(75%); 
         font-size: 12px;
         background-color: #156b3a00;
@@ -967,17 +967,25 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        gap: 10px;
         /* overflow:auto; */
         flex-shrink: 0;
         max-height: 40%;
         margin-bottom: 0;
+        padding-bottom: 0%;
+        border-bottom: 10px ridge #C4D6BE;
     }
 
     #question-content{
         overflow-y: auto;
+        
         max-height: calc(70%);
     }
-    
+    #topicdescription{
+        width: min-content;
+        border-bottom: 3px solid #6e8c64;
+        /* border-radius: 9px; */
+    }
     #topicdescription, #questiondescription, #expectedoutput{
         margin-left: 10px;
     }
