@@ -1052,11 +1052,11 @@
     #regenerate-btn button{
         border: none;
         border-radius: 5px;
-        background: linear-gradient(to right, #d7b50d, #e9a004e2); 
+        background: #FF8E54; 
         
     }
     #regenerate-btn button:hover{
-        border:2px solid #e2b00e;
+        border:2px solid #DFF497;
         transform: translateY(-1px);
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2); 
     }
