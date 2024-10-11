@@ -367,6 +367,7 @@
             async regenerate(){
                 this.stopTimer();
                 this.blockSubmission();
+                this.refreshOutput();
                 var payload;
                 if (this.$cookies.isKey("userID")) {
                     payload = {
