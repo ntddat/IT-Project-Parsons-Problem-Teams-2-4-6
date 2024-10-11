@@ -1,18 +1,28 @@
 <template>
+    <!-- cookie pop up -->
+    <div v-if="showPopUp" class="modal-backdrop">
+      <div class="modal-content">
+        <p>{{ cookieWords }}</p>
+        <button @click="accept">Agree</button>
+        <button @click="reject">Reject</button>
+      </div>
+    </div>
+    <!-- cookie pop up -->  
+
   <div class="generator" @click="closeDropdowns">
-    <nav class="top">
+    <nav class="top" v-if="!loading">
       <div class="header">
         <img src="/App/logo.png" alt="Logo" class="top-logo" />
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
-        <router-link to="/history" class="nav-link">History</router-link>
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
+        <router-link to="/history" class="nav-link">History</router-link>
       </div>
     </nav>
-    <div class="main-content">
+    <div class="main-content" v-if="!loading">
       <div class="descript">
-        <img src="../assets/icon/logo.png" alt="Logo" class="logo" />
+        <img src="/App/logo.png" alt="Logo" class="logo" />
         <h1>Question Generator</h1>
         <div>
           Get Started by selecting a topic and context from the dropdown menus below!
@@ -54,20 +64,30 @@
           </div>
         </div>
 
-        <button class="send-button" @click="sendData">
+        <button class="send-button" @click="sendData" :disabled="loading">
           <span class="iconfont icon-fasong"></span>
         </button>
       </div>
+    </div>
+    <div v-if="loading" class="loading-overlay">
+      <img src="../loading3.gif" width="50" height="50"lass="loading-icon"/>
+      <p class="loading-text">{{ loadingWord }}</p>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import {getCookie, setCookie} from "../libs/cookie.js"
+
 export default {
   name: 'Generator',
   data() {
     return {
+      cookieWords: "We are using Cookie to recording your past data. By clicking 'Accept', you agree to our use of cookies",
+      showPopUp: true, 
+      loadingWord: "Generating questions may take some time, please be patient.",
+
       isTopicDropdownVisible: false,
       isContextDropdownVisible: false,
       // Store the selected topic
@@ -95,10 +115,39 @@ export default {
         'Traffic Flow Analysis',
         'Sales Forecasting',
         'Inventory Management'
-      ]
+      ],
+      loading: false
     };
   },
+
+  beforeMount () {
+      this.checkPopUp();
+  },
+  // -----------------------
   methods: {
+    // cookie pop up 
+    accept() {       // handle acceptance
+      this.showPopUp = false;
+      setCookie("acception", "true", 5)
+    },
+    reject() {       // handle rejection
+      this.showPopUp = false;
+      setCookie("acception", "false", 5)
+      console.log(getCookie("acception"))
+    },
+    checkPopUp() {
+      const acception = getCookie("acception")
+      if (acception == "") {
+        console.log("acception not exist: ")
+        this.showPopUp = true
+      }
+      else {
+        console.log("acception already exist: " + acception)
+        this.showPopUp = false
+      }
+    },
+
+
     toggleDropdown1(event) {
       this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
       this.isContextDropdownVisible = false;
@@ -118,7 +167,6 @@ export default {
       this.isContextDropdownVisible = false;
     },
     closeDropdowns(event) {
-      // Close all drop-down boxes when clicking on other parts of the page
       if (!event.target.closest('.dropdown')) {
         this.isTopicDropdownVisible = false;
         this.isContextDropdownVisible = false;
@@ -131,22 +179,53 @@ export default {
       };
       console.log('Sending data to backend:', payload);
 
-      // Data is sent to the back end via HTTP requests
+      this.loading = true;
+
       axios.post('http://localhost:8383/api/sendData', payload, {
         headers: {
           'Content-Type': 'application/json'
         }
       })
-        .then(response => {console.log('Data sent successfully:', response.data)
-      window.location.href = "/App/problem.html"})
-
-      .catch(error => console.error('Error sending data:', error));
+      .then(response => {
+        console.log('Data sent successfully:', response.data);
+        this.$router.push({ 
+          path: '/Problem', 
+          query: { topic: this.selectedTopic, context: this.selectedContext }
+        });
+      })
+      .catch(error => {
+        console.error('Error sending data:', error);
+      })
+      .finally(() => {
+        this.loading = false; 
+      });
     }
   }
 };
 </script>
 
 <style scoped>
+/* cookie pop up  */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  padding: 20px;
+  background: white;
+  border-radius: 5px;
+}
+/* ----------------------------- */
+
 .generator {
   display: flex;
   flex-direction: column;
@@ -161,7 +240,6 @@ export default {
   text-align: center;
   color: black;
   font-size: 20px;
-  font-family: Lexend, sans-serif;
   font-weight: 500;
   line-height: 40px;
   word-wrap: break-word;
@@ -176,8 +254,8 @@ export default {
   justify-content: space-between;
   position: fixed;
   bottom: 0;
-  width: 100%;
-  padding: 10px;
+  width: 97%;
+  padding: 13px;
 }
 
 .dropdown {
@@ -231,6 +309,21 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full-screen loading overlay */
+}
+
+.loading-text {
+  margin-top: 60px;
+  color: #333; /* Darker color for contrast */
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .top {

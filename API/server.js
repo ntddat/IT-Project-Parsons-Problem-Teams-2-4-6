@@ -17,6 +17,7 @@ app.use(cors());
 // Importing our modules
 import { establishConnection } from './database/connection.js';
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./service/OutputParser.js";
+import { questionDetailsRepo } from './database/repository/questions/questionDetailsRepo.js';
 import { findClosestTopic } from "./utils/constants/TopicsContexts.js";
 import { generatePrompt } from './service/prompts.js';
 import { timeoutRetry } from './utils/TimeoutRetry.js';
@@ -28,6 +29,8 @@ establishConnection();
 // Constants
 const port = 8383
 var answer = "Haven't queried yet";
+
+/**Should I try catch these initial setup functions ## */
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -45,31 +48,8 @@ async function askGemini(topic, context) {
   const chat = model.startChat({ history: [] })
   let syntaxPassed = false;
   let prompt, result, resp, fixed_resp;
-
-  // select from the topics
-  let newTopic = findClosestTopic(topic);
-
-  console.log("Topic: " + newTopic)
-
-  prompt = generatePrompt(newTopic, context);
+  // Generating a new prompt based on the given topic and context
   console.log(prompt);
-
-  // while (!syntaxPassed && attempt) {
-  //   // Generating a new prompt based on the given topic and context
-  //   result = await chat.sendMessage(prompt);
-  //   resp = result.response.text();
-
-  //   // Parsing the JSON response from Gemini
-  //   fixed_resp = outputParserJson(resp);
-      
-  //   // Checking if the generated code is syntactically correct
-  //   //fixed_resp.Code = fixed_resp.Code.join('\n');   
-  //   createCSV(fixed_resp.CSV, fixed_resp.CSVName);
-  //   syntaxPassed = await syntaxCheck(fixed_resp.Code);
-    
-  //   // to prevent API exhaustion (yes that is a thing), delay for 0.25s
-  //   await delay(250);
-  // }
 
   // generate the initial code snippet 
   result = await chat.sendMessage(prompt);
@@ -96,8 +76,7 @@ async function askGemini(topic, context) {
   } 
 }
 
-//Allows the server to see the index.html page in the public folder
-//IN MERGING PROCESS CHANGED FROM PUBLIC TO SRC SO index.html can be in the same folder as main.js
+//Allows the server to see the pages in the App public folder
 app.use(expressStatic('App'))
 //Expects to receive json in the app.post method
 app.use(json())
@@ -138,14 +117,15 @@ app.post('/api/sendData', async (req,res) => {
     console.log("POST request received"); 
     const { topic, context } = req.body; // Destructure the topic and context from req.body
 
-    console.log("Received topic:", topic);
-    console.log("Received context:", context);
-    
-    await askGemini(topic, context)
-
-    if (!topic && !context) {
-        res.status(400).send({status: "failed"})
+    /**Could expand on this to ensure topic and context lie within acceptable inputs ## */
+    if (!topic) {
+      res.status(400).send({status: "Topic not received"});
     }
+    if (!context) {
+      res.status(400).send({status: "Context not received"});
+    }
+
+    await askGemini(topic, context);
     res.status(200).send({status: "received"})
 })
 

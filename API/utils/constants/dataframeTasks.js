@@ -8,16 +8,16 @@ createDF.push(" create 3 Pandas DataFrames and join them using merge.\n");
 createDF.push(" create a Python dictionary and use it to create a Pandas DataFrame.\n");
 
 let taskDFSort = [];
-taskDFSort.push(" sort the DataFrame in ascending order.\n"); 
-taskDFSort.push(" sort the DataFrame in descending order.\n"); 
+taskDFSort.push(" sort the DataFrame over multiple columns in ascending order.\n"); 
+taskDFSort.push(" sort the DataFrame over multiple columns in descending order.\n"); 
 
 let taskDFGroupby = [];
-taskDFGroupby.push(" use groupby and the Pandas sum function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-//taskDFGroupby.push(" use groupby and the Pandas count function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-taskDFGroupby.push(" use groupby and the Pandas mean function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-taskDFGroupby.push(" use groupby and the Pandas median function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-taskDFGroupby.push(" use groupby and the Pandas mode function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-//taskDFGroupby.push(" use groupby and agg on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and sum on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and count on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and mean on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and median on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and mode on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and agg on the original DataFrame, and print the grouped DataFrame.\n");
 
 let taskDFJoin = [];
 taskDFJoin.push(" create a new DataFrame, and perform a left join on it and the original DataFrame using keys from the original DataFrame, then print the resulting DataFrame.\n");
@@ -29,6 +29,7 @@ taskDFJoin.push(" create a new DataFrame and perform a merge on it and the origi
 let taskDFRegex = [];
 taskDFRegex.push(" capitalize all string values of a column in the original DataFrame using regular expression.\n");
 taskDFRegex.push(" count the number of occurrence of a specified substring in a column in the original DataFrame using regular expression.\n");
+taskDFRegex.push(" remove all HTML tags in a column in the original DataFrame using regular expression.\n");
 taskDFRegex.push(" extract date from a column in the original DataFrame using regular expression.\n");
 
 let taskDFMissing = [];
@@ -67,6 +68,9 @@ export function promptDataFrame() {
   let taskOneArr = tasksDF.get(taskOne);
   let taskTwoArr = tasksDF.get(taskTwo);
   let taskThreeArr = tasksDF.get(taskThree);
+  console.log(taskOne);
+  console.log(taskTwo);
+  console.log(taskThree);
   str += "- It should then";
   str += taskOneArr[Math.floor(Math.random() * taskOneArr.length)];
   str += "- It should then";
