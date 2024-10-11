@@ -40,9 +40,6 @@ const model = genAI.getGenerativeModel({
   generationConfig: {temperature: 1.0} 
 });
 
-// implement a simple delay to not exhaust API
-const delay = ms => new Promise(res => setTimeout(res, ms));
-
 async function askGemini(topic, context) {
   // Starting a full chat
   const chat = model.startChat({ history: [] })
@@ -50,6 +47,9 @@ async function askGemini(topic, context) {
   let prompt, result, resp, fixed_resp;
   // Generating a new prompt based on the given topic and context
   console.log(prompt);
+
+  let closestTopic = findClosestTopic(topic);
+  prompt = generatePrompt(closestTopic, context);
 
   // generate the initial code snippet 
   result = await chat.sendMessage(prompt);
