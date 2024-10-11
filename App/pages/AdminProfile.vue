@@ -40,7 +40,7 @@
             <div class="history-container">
                 <div class="history-header">
                     <span class="header-topic">Topic</span>
-                    <span class="tit_text header-practice">Total Practice</span>
+                    <span class="tit_text header-practice">Total Questions</span>
                     <span class="tit_text header-accuracy">Accuracy</span>
                 </div>
 
@@ -56,9 +56,9 @@
                             <div v-show="item.isExpanded" class="dropdown-content">
                                 <div class="summary-header">
                                     <span class="header-ID">ID</span>
-                                    <span class="header-Answer">Total Answer</span>
+                                    <span class="header-Answer">Total Questions</span>
                                     <span class="header-Accuracy">Accuracy</span>
-                                    <span class="header-Time">Total Time</span>
+                                    <span class="header-Time">Total Time(minutes)</span>
                                 </div>
                                 <div class="scrolling-wrapper">
                                     <ul class="summary-list">
@@ -66,7 +66,7 @@
                                             <div class="item-id">{{item.index}}-{{item.studentID}}</div>
                                             <div class="item-answered">{{item.answered}}</div>
                                             <div class="item-accuracy">{{item.accuracy}}%</div>
-                                            <div class="item-time">{{item.hour}} hours {{item.min}} min</div>
+                                            <div class="item-time">{{item.min}}</div>
                                         </li>
                                     </ul>
                                 </div>
@@ -79,49 +79,49 @@
     </div>
 </template>
 <script>
-import {getCookie, setCookie} from "../libs/cookie.js"
+// import {getCookie, setCookie} from "../libs/cookie.js"
 
 export default {
     data() {
         return {
             userName: "Admin",
             accuracy: 60,
-            exercises: 8,
+            exercises: 7,
             // Sample data with more rows to demonstrate scrolling
             history: [
                 { title: "Decision Tree Classifier", practice: 90, accuracy: 77 },
                 { title: "Linear Regression", practice: 100, accuracy: 80 },
                 { title: "Correlation", practice: 78, accuracy: 65 },
                 { title: "NMI", practice: 133, accuracy: 70 },
-                { title: "Correlation", practice: 60, accuracy: 90 },
                 { title: "DataFrame", practice: 45, accuracy: 88 },
                 { title: "Sentence splitting using nltk", practice: 75, accuracy: 85 },
                 { title: "Reading/Writing CSV files", practice: 50, accuracy: 82 }
             ],
             summary: [
-                {index: "1", studentID:"xxxx", answered:50, accuracy:66, hour:3, min:15},
-                {index: "2", studentID:"xxxx", answered:100, accuracy:55, hour:5, min:17},
-                {index: "3", studentID:"xxxx", answered:67, accuracy:80, hour:4, min:34},
-                {index: "4", studentID:"xxxx", answered:45, accuracy:100, hour:2, min:8},
-                {index: "5", studentID:"xxxx", answered:25, accuracy:70, hour:1, min:30},
-                {index: "6", studentID:"xxxx", answered:66, accuracy:88, hour:5, min:10},
-                {index: "8", studentID:"xxxx", answered:110, accuracy:78, hour:11, min:23},
-                {index: "9", studentID:"xxxx", answered:44, accuracy:33, hour:2, min:48},
-                {index: "10", studentID:"xxxx", answered:78, accuracy:66, hour:3, min:22},
-                {index: "11", studentID:"xxxx", answered:45, accuracy:55, hour:2, min:34},
-                {index: "12", studentID:"xxxx", answered:56, accuracy:48, hour:2, min:57},
-                {index: "13", studentID:"xxxx", answered:25, accuracy:75, hour:1, min:13},
-                {index: "14", studentID:"xxxx", answered:10, accuracy:50, hour:0, min:22},
-                {index: "15", studentID:"xxxx", answered:0, accuracy:0, hour:0, min:0},
-                {index: "16", studentID:"xxxx", answered:4, accuracy:100, hour:0, min:35},
+                {index: "1", studentID:"xxxx", answered:50, accuracy:66, min:150.25},
+                {index: "2", studentID:"xxxx", answered:100, accuracy:55, min:170.36},
+                {index: "3", studentID:"xxxx", answered:67, accuracy:80, min:34.45},
+                {index: "4", studentID:"xxxx", answered:45, accuracy:100, min:8.72},
+                {index: "5", studentID:"xxxx", answered:25, accuracy:70, min:300.98},
+                {index: "6", studentID:"xxxx", answered:66, accuracy:88, min:10.77},
+                {index: "8", studentID:"xxxx", answered:110, accuracy:78, min:23.88},
+                {index: "9", studentID:"xxxx", answered:44, accuracy:33, min:48.26},
+                {index: "10", studentID:"xxxx", answered:78, accuracy:66, min:22.49},
+                {index: "11", studentID:"xxxx", answered:45, accuracy:55, min:34.98},
+                {index: "12", studentID:"xxxx", answered:56, accuracy:48, min:57.15},
+                {index: "13", studentID:"xxxx", answered:25, accuracy:75, min:13.52},
+                {index: "14", studentID:"xxxx", answered:10, accuracy:50, min:22.69},
+                {index: "15", studentID:"xxxx", answered:0, accuracy:0, min:0.00},
+                {index: "16", studentID:"xxxx", answered:4, accuracy:100, min:35.21},
             ]
         };
     },
     methods: {
         handleLogout() {
-            console.log("loging out...");
-            setCookie("Admin", false, 0)
-            console.log("Admin cookie Terminated")
+                console.log("loging out...");
+            // setCookie("Admin", false, 0)
+            this.$cookies.remove("Admin")
+                console.log("Admin cookie Terminated")
             this.$router.push('/Generator')
         },
 

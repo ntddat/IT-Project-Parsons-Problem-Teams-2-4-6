@@ -1,9 +1,13 @@
 /** Stylesheet for the puzzles */
 
 .sortable-code {
+    /* background-color: #C4D6BE; */
+    width: 85%; 
     position: static;
     padding-left: 0px;
-    margin-left: 2%;
+    margin: 0;
+    margin-bottom: 0;
+    margin-top: 0;
     float: left;
 }
 #sortableTrash { 
@@ -23,19 +27,51 @@
     border: 1px solid #28289900;
 }
 .sortable-code ul:empty {
-  padding-bottom: 30px;
+    height: calc(100%);
+    margin-top: 5px;
+    padding-bottom: 0px;
 }
 .sortable-code li, .sortable-code li:before, .sortable-code li:after {
   box-sizing: content-box;
 }
 ul.output {
-    background-color: #ce620400;
+    background-color: #C4D6BE;
     border: 1px solid #0e0ea500;;
-    min-height: 80%;
-    width: calc(100% - 10px); 
+    max-height: 100%;
+    min-height: 85%;
+    width: calc(100%); 
     box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2), inset -3px -3px 8px rgba(255, 255, 255, 0.05); /* Concave effect */
     border-radius: 5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    margin: 0;
+    margin-top: 5px;
+    padding:0;
+    scrollbar-gutter: stable both-edges;
     /* padding-left: 10px; */
+}
+ul.output:hover {
+    overflow-x: auto;
+    scrollbar-gutter: stable both-edges;
+}
+*:not(body)::-webkit-scrollbar {
+    width: 8px; 
+}
+
+ul.output::-webkit-scrollbar-corner {
+    background-color: #C4D6BE; /* 设置滚动条交汇处的背景颜色，确保与整体一致 */
+}
+*:not(body)::-webkit-scrollbar-thumb {
+    background-color: #5e766950; 
+    border-radius: 10px; 
+}
+
+*:not(body)::-webkit-scrollbar-button {
+    display: none; 
+}
+*:not(body)::-webkit-scrollbar-track {
+    background: transparent; 
 }
 .sortable-code li {
     width: 80%;
@@ -46,8 +82,8 @@ ul.output {
     border:1px solid rgb(193, 193, 193);
     padding:15px;
     margin-top: 5px;
-    white-space: nowrap;
-    overflow: auto;
+    white-space: normal;
+    overflow: clip;
     cursor: move;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1); /* 阴影 */
     z-index: auto;

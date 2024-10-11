@@ -2,12 +2,13 @@
     <!-- cookie pop up -->
     <div v-if="showPopUp" class="modal-backdrop">
       <div class="modal-content">
-        <p>{{ cookieWords }}</p>
-        <button @click="accept">Agree</button>
-        <button @click="reject">Reject</button>
+        <p id="cookieTop"><i class="fa-solid fa-cookie-bite"></i> Cookie</p>
+        <p id="cookieWords">{{ cookieWords }}</p>
+        <button id="accept-btn" @click="accept">Accept</button>
+        <button id="reject-btn" @click="reject">Reject</button>
       </div>
     </div>
-    <!-- cookie pop up -->  
+    <!-- cookie pop up --> 
 
   <div class="generator" @click="closeDropdowns">
     <nav class="top" v-if="!loading">
@@ -16,8 +17,9 @@
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
+        <div @click="cleanCookies" class="nav-link">Clean</div>
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
-        <router-link to="/history" class="nav-link">History</router-link>
+        <div @click="historyBotton" class="nav-link">History</div>
       </div>
     </nav>
     <div class="main-content" v-if="!loading">
@@ -70,23 +72,28 @@
       </div>
     </div>
     <div v-if="loading" class="loading-overlay">
-      <img src="../loading3.gif" width="50" height="50"lass="loading-icon"/>
+      <img src="../loading3.gif" width="50" height="50" lass="loading-icon"/>
       <p class="loading-text">{{ loadingWord }}</p>
     </div>
   </div>
 </template>
 
 <script>
+
 import axios from 'axios';
-import {getCookie, setCookie} from "../libs/cookie.js"
+
+import { getUserID } from "../libs/user.js"
+import LZString from 'lz-string';
+import { compress } from 'lz-string';
+
 
 export default {
   name: 'Generator',
   data() {
     return {
-      cookieWords: "We are using Cookie to recording your past data. By clicking 'Accept', you agree to our use of cookies",
+      cookieWords: "We are using Cookie to record your past data. By clicking 'Accept', you agree to our use of cookies",
       showPopUp: true, 
-      loadingWord: "Generating questions may take some time, please be patient.",
+      loadingWord: "Generating questions may take some time, please be patient...",
 
       isTopicDropdownVisible: false,
       isContextDropdownVisible: false,
@@ -120,34 +127,59 @@ export default {
     };
   },
 
-  beforeMount () {
+  mounted () {
       this.checkPopUp();
+      // const userID = getUserID()
+      // console.log(userID)
   },
   // -----------------------
   methods: {
+    cleanCookies() {
+      this.$cookies.remove('acception');
+      this.$cookies.remove('userID');
+      this.$router.go(0);
+    },
+
+    historyBotton() {
+      this.$router.push({
+        path: '/History',
+        query: {
+          isAdmin: false,
+          // userID: getCookie("userID")
+          userID: this.$cookies.get('userID')
+        }
+      })
+    },
     // cookie pop up 
-    accept() {       // handle acceptance
+    async accept() {       // handle acceptance
       this.showPopUp = false;
-      setCookie("acception", "true", 5)
+      this.$cookies.set('acception', true, '3m');
+      const userID = await getUserID()
+      // console.log(userID)
+      this.$cookies.set('userID', userID, '3m');
+      // console.log("get ID: " + userID)
     },
     reject() {       // handle rejection
       this.showPopUp = false;
-      setCookie("acception", "false", 5)
-      console.log(getCookie("acception"))
+      this.$cookies.set('acception', false, '7d');
     },
     checkPopUp() {
-      const acception = getCookie("acception")
-      if (acception == "") {
-        console.log("acception not exist: ")
+      const acception = this.$cookies.isKey("acception")
+
+      if (!acception) {
+        // console.log("acception not exist: ")
         this.showPopUp = true
       }
       else {
         console.log("acception already exist: " + acception)
+        // if accept the cookie, then refresh the cookies
+        if (acception == 'true') {
+          this.$cookies.set('acception', true, '3m');
+          this.$cookies.set('userID', this.$cookies.get('userID'), '3m');
+        }
         this.showPopUp = false
       }
     },
-
-
     toggleDropdown1(event) {
       this.isTopicDropdownVisible = !this.isTopicDropdownVisible;
       this.isContextDropdownVisible = false;
@@ -173,28 +205,51 @@ export default {
       }
     },
     sendData() {
-      const payload = {
+      if (!this.selectedTopic || !this.selectedContext) {
+        alert('Please select both a topic and a context before proceeding.');
+        return; // Stop execution if no topic or context is selected
+      }
+      var payload;
+      if (this.$cookies.isKey("userID")) {
+        payload = {
+        topic: this.selectedTopic,
+        context: this.selectedContext,
+        userID : this.$cookies.get("userID"),
+        };
+      } else {
+        payload = {
         topic: this.selectedTopic,
         context: this.selectedContext
-      };
+        };
+      }
+       
       console.log('Sending data to backend:', payload);
 
       this.loading = true;
 
-      axios.post('http://localhost:8383/api/sendData', payload, {
+      axios.get('http://localhost:8383/api/question/generateQuestion', {
+        params: payload,  // This sends topic, context, and userID as query parameters
         headers: {
           'Content-Type': 'application/json'
         }
       })
       .then(response => {
-        console.log('Data sent successfully:', response.data);
+        //console.log('Data received successfully:', response.data);
+        // Push to Problem page, passing the received data via query parameters
+        const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(response.data));
+        console.log(compressedData);
         this.$router.push({ 
           path: '/Problem', 
-          query: { topic: this.selectedTopic, context: this.selectedContext }
+          query: { 
+            shareLink: compressedData,
+            // response: JSON.stringify(response.data),  // assuming the result is in response.data.result
+            topic: this.selectedTopic, 
+            context: this.selectedContext 
+          }
         });
       })
       .catch(error => {
-        console.error('Error sending data:', error);
+        console.error('Error fetching data:', error);
       })
       .finally(() => {
         this.loading = false; 
@@ -212,17 +267,50 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.183);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  
 }
 
 .modal-content {
+  display: flex;
   padding: 20px;
-  background: white;
-  border-radius: 5px;
+  background-color: rgb(204, 223, 197);
+  border-radius: 10px;
+  flex-direction: column;
+  border:2px solid #156B3A
+}
+#cookieTop{
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0;
+  font-family: "Font Awesome 5 Free";
+}
+#cookieTop i{
+  padding-right: 3px;
+}
+
+#cookieWords{
+  font-size: 22px;
+  margin: 10px;
+  margin-left: 0px
+}
+#accept-btn, #reject-btn{
+  width: 60%;
+  height: 40%;
+  padding: 3px;
+  background-color: rgba(0, 255, 255, 0);
+  border: 1.5px solid rgb(0, 0, 0);
+  margin: 10px;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  font-weight: 600;
+}
+#accept-btn:hover, #reject-btn:hover{
+  background-color: #dd8b33f4;
 }
 /* ----------------------------- */
 
@@ -282,10 +370,11 @@ export default {
   background: white;
   border: 1px solid #ccc;
   border-radius: 5px;
-  max-height: 150px;
+  max-height: 43vh; 
   overflow-y: auto;
   width: 100%;
 }
+
 
 .dropdown-item {
   font-size: 15px;
@@ -353,6 +442,7 @@ export default {
   gap: 20px;
   width: auto; /* Set width to auto to adjust based on content */
   margin-right: 30px; /* Move nav bar slightly away from the right edge */
+  cursor: pointer;
 }
 
 .nav-link {

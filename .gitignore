@@ -2,6 +2,8 @@
 # Ignore generated CSV files
 *.csv
 .csv
+*.txt
+.txt
 
 # Ignoring .env files (for the API key)
 .env
@@ -16,11 +18,9 @@ runs/
 # Ignore node_modules
 node_modules/
 
-# Ignore database scripts
-databaseScripts/*.js
-
 # Ignore script generated for PythonShell
 script.py
+test.py
 
 #TEAM 2's GITIGNORE
 # Logs
@@ -53,3 +53,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+#sklearn
+sklearn-env/
