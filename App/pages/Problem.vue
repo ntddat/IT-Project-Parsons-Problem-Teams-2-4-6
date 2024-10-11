@@ -23,9 +23,9 @@
                     <div id="progress"></div>
                 </div> -->
                 <div id="time-elapsed">0 mins 0 seconds</div>
-                <a id="regenerate-btn"> 
-                        <button>Regenerate</button>
-                </a>
+                <div id="regenerate-btn">
+                    <button :disabled="isRegenerateDisabled" @click="handleRegenerate">Regenerate</button>
+                </div>
             </div>
         </div>
     
@@ -72,7 +72,7 @@
                         <button id="reset-btn">
                             <i class="fas fa-undo"></i> Reset
                         </button>
-                        <button id="submit-btn">
+                        <button id="submit-btn" :disabled="isSubmitDisabled">
                             <i class="fas fa-paper-plane"></i> Submit
                         </button>
                     </div>
@@ -144,6 +144,8 @@
                 sharelink: '',
                 prevAnswerCode: '',
                 loadingWord: "Regenerating questions may take some time, please be patient...",
+                isRegenerateDisabled: false,
+                isSubmitDisabled: false, 
             }
         },
         
@@ -313,13 +315,19 @@
             },
 
             blockSubmission(){
-                const submitButton = document.getElementById('submit-btn');
-                submitButton.disabled = true;
+                this.isSubmitDisabled = true;
             },
 
             activeSubmission(){
-                const submitButton = document.getElementById('submit-btn');
-                submitButton.disabled = false;
+                this.isSubmitDisabled = false;
+            },
+
+            blockRegeneration(){
+                this.isRegenerateDisabled = true;
+            },
+
+            activeRegeneration(){
+                this.isRegenerateDisabled = false;
             },
 
             duplicateCheck(code){
@@ -365,6 +373,7 @@
 
 
             async regenerate(){
+                this.blockRegeneration();
                 this.stopTimer();
                 this.blockSubmission();
                 this.refreshOutput();
@@ -412,6 +421,7 @@
                     this.refreshTimer();
                     this.startTimer();
                     this.activeSubmission();
+                    this.activeRegeneration();
                 });
             },
 
@@ -571,11 +581,11 @@
                     });
  
                     document.getElementById('regenerate-btn').addEventListener('click',() => {
-                        
+
                         console.log('regenerating');
-                        this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
+                        //this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
                         this.regenerate();
-                        
+
                     });
 
                     document.getElementById('window-regenerate-btn').addEventListener('click', () => {
