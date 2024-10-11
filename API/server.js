@@ -7,6 +7,7 @@ import express, { static as expressStatic, json } from 'express';
 import format from 'string-format';
 import cors from 'cors';
 
+
 dotenv.config();
 const app = express()
 
@@ -18,6 +19,7 @@ import { establishConnection } from './database/connection.js';
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./service/OutputParser.js";
 import { findClosestTopic } from "./utils/constants/TopicsContexts.js";
 import { generatePrompt } from './service/prompts.js';
+import { timeoutRetry } from './utils/TimeoutRetry.js';
 import { createCSV, syntaxCheck } from "./utils/compiler.js";
 
 // Establishing connection to the database
@@ -52,31 +54,37 @@ async function askGemini(topic, context) {
   prompt = generatePrompt(newTopic, context);
   console.log(prompt);
 
-  // create a simple timer running for 7s to attempt to generate a new question
-  let attempt = true;
-  setTimeout(function() {
-    attempt = false;
-  }, 7000);
+  // while (!syntaxPassed && attempt) {
+  //   // Generating a new prompt based on the given topic and context
+  //   result = await chat.sendMessage(prompt);
+  //   resp = result.response.text();
 
-  while (!syntaxPassed && attempt) {
-    // Generating a new prompt based on the given topic and context
-    result = await chat.sendMessage(prompt);
-    resp = result.response.text();
-
-    // Parsing the JSON response from Gemini
-    fixed_resp = outputParserJson(resp);
+  //   // Parsing the JSON response from Gemini
+  //   fixed_resp = outputParserJson(resp);
       
-    // Checking if the generated code is syntactically correct
-    //fixed_resp.Code = fixed_resp.Code.join('\n');   
-    createCSV(fixed_resp.CSV, fixed_resp.CSVName);
-    syntaxPassed = await syntaxCheck(fixed_resp.Code);
+  //   // Checking if the generated code is syntactically correct
+  //   //fixed_resp.Code = fixed_resp.Code.join('\n');   
+  //   createCSV(fixed_resp.CSV, fixed_resp.CSVName);
+  //   syntaxPassed = await syntaxCheck(fixed_resp.Code);
     
-    // to prevent API exhaustion (yes that is a thing), delay for 0.25s
-    await delay(250);
-  }
+  //   // to prevent API exhaustion (yes that is a thing), delay for 0.25s
+  //   await delay(250);
+  // }
+
+  // generate the initial code snippet 
+  result = await chat.sendMessage(prompt);
+  resp = result.response.text();
+  fixed_resp = outputParserJson(resp);
+
+  console.log(fixed_resp);
+
+  // until 20 secs have passed, keep regenerating the code
+  // attempt to generate some functional code
+  let newCode = await timeoutRetry(fixed_resp.Code, fixed_resp.CSVName, fixed_resp.CSV, 20000);
 
   // if it managed to generate a problem
-  if (syntaxPassed) {
+  if (newCode !== null) {
+    fixed_resp.Code = newCode;
     fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
     fixed_resp.Code = processString(fixed_resp.Code); 
     fixed_resp.Code = fixed_resp.Code.join('\n');
