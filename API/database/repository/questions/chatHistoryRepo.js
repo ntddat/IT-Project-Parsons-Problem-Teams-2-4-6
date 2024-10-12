@@ -49,7 +49,7 @@ const chatHistoryRepo = {
     // console.log("testing")
     return transformedHistory;
   },
-  createNewChatHistory: async (userID, topic, question, context, prompt, questionsDbName) => {
+  createNewChatHistory: async (userID, topic, context, prompt, question, questionsDbName) => {
     try {
         const chatHistoryModel = await getChatHistoryModel(questionsDbName);
         const newChatHistory = new chatHistoryModel({
