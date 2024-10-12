@@ -1,6 +1,6 @@
 import httpCodes from "../../utils/constants/httpsCodes.js";
 import adminService from "../../service/user/adminService.js";
-import { getUsersDbName } from "../../utils/functions/dbName.js";
+import { getUsersDbName, getQuestionsDbName } from "../../utils/functions/dbName.js";
 // ADMIN CONTROLS
 const adminController = {
   /**

@@ -23,9 +23,9 @@
                     <div id="progress"></div>
                 </div> -->
                 <div id="time-elapsed">0 mins 0 seconds</div>
-                <a id="regenerate-btn"> 
-                        <button>Regenerate</button>
-                </a>
+                <div id="regenerate-btn">
+                    <button id="regenerate-btn" @click="regenerate" :disabled="isRegenerateDisabled">Regenerate</button>
+                </div>
             </div>
         </div>
     
@@ -72,7 +72,7 @@
                         <button id="reset-btn">
                             <i class="fas fa-undo"></i> Reset
                         </button>
-                        <button id="submit-btn">
+                        <button id="submit-btn" :disabled="isSubmitDisabled">
                             <i class="fas fa-paper-plane"></i> Submit
                         </button>
                     </div>
@@ -97,7 +97,7 @@
                 <button id="escape-btn"><i class="fa-solid fa-xmark"></i></button>
                 <p>Correct answer! Congratulations!</p>
                 <div id="button-container">
-                    <button id="window-regenerate-btn" class="finish-button">Regenerate</button>
+                    <button id="window-regenerate-btn" @click="windowRegenerate" class="finish-button">Regenerate</button>
                     <button id="window-retry-btn" class="finish-button">Try Again</button>
                     <button id="window-back-btn" class="finish-button" @click="goBackHome">Back Home</button>
                 </div>
@@ -144,6 +144,8 @@
                 sharelink: '',
                 prevAnswerCode: '',
                 loadingWord: "Regenerating questions may take some time, please be patient...",
+                isRegenerateDisabled: false,
+                isSubmitDisabled: false, 
             }
         },
         
@@ -313,13 +315,19 @@
             },
 
             blockSubmission(){
-                const submitButton = document.getElementById('submit-btn');
-                submitButton.disabled = true;
+                this.isSubmitDisabled = true;
             },
 
             activeSubmission(){
-                const submitButton = document.getElementById('submit-btn');
-                submitButton.disabled = false;
+                this.isSubmitDisabled = false;
+            },
+
+            blockRegeneration(){
+                this.isRegenerateDisabled = true;
+            },
+
+            activeRegeneration(){
+                this.isRegenerateDisabled = false;
             },
 
             duplicateCheck(code){
@@ -357,16 +365,21 @@
                 }
             },
             
-            
+
             
             //todo regenerate-btn 的功能
             //todo window-regenerate-btn 的功能
-            
+            async windowRegenerate(){
+                document.getElementById('resultMessage').style.display = 'none';
+                this.regenerate();
+            },
 
 
             async regenerate(){
+                this.blockRegeneration();
                 this.stopTimer();
                 this.blockSubmission();
+                this.refreshOutput();
                 var payload;
                 if (this.$cookies.isKey("userID")) {
                     payload = {
@@ -411,6 +424,7 @@
                     this.refreshTimer();
                     this.startTimer();
                     this.activeSubmission();
+                    this.activeRegeneration();
                 });
             },
 
@@ -569,19 +583,19 @@
                         document.getElementById('resultMessage').style.display = 'none';
                     });
  
-                    document.getElementById('regenerate-btn').addEventListener('click',() => {
-                        
-                        console.log('regenerating');
-                        this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
-                        this.regenerate();
-                        
-                    });
+                    // document.getElementById('regenerate-btn').addEventListener('click',() => {
 
-                    document.getElementById('window-regenerate-btn').addEventListener('click', () => {
-                        document.getElementById('resultMessage').style.display = 'none';
-                        this.regenerate();
+                    //     console.log('regenerating');
+                    //     //this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
+                    //     this.regenerate();
+
+                    // });
+
+                    // document.getElementById('window-regenerate-btn').addEventListener('click', () => {
+                    //     document.getElementById('resultMessage').style.display = 'none';
+                    //     this.regenerate();
                         
-                    });
+                    // });
                 })
             },
     
@@ -680,7 +694,7 @@
         flex-direction: row;
         position: relative;
         margin-top: 0;
-        max-height: 88vh;
+        max-height: 89vh;
     }
     #top-panel{
         width: 100%;
@@ -839,7 +853,7 @@
         padding: 0; /* 确保padding不会影响间距 */
         width: auto;
         /* overflow-y: auto;         */
-        max-height: 80%;
+        max-height: 80%-60px;
         min-height: calc(75%); 
         font-size: 12px;
         background-color: #156b3a00;
@@ -966,17 +980,25 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        gap: 10px;
         /* overflow:auto; */
         flex-shrink: 0;
         max-height: 40%;
         margin-bottom: 0;
+        padding-bottom: 0%;
+        border-bottom: 10px ridge #C4D6BE;
     }
 
     #question-content{
         overflow-y: auto;
+        
         max-height: calc(70%);
     }
-    
+    #topicdescription{
+        width: min-content;
+        border-bottom: 3px solid #6e8c64;
+        /* border-radius: 9px; */
+    }
     #topicdescription, #questiondescription, #expectedoutput{
         margin-left: 10px;
     }
@@ -1043,11 +1065,11 @@
     #regenerate-btn button{
         border: none;
         border-radius: 5px;
-        background: linear-gradient(to right, #d7b50d, #e9a004e2); 
+        background: #FF8E54; 
         
     }
     #regenerate-btn button:hover{
-        border:2px solid #e2b00e;
+        border:2px solid #DFF497;
         transform: translateY(-1px);
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2); 
     }

@@ -56,7 +56,7 @@ const userDataRepo = {
   getUserSummaryOfTopic: async (topic, usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
-      const result = await userDataModel.aggregtae([
+      const result = await userDataModel.aggregate([
         {
           // splits the attemptsSummary array into separate documents
           $unwind: "$topicSummary"

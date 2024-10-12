@@ -1,10 +1,11 @@
 /** Stylesheet for the puzzles */
 
 .sortable-code {
-    /* background-color: #C4D6BE; */
+    /* background-color: #ff0000; */
     width: 85%; 
     position: static;
     padding-left: 0px;
+    
     margin: 0;
     margin-bottom: 0;
     margin-top: 0;
@@ -36,9 +37,10 @@
 }
 ul.output {
     background-color: #C4D6BE;
+    /* background-color: #FFBABA; */
     border: 1px solid #0e0ea500;;
-    max-height: 100%;
-    min-height: 85%;
+    max-height: calc(100% - 60px);
+    min-height: calc(85% - 60px);
     width: calc(100%); 
     box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2), inset -3px -3px 8px rgba(255, 255, 255, 0.05); /* Concave effect */
     border-radius: 5px;
@@ -47,8 +49,10 @@ ul.output {
     scrollbar-gutter: stable;
     margin: 0;
     margin-top: 5px;
+    /* margin-bottom: 60px; */
     padding:0;
     scrollbar-gutter: stable both-edges;
+    padding-bottom: 60px;
     /* padding-left: 10px; */
 }
 ul.output:hover {
