@@ -130,9 +130,9 @@
     //let startTime;
     import LZString from 'lz-string';
     import { compress } from 'lz-string';
-    let intervalId;
-    let elapsedTime;
-    let timerLock = false;
+    // let intervalId;
+    // let elapsedTime;
+    // let timerLock = false;
     import axios from 'axios';
     export default {
         data() {
@@ -146,6 +146,9 @@
                 loadingWord: "Regenerating questions may take some time, please be patient...",
                 isRegenerateDisabled: false,
                 isSubmitDisabled: false, 
+                elapsedTime: 0,
+                timerLock: false,
+                intervalId: null,
             }
         },
         
@@ -276,12 +279,12 @@
             },
 
             startTimer() {
-                elapsedTime = 0;
-                timerLock = false;
+                this.elapsedTime = 0;
+                this.timerLock = false;
 
-                intervalId = setInterval(() => {
-                    if(!timerLock){
-                        elapsedTime++; 
+                this.intervalId = setInterval(() => {
+                    if(!this.timerLock){
+                        this.elapsedTime++; 
                         this.updateTimeElapsed(); 
                     }
                 }, 1000);
@@ -289,27 +292,31 @@
 
             
             updateTimeElapsed() {
-                const minutes = Math.floor(elapsedTime / 60); 
-                const seconds = elapsedTime % 60; 
+                const minutes = Math.floor(this.elapsedTime / 60); 
+                const seconds = this.elapsedTime % 60; 
 
                 
-                document.getElementById('time-elapsed').textContent = `${minutes} mins ${seconds} seconds`;
+                const timeElapsedElement = document.getElementById('time-elapsed');
+
+                if (timeElapsedElement) {
+                    timeElapsedElement.textContent = `${minutes} mins ${seconds} seconds`;
+                }
             },
 
             
             stopTimer() {
-                clearInterval(intervalId); 
-                timerLock = true;
+                clearInterval(this.intervalId); 
+                this.timerLock = true;
             },
 
             activeTimer(){
-                timerLock = false;
+                this.timerLock = false;
             },
             
             refreshTimer() {
                 console.log("refreshed");
                 this.stopTimer(); 
-                elapsedTime = 0;
+                this.elapsedTime = 0;
                 // activeTimer();
                 document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
             },
@@ -482,7 +489,7 @@
                     questionID: this.questionID,
                     userID : this.$cookies.get('userID'),
                     correct : correctness,
-                    time : Number(elapsedTime),
+                    time : Number(this.elapsedTime),
                     topic : this.topic
                 }
                 //this.refreshTimer();
@@ -561,7 +568,7 @@
                         this.stopTimer();
                         this.blockSubmission();
                         if(!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)){
-                            this.runSubmit(studentCode,solution);       
+                            await this.runSubmit(studentCode,solution);       
                             this.refreshTimer();
                         }
                         this.startTimer();
