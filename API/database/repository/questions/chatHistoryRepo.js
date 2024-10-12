@@ -49,7 +49,7 @@ const chatHistoryRepo = {
     // console.log("testing")
     return transformedHistory;
   },
-  createNewChatHistory: async (userID, topic, question, context, prompt, questionsDbName) => {
+  createNewChatHistory: async (userID, topic, context, prompt, question, questionsDbName) => {
     try {
         const chatHistoryModel = await getChatHistoryModel(questionsDbName);
         const newChatHistory = new chatHistoryModel({
@@ -65,6 +65,23 @@ const chatHistoryRepo = {
         throw e;
     }
   },
+  getBackupQuestion: async (userID, topic, context, questionsDbName) => {
+    const chatHistoryModel = await getChatHistoryModel(questionsDbName);
+    const backup = await chatHistoryModel.findOne(
+      { 
+        userID: {$ne:userID},
+        topic: topic,
+        context: context,
+
+      },
+      { 
+        question: 1, 
+        _id: 0,
+      }
+    );
+    console.log(backup);
+    return backup;
+  }
   
 }
 

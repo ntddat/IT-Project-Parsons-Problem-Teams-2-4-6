@@ -83,6 +83,9 @@ async function askGemini(topic, context, userID) {
     else {
       console.log("Exception not implemented yet");
     } 
+    console.log("Backup:\n");
+    let backup = await chatHistoryRepo.getBackupQuestion(userID, topic, context);
+    console.log(backup);
     // i need to store the code and prompt here.
     saveChatHistory(userID, topic, resp, context, prompt, questionsDbName);
 

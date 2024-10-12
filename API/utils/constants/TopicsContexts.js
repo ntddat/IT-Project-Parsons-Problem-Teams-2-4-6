@@ -172,9 +172,11 @@ export function generatePrompt(topic, context) {
         prompt += promptCorr();
         break;
       case "Linear Regression":
+        prompt += "- The data used should not have any null values.\n";
         prompt += promptLR();
         break;
       case "Decision Tree Classifier":
+        prompt += "- The data used should not have any null values.\n";
         prompt += promptDTree();
         break;
       case "Reading/Writing CSV files":
