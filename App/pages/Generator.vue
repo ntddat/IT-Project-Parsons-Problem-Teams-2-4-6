@@ -137,6 +137,7 @@ export default {
     cleanCookies() {
       this.$cookies.remove('acception');
       this.$cookies.remove('userID');
+      this.$cookies.remove('name');
       this.$router.go(0);
     },
 

@@ -27,10 +27,21 @@
         <div class="profile-container">
                 <div class="profile-header">
                     <div class="profile-pic">
-                        <span class="profile-initial">S</span>
+                        <span class="profile-initial">{{ userName.charAt(0).toUpperCase() }}</span>
                     </div>
                     <div class="profile-info">
-                        <h1>{{ userName }}</h1>
+                        <!-- Name Edit -->
+                        <h1 v-if="!editing" @click="startEditing">
+                            {{ userName }}
+                            <img @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
+                        </h1> 
+                        <div v-else>
+                            <input v-model="newName" @keyup.enter="saveName" @blur="saveName" 
+                                type="text" class="name-input" autofocus/>
+                            <button class="changeNameButton" @click="saveName">Change</button>
+                            <button class="changeNameButton" @click="NotChangeName">Not Now</button>
+                        </div>
+
                         <h3>#{{ userID.toString().padStart(5, '0') }}</h3>
                     </div>
                 </div>
@@ -202,6 +213,9 @@ export default {
             this.setUserData()
         }
 
+        if (this.$cookies.isKey('name') && !(isAdmin == 'true')) {
+            this.userName = this.$cookies.get('name')
+        }
         // const userID = this.$cookies.get('userID')
         // console.log("UserID: "+ userID + "type: " + typeof(userID))
         // const datas = await getUserHistory(userID) 
@@ -212,10 +226,12 @@ export default {
             notShowPopWin: null,
             // acceptCookie: true,
             userName: "Student",
+            newName: null,
             userID: null,
             accuracy: null,
             exercises: null,
             topicSummary: null,
+            editing: false, 
 
             mouseX: 0,
             mouseY: 0,
@@ -223,6 +239,26 @@ export default {
         };
     },
     methods: {
+        startEditing() {
+            this.editing = true;
+            this.newName = this.userName;
+            // this.$nextTick(() => {
+            //     document.addEventListener('click', this.handleClickOutside);
+            // });
+        },
+        NotChangeName() {
+            this.editing = false;
+        },
+        saveName() {
+            if (this.newName.trim().length === 0 || this.newName.trim().length > 15) {
+                alert("name must not empty, max length 15"); 
+            } else {
+                this.userName = this.newName.trim();
+                this.$cookies.set('name', this.userName, '3m');
+                this.editing = false;
+            }
+        },
+
         async setUserData() {
             const datas = await getUserHistory(this.userID) 
             this.accuracy = datas.userData.accuracy
@@ -259,7 +295,7 @@ export default {
       tooltipStyle() {
         return {
         //   top: `${this.mouseY}px`,
-            top: `${this.mouseY }`,
+            top: `0`,
             left: `${this.mouseX }`,
         };
       },
@@ -356,8 +392,18 @@ export default {
     font-weight: bold;
     color: #333333;
 }
-
-
+.name-input {
+    background-color: transparent;
+    width: auto;
+    height: 35px;
+    font-size: 15px;
+}
+.changeNameButton {
+    background-color: transparent;
+    width: auto;
+    height: 35px;
+    margin-left: 20px;
+}
 .profile-info h3 {
     font-weight: bold;
     color: #333333;
