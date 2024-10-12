@@ -744,6 +744,7 @@
       text-decoration: none;
       color: #333333;
       font-weight: bold;
+      cursor: pointer;
     }
     .nav-link:not(#window-back-btn .nav-link):hover {
       color: #156B3A;
@@ -983,28 +984,28 @@
         overflow: visible;
     }   
     
-    #left-content{
-        width: 100%;
+    #left-content {
+        width: 100%; 
         display: flex;
         flex-direction: column;
         gap: 10px;
-        /* overflow:auto; */
         flex-shrink: 0;
         max-height: 40%;
-        margin-bottom: 0;
-        padding-bottom: 0%;
-        border-bottom: 10px ridge #C4D6BE;
     }
 
     #question-content{
         overflow-y: auto;
-        
+        background-color: #C4D6BE; 
+        margin: 0 10px;
+        border: 1px solid #C4D6BE; 
+        border-radius: 5px; 
         max-height: calc(70%);
     }
     #topicdescription{
         width: min-content;
         border-bottom: 3px solid #6e8c64;
         /* border-radius: 9px; */
+        margin-bottom: 0;
     }
     #topicdescription, #questiondescription, #expectedoutput{
         margin-left: 10px;
@@ -1015,7 +1016,7 @@
         scrollbar-gutter: stable;
     } */
     #sortableTrash {
-        width: 100%;
+        width: auto;
         background: #13d4bd00;
         max-height: 50%;
         /* border: 1px solid #dcdcdc; */
@@ -1025,6 +1026,8 @@
         flex-shrink: 0;
         overflow-y: auto;
         font-size: 12px;
+        margin: 5px 10px;
+        margin-left: 35px;
         /* scrollbar-gutter: stable; */
     }
     /* 鼠标悬浮时显示滚动条 */
@@ -1032,7 +1035,6 @@
         overflow: auto;
         scrollbar-gutter: stable;
     } */
-    
     
     
     button i {
@@ -1051,7 +1053,7 @@
         font-weight: 800;
         border-radius: 17.5px;
         cursor: pointer;
-        margin: 5px;
+        margin: auto;
         box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.3), inset -3px -3px 8px rgba(255, 255, 255, 0.1); /* Concave effect */
         transition: all 0.3s ease; /* Smooth transition */
     }
@@ -1084,8 +1086,8 @@
         display: flex;
         justify-content: center;
         gap: 20%;
-        /* margin-top: 5px; */
-        margin-bottom: 0; 
+        margin-top: 5px;
+        margin-bottom: 5px; 
     }
 
     #button-group i {
