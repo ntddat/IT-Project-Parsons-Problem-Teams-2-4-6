@@ -24,7 +24,7 @@
                 </div> -->
                 <div id="time-elapsed">0 mins 0 seconds</div>
                 <div id="regenerate-btn">
-                    <button :disabled="isRegenerateDisabled" @click="handleRegenerate">Regenerate</button>
+                    <button id="regenerate-btn" @click="regenerate" :disabled="isRegenerateDisabled">Regenerate</button>
                 </div>
             </div>
         </div>
@@ -97,7 +97,7 @@
                 <button id="escape-btn"><i class="fa-solid fa-xmark"></i></button>
                 <p>Correct answer! Congratulations!</p>
                 <div id="button-container">
-                    <button id="window-regenerate-btn" class="finish-button">Regenerate</button>
+                    <button id="window-regenerate-btn" @click="windowRegenerate" class="finish-button">Regenerate</button>
                     <button id="window-retry-btn" class="finish-button">Try Again</button>
                     <button id="window-back-btn" class="finish-button" @click="goBackHome">Back Home</button>
                 </div>
@@ -365,11 +365,14 @@
                 }
             },
             
-            
+
             
             //todo regenerate-btn 的功能
             //todo window-regenerate-btn 的功能
-            
+            async windowRegenerate(){
+                document.getElementById('resultMessage').style.display = 'none';
+                this.regenerate();
+            },
 
 
             async regenerate(){
@@ -580,19 +583,19 @@
                         document.getElementById('resultMessage').style.display = 'none';
                     });
  
-                    document.getElementById('regenerate-btn').addEventListener('click',() => {
+                    // document.getElementById('regenerate-btn').addEventListener('click',() => {
 
-                        console.log('regenerating');
-                        //this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
-                        this.regenerate();
+                    //     console.log('regenerating');
+                    //     //this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
+                    //     this.regenerate();
 
-                    });
+                    // });
 
-                    document.getElementById('window-regenerate-btn').addEventListener('click', () => {
-                        document.getElementById('resultMessage').style.display = 'none';
-                        this.regenerate();
+                    // document.getElementById('window-regenerate-btn').addEventListener('click', () => {
+                    //     document.getElementById('resultMessage').style.display = 'none';
+                    //     this.regenerate();
                         
-                    });
+                    // });
                 })
             },
     
