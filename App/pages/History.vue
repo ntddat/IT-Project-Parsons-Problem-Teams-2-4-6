@@ -1,11 +1,16 @@
 <template>
     <div class="history">
+        <!-- <div v-show="showTooltip" :style="tooltipStyle" class="tooltip-box">
+                Click for more info!
+        </div> -->
+
         <!-- Navigation Bar -->
         <nav class="top">
             <div class="header">
                 <img src="/App/logo.png" alt="Logo" class="top-logo" />
                 <div class="web-name">Learnr</div>
             </div>
+            <div class="info-mes">Get more information by clicking on the list below</div>
             <div class="nav-links">
                 <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
@@ -18,7 +23,7 @@
         </div>
         
         <div id="cont_box" v-else>
-            <!-- Profile Section -->
+        <!-- Profile Section -->
         <div class="profile-container">
                 <div class="profile-header">
                     <div class="profile-pic">
@@ -42,7 +47,7 @@
                 </div>
             </div>
             
-            <!-- Recent Problem Section -->
+        <!-- Recent Problem Section -->
         <div class="recent-container" v-if="false">
             <div class="recent-header">Recent Five Questions</div>
                 <div class="recent-datas">    
@@ -72,8 +77,12 @@
                 </div>
             </div>
 
-            <!-- History Section -->
-        <div class="history-container">
+        <!-- History Section -->
+        <div class="hover-container history-container" @mousemove="updateMousePosition" @mouseleave="hideTooltip">
+            
+            <!-- <div v-show="showTooltip" :style="tooltipStyle" class="tooltip-box">
+                Click for more info!
+            </div> -->
             <!-- History Header -->
             <div class="history-header">
                 <span class="header-topic">Topic</span>
@@ -94,9 +103,9 @@
                         {{ item.accuracy }}%
                     </div>
                 </div>
-                    <!-- Question details -->
 
-                    <div v-show="item.isExpanded" class="question-dropdown">
+                <!-- Question details -->
+                <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
                 <!-- <div v-show="true" class="question-dropdown"> -->
                     <!-- Question Dropdown Head -->
                     <div class="question-header">
@@ -206,122 +215,14 @@ export default {
             userID: null,
             accuracy: null,
             exercises: null,
-            topicSummary: null
-            // topicSummary: [
-            // {Topic: "Decision Tree Classifier", numQuestions: 2, Accuracy: 50, 
-            //     attemptedQuestions: [
-            //         {
-            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: true },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //             ]
-            //         },
-            //         {
-            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: false },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //                 { attemptID: 4, time: 256, correct: false }
-            //             ]
-            //         }
-            //     ]},
-            // { Topic: "Linear Regression", numQuestions: 100, Accuracy: 80, 
-            //     attemptedQuestions: [
-            //         {
-            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: true },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //             ]
-            //         },
-            //         {
-            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: false },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //                 { attemptID: 4, time: 256, correct: false }
-            //             ]
-            //         }
-            //     ]},
-            // { Topic: "Correlation", numQuestions: 78, Accuracy: 65, 
-            //     attemptedQuestions: [
-            //         {
-            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: true },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //             ]
-            //         },
-            //         {
-            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: false },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //                 { attemptID: 4, time: 256, correct: false }
-            //             ]
-            //         }
-            //     ]},
-            // { Topic: "NMI", numQuestions: 133, Accuracy: 70, 
-            //     attemptedQuestions: [
-            //         {
-            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: true },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //             ]
-            //         },
-            //         {
-            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: false },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //                 { attemptID: 4, time: 256, correct: false }
-            //             ]
-            //         }
-            //     ]},
-            // { Topic: "Correlation", numQuestions: 60, Accuracy: 90, 
-            //     attemptedQuestions: [
-            //         {
-            //             questionID: 1, numAttempts: 3, correct: true, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: true },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //             ]
-            //         },
-            //         {
-            //             questionID: 2, numAttempts: 4, correct: false, totalTime: 123, // have been correct
-            //             attempts: [
-            //                 { attemptID: 1, time: 345, correct: false },
-            //                 { attemptID: 2, time: 245, correct: false },
-            //                 { attemptID: 3, time: 256, correct: false },
-            //                 { attemptID: 4, time: 256, correct: false }
-            //             ]
-            //         }
-            //     ]}
-            // ]
+            topicSummary: null,
+
+            mouseX: 0,
+            mouseY: 0,
+            showTooltip: false,
         };
     },
     methods: {
-        // checkCookie() {
-        //     const acception = getCookie("acception")
-        //     if (acception == "true") {
-        //         // console.log("acception is false")
-        //         this.acceptCookie = true
-        //     } else {
-        //         console.log(acception + " acception is false or does not exist")
-        //         this.acceptCookie = false
-        //     }
-        // },
         async setUserData() {
             const datas = await getUserHistory(this.userID) 
             this.accuracy = datas.userData.accuracy
@@ -329,10 +230,7 @@ export default {
             this.topicSummary = datas.userData.topicSummary
             // console.log(datas.userData.accuracy)
         },
-
         async accept() {
-            // this.acceptCookie = true,
-            // setCookie("acception", "true", 5)
             this.$cookies.set('acception', true, '3m');
             this.userID = await getUserID()
             this.$cookies.set('userID', this.userID, '3m');
@@ -345,13 +243,27 @@ export default {
         this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded = 
         !this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded
         },
-        formatTime(seconds) {
-        const minutes = Math.floor(seconds / 60); 
-        const sec = seconds % 60; 
+        updateMousePosition(event) {
+            this.mouseX = event.pageX ;
+            this.mouseY = event.pageY;
+            this.showTooltip = true; // 显示提示框
 
-        return `${minutes}m ${sec < 10 ? '0' + sec : sec}s`; 
+            // console.log(this.mouseX + ' ' + this.mouseY)
         },
-  }
+        hideTooltip() {
+            this.showTooltip = false; // 隐藏提示框
+        },
+    },
+    computed: {
+      // 根据鼠标位置动态调整提示框的样式
+      tooltipStyle() {
+        return {
+        //   top: `${this.mouseY}px`,
+            top: `${this.mouseY }`,
+            left: `${this.mouseX }`,
+        };
+      },
+    },
 };
 </script>
 
@@ -380,6 +292,11 @@ export default {
 .web-name {
   font-size: 21px;
   font-weight: bold;
+}
+
+.info-mes {
+    color: #333333;
+    font-weight: bold;
 }
 
 .nav-links {
@@ -502,6 +419,23 @@ export default {
     overflow: auto; 
 }
 
+.hover-container {
+    display: inline-block;
+    position: relative;
+}
+  
+.tooltip-box {
+    position: absolute;
+    background-color: #333; /* 提示框背景色 */
+    color: #fff;            /* 提示框文字颜色 */
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;          /* 保证提示框在最上层 */
+    white-space: nowrap;
+    pointer-events: none;   /* 避免提示框阻止鼠标事件 */
+}
+
 .history-list {
     list-style-type: none;
     padding: 0;
@@ -585,6 +519,9 @@ export default {
 }
 
 .attempt-dropdown{
+    /* padding-left: 20px;
+    padding-right: 20px; */
+    /* width: 80%; */
     grid-column: span 4;
     background-color: transparent;
     list-style-type: none;
