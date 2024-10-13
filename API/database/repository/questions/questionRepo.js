@@ -34,7 +34,6 @@ const questionRepo = {
       const accuracy = (totalQuestions > 0)
         ? Math.round((numCorrect / totalQuestions) * 100 * 100) / 100
         : 0;
-      console.log("ACCURACY: ", accuracy);
       return accuracy;
     } catch (e) {
       console.error("Error calculating total accuracy:", e);
