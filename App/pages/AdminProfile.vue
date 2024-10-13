@@ -64,7 +64,7 @@
                             </div>
                             <div class="scrolling-wrapper">
                                 <ul class="summary-list">
-                                    <li v-for="(user, userID) in item.users" :key="userID" class="summary-item" @click="gotoHistory(user.userID)">
+                                    <li v-for="(user, userID) in item.users.sort((a, b) => a.userID - b.userID)" :key="userID" class="summary-item" @click="gotoHistory(user.userID)">
                                         <div class="item-id">{{user.userID}}</div>
                                         <div class="item-answered">{{user.numQuestions}}</div>
                                         <div class="item-accuracy">{{user.accuracy}}%</div>
