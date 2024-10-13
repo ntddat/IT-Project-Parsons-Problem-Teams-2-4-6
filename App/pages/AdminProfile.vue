@@ -47,7 +47,7 @@
 
                 <div class="scrolling-wrapper">
                     <ul class="history-list">
-                        <li v-for="(item, topic) in topicsInfo" :key="topic">
+                        <li v-for="(item, topic) in topicsInfo.sort((a, b) => a.topic.localeCompare(b.topic))" :key="topic">
                             <div @click="toggleDropdown(topic)" class="history-item">
                                 <div class="history-topic">
                                     <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
