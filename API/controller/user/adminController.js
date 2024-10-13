@@ -1,6 +1,6 @@
 import httpCodes from "../../utils/constants/httpsCodes.js";
 import adminService from "../../service/user/adminService.js";
-import { getUsersDbName, getQuestionsDbName } from "../../utils/functions/dbName.js";
+import { getUsersDbName } from "../../utils/functions/dbName.js";
 // ADMIN CONTROLS
 const adminController = {
   /**
@@ -13,23 +13,20 @@ const adminController = {
     try {
       const usersDbName = await getUsersDbName();
 
-      const overallInfo = await adminService.summariseInfo(usersDbName);
-      if (!overallInfo.success) {
-        return res.status(httpCodes.BAD_REQUEST).json({
-          success: false,
-          message: overallInfo.message,
-          error: overallInfo.error
-        });
-      }
-
-      const questionsDbName = await getQuestionsDbName();
-
-      const topicsInfo = await adminService.summariseTopicsInfo(usersDbName, questionsDbName);
+      const topicsInfo = await adminService.summariseTopicsInfo(usersDbName);
       if (!topicsInfo.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
           message: topicsInfo.message,
           error: topicsInfo.error
+        });
+      }
+      const overallInfo = await adminService.summariseInfo(topicsInfo.topicsAnalytics);
+      if (!overallInfo.success) {
+        return res.status(httpCodes.BAD_REQUEST).json({
+          success: false,
+          message: overallInfo.message,
+          error: overallInfo.error
         });
       }
 
