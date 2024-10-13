@@ -68,7 +68,7 @@
                                         <div class="item-id">{{user.userID}}</div>
                                         <div class="item-answered">{{user.numQuestions}}</div>
                                         <div class="item-accuracy">{{user.accuracy}}%</div>
-                                        <div class="item-time">{{user.totalTime}}</div>
+                                        <div class="item-time">{{(user.totalTime/60).toFixed(2)}}</div>
                                     </li>
                                 </ul>
                             </div>
