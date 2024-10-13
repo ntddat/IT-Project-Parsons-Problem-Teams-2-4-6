@@ -36,7 +36,7 @@
                             <img @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
                         </h1> 
                         <div v-else>
-                            <input v-model="newName" @keyup.enter="saveName" @blur="saveName" 
+                            <input v-model="newName" @keyup.enter="saveName" 
                                 type="text" class="name-input" autofocus/>
                             <button class="changeNameButton" @click="saveName">Change</button>
                             <button class="changeNameButton" @click="NotChangeName">Not Now</button>
@@ -132,7 +132,8 @@
                         v-for="(question, questionIndex) in item.attemptedQuestions" 
                         :key="questionIndex" class="question-data">  
                             <div class="question">
-                                {{ question.questionID }}
+                                <!-- {{ question.questionID }} -->
+                                  {{ questionIndex + 1 }}
                             </div>
                             <div class="attempts">
                                 {{ question.numAttempts }}
