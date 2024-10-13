@@ -23,9 +23,9 @@
                     <div id="progress"></div>
                 </div> -->
                 <div id="time-elapsed">0 mins 0 seconds</div>
-                <a id="regenerate-btn"> 
-                        <button>Regenerate</button>
-                </a>
+                <div id="regenerate-btn">
+                    <button id="regenerate-btn" @click="regenerate" :disabled="isRegenerateDisabled">Regenerate</button>
+                </div>
             </div>
         </div>
     
@@ -72,7 +72,7 @@
                         <button id="reset-btn">
                             <i class="fas fa-undo"></i> Reset
                         </button>
-                        <button id="submit-btn">
+                        <button id="submit-btn" :disabled="isSubmitDisabled">
                             <i class="fas fa-paper-plane"></i> Submit
                         </button>
                     </div>
@@ -97,7 +97,7 @@
                 <button id="escape-btn"><i class="fa-solid fa-xmark"></i></button>
                 <p>Correct answer! Congratulations!</p>
                 <div id="button-container">
-                    <button id="window-regenerate-btn" class="finish-button">Regenerate</button>
+                    <button id="window-regenerate-btn" @click="windowRegenerate" class="finish-button">Regenerate</button>
                     <button id="window-retry-btn" class="finish-button">Try Again</button>
                     <button id="window-back-btn" class="finish-button" @click="goBackHome">Back Home</button>
                 </div>
@@ -130,9 +130,9 @@
     //let startTime;
     import LZString from 'lz-string';
     import { compress } from 'lz-string';
-    let intervalId;
-    let elapsedTime;
-    let timerLock = false;
+    // let intervalId;
+    // let elapsedTime;
+    // let timerLock = false;
     import axios from 'axios';
     export default {
         data() {
@@ -144,6 +144,11 @@
                 sharelink: '',
                 prevAnswerCode: '',
                 loadingWord: "Regenerating questions may take some time, please be patient...",
+                isRegenerateDisabled: false,
+                isSubmitDisabled: false, 
+                elapsedTime: 0,
+                timerLock: false,
+                intervalId: null,
             }
         },
         
@@ -274,12 +279,12 @@
             },
 
             startTimer() {
-                elapsedTime = 0;
-                timerLock = false;
+                this.elapsedTime = 0;
+                this.timerLock = false;
 
-                intervalId = setInterval(() => {
-                    if(!timerLock){
-                        elapsedTime++; 
+                this.intervalId = setInterval(() => {
+                    if(!this.timerLock){
+                        this.elapsedTime++; 
                         this.updateTimeElapsed(); 
                     }
                 }, 1000);
@@ -287,39 +292,49 @@
 
             
             updateTimeElapsed() {
-                const minutes = Math.floor(elapsedTime / 60); 
-                const seconds = elapsedTime % 60; 
+                const minutes = Math.floor(this.elapsedTime / 60); 
+                const seconds = this.elapsedTime % 60; 
 
                 
-                document.getElementById('time-elapsed').textContent = `${minutes} mins ${seconds} seconds`;
+                const timeElapsedElement = document.getElementById('time-elapsed');
+
+                if (timeElapsedElement) {
+                    timeElapsedElement.textContent = `${minutes} mins ${seconds} seconds`;
+                }
             },
 
             
             stopTimer() {
-                clearInterval(intervalId); 
-                timerLock = true;
+                clearInterval(this.intervalId); 
+                this.timerLock = true;
             },
 
             activeTimer(){
-                timerLock = false;
+                this.timerLock = false;
             },
             
             refreshTimer() {
                 console.log("refreshed");
                 this.stopTimer(); 
-                elapsedTime = 0;
+                this.elapsedTime = 0;
                 // activeTimer();
                 document.getElementById('time-elapsed').textContent = '0 mins 0 seconds'; 
             },
 
             blockSubmission(){
-                const submitButton = document.getElementById('submit-btn');
-                submitButton.disabled = true;
+                this.isSubmitDisabled = true;
             },
 
             activeSubmission(){
-                const submitButton = document.getElementById('submit-btn');
-                submitButton.disabled = false;
+                this.isSubmitDisabled = false;
+            },
+
+            blockRegeneration(){
+                this.isRegenerateDisabled = true;
+            },
+
+            activeRegeneration(){
+                this.isRegenerateDisabled = false;
             },
 
             duplicateCheck(code){
@@ -357,16 +372,21 @@
                 }
             },
             
-            
+
             
             //todo regenerate-btn 的功能
             //todo window-regenerate-btn 的功能
-            
+            async windowRegenerate(){
+                document.getElementById('resultMessage').style.display = 'none';
+                this.regenerate();
+            },
 
 
             async regenerate(){
+                this.blockRegeneration();
                 this.stopTimer();
                 this.blockSubmission();
+                this.refreshOutput();
                 var payload;
                 if (this.$cookies.isKey("userID")) {
                     payload = {
@@ -411,6 +431,7 @@
                     this.refreshTimer();
                     this.startTimer();
                     this.activeSubmission();
+                    this.activeRegeneration();
                 });
             },
 
@@ -468,7 +489,7 @@
                     questionID: this.questionID,
                     userID : this.$cookies.get('userID'),
                     correct : correctness,
-                    time : Number(elapsedTime),
+                    time : Number(this.elapsedTime),
                     topic : this.topic
                 }
                 //this.refreshTimer();
@@ -547,7 +568,7 @@
                         this.stopTimer();
                         this.blockSubmission();
                         if(!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)){
-                            this.runSubmit(studentCode,solution);       
+                            await this.runSubmit(studentCode,solution);       
                             this.refreshTimer();
                         }
                         this.startTimer();
@@ -569,19 +590,19 @@
                         document.getElementById('resultMessage').style.display = 'none';
                     });
  
-                    document.getElementById('regenerate-btn').addEventListener('click',() => {
-                        
-                        console.log('regenerating');
-                        this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
-                        this.regenerate();
-                        
-                    });
+                    // document.getElementById('regenerate-btn').addEventListener('click',() => {
 
-                    document.getElementById('window-regenerate-btn').addEventListener('click', () => {
-                        document.getElementById('resultMessage').style.display = 'none';
-                        this.regenerate();
+                    //     console.log('regenerating');
+                    //     //this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
+                    //     this.regenerate();
+
+                    // });
+
+                    // document.getElementById('window-regenerate-btn').addEventListener('click', () => {
+                    //     document.getElementById('resultMessage').style.display = 'none';
+                    //     this.regenerate();
                         
-                    });
+                    // });
                 })
             },
     
@@ -680,7 +701,7 @@
         flex-direction: row;
         position: relative;
         margin-top: 0;
-        max-height: 88vh;
+        max-height: 89vh;
     }
     #top-panel{
         width: 100%;
@@ -723,6 +744,7 @@
       text-decoration: none;
       color: #333333;
       font-weight: bold;
+      cursor: pointer;
     }
     .nav-link:not(#window-back-btn .nav-link):hover {
       color: #156B3A;
@@ -839,7 +861,7 @@
         padding: 0; /* 确保padding不会影响间距 */
         width: auto;
         /* overflow-y: auto;         */
-        max-height: 80%;
+        max-height: 80%-60px;
         min-height: calc(75%); 
         font-size: 12px;
         background-color: #156b3a00;
@@ -962,21 +984,29 @@
         overflow: visible;
     }   
     
-    #left-content{
-        width: 100%;
+    #left-content {
+        width: 100%; 
         display: flex;
         flex-direction: column;
-        /* overflow:auto; */
+        gap: 10px;
         flex-shrink: 0;
         max-height: 40%;
-        margin-bottom: 0;
     }
 
     #question-content{
         overflow-y: auto;
+        background-color: #C4D6BE; 
+        margin: 0 10px;
+        border: 1px solid #C4D6BE; 
+        border-radius: 5px; 
         max-height: calc(70%);
     }
-    
+    #topicdescription{
+        width: min-content;
+        border-bottom: 3px solid #6e8c64;
+        /* border-radius: 9px; */
+        margin-bottom: 0;
+    }
     #topicdescription, #questiondescription, #expectedoutput{
         margin-left: 10px;
     }
@@ -986,7 +1016,7 @@
         scrollbar-gutter: stable;
     } */
     #sortableTrash {
-        width: 100%;
+        width: auto;
         background: #13d4bd00;
         max-height: 50%;
         /* border: 1px solid #dcdcdc; */
@@ -996,6 +1026,8 @@
         flex-shrink: 0;
         overflow-y: auto;
         font-size: 12px;
+        margin: 5px 10px;
+        margin-left: 35px;
         /* scrollbar-gutter: stable; */
     }
     /* 鼠标悬浮时显示滚动条 */
@@ -1003,7 +1035,6 @@
         overflow: auto;
         scrollbar-gutter: stable;
     } */
-    
     
     
     button i {
@@ -1022,7 +1053,7 @@
         font-weight: 800;
         border-radius: 17.5px;
         cursor: pointer;
-        margin: 5px;
+        margin: auto;
         box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.3), inset -3px -3px 8px rgba(255, 255, 255, 0.1); /* Concave effect */
         transition: all 0.3s ease; /* Smooth transition */
     }
@@ -1043,11 +1074,11 @@
     #regenerate-btn button{
         border: none;
         border-radius: 5px;
-        background: linear-gradient(to right, #d7b50d, #e9a004e2); 
+        background: #FF8E54; 
         
     }
     #regenerate-btn button:hover{
-        border:2px solid #e2b00e;
+        border:2px solid #DFF497;
         transform: translateY(-1px);
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2); 
     }
@@ -1055,8 +1086,8 @@
         display: flex;
         justify-content: center;
         gap: 20%;
-        /* margin-top: 5px; */
-        margin-bottom: 0; 
+        margin-top: 5px;
+        margin-bottom: 5px; 
     }
 
     #button-group i {

@@ -93,43 +93,13 @@ const questionController = {
     );
   },
 
-  saveAttempt: async (req, res, next) => {
-    try {
-      const { questionID, time, correct, topic } = req.body;
-      if (!topic || !questionID || !time || correct === undefined) {
-        return res.status(httpCodes.BAD_REQUEST).json({
-          success: false,
-          message: "Please provide an attempt to save"
-        });
-      }
-
-      const questionsDbName = await getQuestionsDbName();
-      const result = await questionService.saveAttempt(questionID, time, correct, topic, questionsDbName);
-
-      if (!result.success) {
-        return res.status(httpCodes.BAD_REQUEST).json({
-          success: false,
-          message: result.message
-        });
-      }
-      // next one in the middleware chain (this is actually a middleware!)
-      next();
-    } catch (e) {
-      console.error("Error saving attempt:", e);
-      return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: e.message
-      });
-    }
-  },
-
   // Updates the question details based on the user's attempt
   // Request: { questionID, time, correct }
   // Response: { success, message }
   updateQuestionDetails: async (req, res, next) => {
     try {
       const { questionID, time, correct } = req.body; // Destructure the questionID, time and correct from req.body
-      if (!questionID || !time || correct === undefined) {
+      if (!questionID || time === undefined || correct === undefined) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
           message: "Please provide a questionID, time and correct"
