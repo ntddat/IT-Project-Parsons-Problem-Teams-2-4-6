@@ -385,5 +385,6 @@ export async function getSummary(){
     padding-left: 25px;
     border-bottom: 1px solid #a6a4a4;
 }
-.summary-item:hover {background-color: #94f0a9;border-radius: 5px}
+.summary-item:hover {background-color: #b6f1c4;border-radius: 5px}
+.history-item:hover {background-color: #cff0d7;border-radius: 5px}
 </style>

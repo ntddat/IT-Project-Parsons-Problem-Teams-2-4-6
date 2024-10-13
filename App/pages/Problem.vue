@@ -164,7 +164,14 @@
             this.startTimer(); 
             this.initializer();
         },
-    
+        beforeRouteLeave(to, from, next) {
+                // Example: Stop the timer before leaving the route
+                this.refreshTimer();
+                console.log("beforeRouteLeave");
+                // Allow the navigation
+                next();
+            },
+
         methods: {
             historyBotton() {
                 this.$router.push({
@@ -179,6 +186,7 @@
             goBackHome() {
                 this.$router.push('/Generator'); // 跳转到 "/Generator" 页面
             },
+            
             // Mid resize
             midDragControllerDiv() {
                 const divider = document.getElementById('divider');
