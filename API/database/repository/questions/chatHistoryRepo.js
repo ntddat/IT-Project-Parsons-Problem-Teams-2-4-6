@@ -65,6 +65,23 @@ const chatHistoryRepo = {
         throw e;
     }
   },
+  getBackupQuestion: async (userID, topic, context, questionsDbName) => {
+    const chatHistoryModel = await getChatHistoryModel(questionsDbName);
+    const backup = await chatHistoryModel.findOne(
+      { 
+        userID: {$ne:userID},
+        topic: topic,
+        context: context,
+
+      },
+      { 
+        question: 1, 
+        _id: 0,
+      }
+    );
+
+    return backup;
+  }
   
 }
 
