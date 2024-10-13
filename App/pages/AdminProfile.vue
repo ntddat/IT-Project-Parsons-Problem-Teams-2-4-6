@@ -62,14 +62,16 @@
                                 <span class="header-Accuracy">Accuracy</span>
                                 <span class="header-Time">Total Time(minutes)</span>
                             </div>
-                            <ul class="summary-list">
-                                <li v-for="(user, userID) in item.users" :key="userID" class="summary-item" @click="gotoHistory(user.userID)">
-                                    <div class="item-id">{{user.userID}}</div>
-                                    <div class="item-answered">{{user.numQuestions}}</div>
-                                    <div class="item-accuracy">{{user.accuracy}}%</div>
-                                    <div class="item-time">{{user.totalTime}}</div>
-                                </li>
-                            </ul>
+                            <div class="scrolling-wrapper">
+                                <ul class="summary-list">
+                                    <li v-for="(user, userID) in item.users" :key="userID" class="summary-item" @click="gotoHistory(user.userID)">
+                                        <div class="item-id">{{user.userID}}</div>
+                                        <div class="item-answered">{{user.numQuestions}}</div>
+                                        <div class="item-accuracy">{{user.accuracy}}%</div>
+                                        <div class="item-time">{{user.totalTime}}</div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         </li>
                     </ul>
