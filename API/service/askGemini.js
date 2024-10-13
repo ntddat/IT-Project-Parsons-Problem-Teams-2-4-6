@@ -47,6 +47,12 @@ async function askGemini(topic, context, userID) {
     let prompt, result, resp, fixed_resp;
 
     let closestTopic = findClosestTopic(topic);
+
+    console.log("----------\n");
+    console.log("START\n");
+    console.log("----------\n");
+
+    console.log("\nPROMPT:\n");
     prompt = generatePrompt(topic, context);
     console.log(prompt);
     //Attempt to prompt gemini, if it fails prompt again
