@@ -6,6 +6,7 @@
                 <img src="/App/logo.png" alt="Logo" class="top-logo" />
                 <div class="web-name">Learnr</div>
             </div>
+            <div class="info-mes">Get more information by clicking on the list below</div>
             <div class="nav-links">
                 <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
@@ -46,30 +47,30 @@
 
                 <div class="scrolling-wrapper">
                     <ul class="history-list">
-                        <li @click="toggleDropdown(topic)" v-for="(item, topic) in topicsInfo" :key="topic" class="history-item">
-                            <div class="history-topic">
-                                <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
-                            </div>
-                            <div class="history-practice">{{ item.numQuestions }}</div>
-                            <div class="history-accuracy">{{ item.accuracy }}%</div>
-                            <div v-show="item.isExpanded" class="dropdown-content">
-                                <div class="summary-header">
-                                    <span class="header-ID">ID</span>
-                                    <span class="header-Answer">Total Questions</span>
-                                    <span class="header-Accuracy">Accuracy</span>
-                                    <span class="header-Time">Total Time(minutes)</span>
+                        <li v-for="(item, topic) in topicsInfo" :key="topic">
+                            <div @click="toggleDropdown(topic)" class="history-item">
+                                <div class="history-topic">
+                                    <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
                                 </div>
-                                <div class="scrolling-wrapper">
-                                    <ul class="summary-list">
-                                        <li v-for="(user, userID) in item.users" :key="userID" class="summary-item" @click="gotoHistory(user.userID)">
-                                            <div class="item-id">{{user.userID}}</div>
-                                            <div class="item-answered">{{user.numQuestions}}</div>
-                                            <div class="item-accuracy">{{user.accuracy}}%</div>
-                                            <div class="item-time">{{user.totalTime}}</div>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <div class="history-practice">{{ item.numQuestions }}</div>
+                                <div class="history-accuracy">{{ item.accuracy }}%</div>
                             </div>
+                        <div v-show="item.isExpanded" class="dropdown-content">
+                            <div class="summary-header">
+                                <span class="header-ID">ID</span>
+                                <span class="header-Answer">Total Questions</span>
+                                <span class="header-Accuracy">Accuracy</span>
+                                <span class="header-Time">Total Time(minutes)</span>
+                            </div>
+                            <ul class="summary-list">
+                                <li v-for="(user, userID) in item.users" :key="userID" class="summary-item" @click="gotoHistory(user.userID)">
+                                    <div class="item-id">{{user.userID}}</div>
+                                    <div class="item-answered">{{user.numQuestions}}</div>
+                                    <div class="item-accuracy">{{user.accuracy}}%</div>
+                                    <div class="item-time">{{user.totalTime}}</div>
+                                </li>
+                            </ul>
+                        </div>
                         </li>
                     </ul>
                 </div>
@@ -303,6 +304,7 @@ export async function getSummary(){
 }
 
 .history-item {
+    position: relative;
     display: grid;
     grid-template-columns: 2.5fr 1.7fr 1.4fr;
     padding: 15px 0;
@@ -385,6 +387,10 @@ export async function getSummary(){
     padding-left: 25px;
     border-bottom: 1px solid #a6a4a4;
 }
-.summary-item:hover {background-color: #b6f1c4;border-radius: 5px}
-.history-item:hover {background-color: #cff0d7;border-radius: 5px}
+.summary-item:hover {background-color: #ccf6b34b;border-radius: 5px}
+.history-item:hover {background-color: #7ea3684b;border-radius: 5px}
+.info-mes {
+    color: #333333;
+    font-weight: bold;
+}
 </style>
