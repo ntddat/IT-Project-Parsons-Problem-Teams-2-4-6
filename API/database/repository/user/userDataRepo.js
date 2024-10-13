@@ -53,34 +53,59 @@ const userDataRepo = {
   },
 
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
-  getUserSummaryOfTopic: async (topic, usersDbName) => {
+  getUserSummaryOfTopic: async (usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
+
       const result = await userDataModel.aggregate([
+        { $unwind: "$topicSummary" },
         {
-          // splits the attemptsSummary array into separate documents
-          $unwind: "$topicSummary"
-        },
-        {
-          $match: {
-            // user's topic matches what is given
-            "topicSummary.topic": topic,
-            "topicSummary.numQuestions": { $gt: 0 } // greater than 0 (they have attempted at least one question)
+          $group: {
+            _id: "$topicSummary.topic",
+            numQuestions: { $sum: "$topicSummary.numQuestions" },
+            numCorrect: { $sum: "$topicSummary.numCorrect" },
+            users: {
+              $push: {
+                userID: "$userID",
+                accuracy: "$topicSummary.accuracy",
+                numQuestions: "$topicSummary.numQuestions",
+                numCorrect: "$topicSummary.numCorrect",
+                totalTime: "$topicSummary.totalTime",
+              }
+            }
           }
         },
         {
           $project: {
-            userID: 1,
-            numQuestions: "$topicSummary.numQuestions",
-            accuracy: "$topicSummary.accuracy",
-            totalTime: "$topicSummary.totalTime",
+            topic: "$_id",
+            numQuestions: 1,
+            numCorrect: 1,
+            accuracy: {
+              $cond: [
+                { $eq: ["$numQuestions", 0] }, 0,
+                { $round: [{$multiply: [{ $divide: ["$numCorrect", "$numQuestions"] }, 100] }, 2]}
+              ]
+            },
+            users: {
+              $filter: {
+                input: "$users",
+                as: "user",
+                cond: { $gt: ["$$user.numQuestions", 0] }
+              }
+            }
           }
         },
         {
-          // sort so the top users are at the top
-          $sort: { "topicSummary.numQuestions": -1 }
-        }
-      ])
+          $addFields: {
+            users: {
+              $sortArray: {
+                input: "$users",
+                sortBy: { numQuestions: -1 }
+              }
+            }
+          }
+        },
+      ]);
       return result;
     } catch (e) {
       console.error("Error getting user summary of topic:", e);
@@ -167,10 +192,6 @@ const userDataRepo = {
           {
             $addToSet: {
               "topicSummary.$[element].correctQuestions": questionID,
-            },
-            $inc: {
-              totalTime: time,
-              "topicSummary.$[element].totalTime": time,
             },
           },
           {
