@@ -2,10 +2,12 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Importing our modules
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
-import { generatePrompt } from "../utils/constants/TopicsContexts.js";
+import { generatePrompt, findClosestTopic } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
+import { PythonShell } from 'python-shell';
 import chatHistoryRepo from '../database/repository/questions/chatHistoryRepo.js';
 import { getQuestionsDbName } from '../utils/functions/dbName.js';
+import { timeoutRetry } from '../utils/functions/TimeoutRetry.js';
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -44,54 +46,54 @@ async function askGemini(topic, context, userID) {
     let syntaxPassed = false;
     let prompt, result, resp, fixed_resp;
 
-    while (!syntaxPassed) {
-      prompt = generatePrompt(topic, context);
-      console.log(prompt);
-      //Attempt to prompt gemini, if it fails prompt again
-      try {
-        result = await chat.sendMessage(prompt);
-        resp = result.response.text();
-        console.log(resp);
-      } catch (error) {
-        console.error(error);
-        continue;
-      }
-      
+    let closestTopic = findClosestTopic(topic);
 
-      // Parsing the JSON response from Gemini
-      try {
-        fixed_resp = outputParserJson(resp);
-      } catch (error) {
-        console.error(error);
-        continue;
-      }
+    console.log("----------\n");
+    console.log("START\n");
+    console.log("----------\n");
 
-      console.log(fixed_resp);
-      
-      // Checking if the generated code is syntactically correct
-      try {
-        createCSV(fixed_resp.CSV, fixed_resp.CSVName);
-      } catch (error) {
-        console.error(error);
-        continue;
-      }
-      
-      try {
-        console.log("Type: " + typeof(fixed_resp.Code));
-        syntaxPassed = await syntaxCheck(fixed_resp.Code);
-      } catch (error) {
-        syntaxPassed = false;
-        console.error("Failed to perform syntax check: ", error);
-      }
-      
-      console.log("Syntax check success?: " + syntaxPassed + "\n");
+    console.log("\nPROMPT:\n");
+    prompt = generatePrompt(topic, context);
+    console.log(prompt);
+    //Attempt to prompt gemini, if it fails prompt again
+    try {
+      result = await chat.sendMessage(prompt);
+      resp = result.response.text();
+      console.log(resp);
+    } catch (error) {
+      console.error(error);
     }
+    
+
+    // Parsing the JSON response from Gemini
+    try {
+      fixed_resp = outputParserJson(resp);
+    } catch (error) {
+      console.error(error);
+    }
+
+    console.log(fixed_resp);
+      
+    // until 20 secs have passed, keep regenerating the code
+    // attempt to generate some functional code
+    let newCode = await timeoutRetry(fixed_resp.Code, fixed_resp.CSVName, fixed_resp.CSV, 20000);
+
+    // if it managed to generate a problem
+    if (newCode !== null) {
+      console.log("Generated syntactically correct code!\n");
+      fixed_resp.Code = newCode;
+      // store the code and prompt here.
+      saveChatHistory(userID, topic, resp, context, prompt, questionsDbName);
+    }  
+    // otherwise, get a backup problem
+    else {
+      console.log("Unable to generate correct code in 20 secs, getting backup problem!\n");
+      let backup = await chatHistoryRepo.getBackupQuestion(userID, topic, context, questionsDbName);
+      fixed_resp = outputParserJson(backup.question); 
+    } 
     fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
     fixed_resp.Code = processString(fixed_resp.Code); 
     fixed_resp.Code = fixed_resp.Code.join('\n');
-
-    // i need to store the code and prompt here.
-    saveChatHistory(userID, topic, resp, context, prompt, questionsDbName);
 
     return {
       success: true,

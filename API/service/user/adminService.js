@@ -1,9 +1,13 @@
 import userDataRepo from "../../database/repository/user/userDataRepo.js";
 import questionRepo from "../../database/repository/questions/questionRepo.js";
+import { getQuestionsDbName } from "../../utils/functions/dbName.js";
 
-async function calculateTotalAccuracy(questionsDbName) {
+async function calculateTotalAccuracy(questionsDbName, totalQuestions) {
   try {
-    const accuracy = await questionRepo.getTotalAccuracy(questionsDbName);
+    const accuracy = await questionRepo.getTotalAccuracy(questionsDbName, totalQuestions);
+    if (accuracy === undefined) {
+      return 0;
+    }
     return accuracy;
   } catch (e) {
     console.error("Error calculating total accuracy:", e);
@@ -14,6 +18,9 @@ async function calculateTotalAccuracy(questionsDbName) {
 async function calculateTotalQuestions(questionsDbName) {
   try {
     const questions = await questionRepo.getTotalNumQuestions(questionsDbName);
+    if (questions === undefined) {
+      return 0;
+    }
     return questions;
   } catch (e) {
     console.error("Error calculating total attempts:", e);
@@ -36,8 +43,9 @@ const adminService = {
   summariseInfo: async (questionsDbName) => {
     try {
       // for EVERYONE
-      const accuracy = await calculateTotalAccuracy(questionsDbName);
+      const questionsDbName = await getQuestionsDbName();
       const totalQuestions = await calculateTotalQuestions(questionsDbName);
+      const accuracy = await calculateTotalAccuracy(questionsDbName, totalQuestions);
       return {
         success: true,
         message: "Successfully summarised information",

@@ -11,7 +11,7 @@ export async function getUserID() {
         const response = await fetch(url,options);
         const data = await response.json();
         // console.log(data.userID.userID);
-        return data.userID.userID;
+        return data.userID;
         // return response
     } catch (error){
         console.error('Error:',error);

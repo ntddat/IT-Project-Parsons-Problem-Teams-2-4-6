@@ -26,27 +26,15 @@ const questionRepo = {
     }
   },
 
-  getTotalAccuracy: async (questionsDbName) => {
+  getTotalAccuracy: async (questionsDbName, totalQuestions) => {
     try {
       const questionModel = await getQuestionModel(questionsDbName);
-      const result = await questionModel.aggregate([{
-          $group: {
-            _id: null,
-            correctQuestions: { 
-              $sum: { 
-                $cond: { 
-                  if: "$correct", then: 1, else: 0 
-                } 
-              } 
-            },
-            numQuestions: { $sum: 1 },
-          }
-        }
-      ]);
+      const numCorrect = await questionModel.countDocuments({ correct: true });
       // calculate accuracy as a percentage
-      const accuracy = result.length > 0 
-        ? Math.round((result[0].correctQuestions / result[0].numQuestions) * 100) 
+      const accuracy = (totalQuestions > 0)
+        ? Math.round((numCorrect / totalQuestions) * 100 * 100) / 100
         : 0;
+      console.log("ACCURACY: ", accuracy);
       return accuracy;
     } catch (e) {
       console.error("Error calculating total accuracy:", e);
@@ -79,7 +67,7 @@ const questionRepo = {
             accuracy: {
               $cond: [
                 { $eq: ["$numQuestions", 0] }, 0,
-                { $round: [{$multiply: [{ $divide: ["$correctQuestions", "$numQuestions"] }, 100] }]} // percentage
+                { $round: [{$multiply: [{ $divide: ["$correctQuestions", "$numQuestions"] }, 100] }, 2]} // percentage
               ]
             }
           }

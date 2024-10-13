@@ -16,7 +16,7 @@ const userController = {
       return res.status(httpCodes.OK).json({
         success: true,
         message: "New user ID generated successfully",
-        userID: userID
+        userID: userID.userID
       });
     } catch (e) {
       console.error("Error generating new user ID:", e);
