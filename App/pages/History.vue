@@ -132,7 +132,8 @@
                         v-for="(question, questionIndex) in item.attemptedQuestions" 
                         :key="questionIndex" class="question-data">  
                             <div class="question">
-                                {{ question.questionID }}
+                                <!-- {{ question.questionID }} -->
+                                  {{ questionIndex + 1 }}
                             </div>
                             <div class="attempts">
                                 {{ question.numAttempts }}
