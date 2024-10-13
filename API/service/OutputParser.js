@@ -61,6 +61,7 @@ export function replaceSpacesWithTabs(inputString) {
  * Filters out any \n followed by spaces, tabs or \n and uses that to mark the start of a new instruction
  * Accounts for print statements containing \n
  * Also accounts for {}, [] and () containing \n
+ * Accounts for ''' comments
  * @returns An array of strings where each string corresponds to a line of python
  * code to be parsed to the interactive problem
  */
@@ -99,7 +100,7 @@ export function processString(string) {
         commentFlag = true;
       }
     } else {
-      if (currentChar == "\n") {
+      if (currentChar == "\n" && !insideBrackets) {
         commentFlag = false;
         nextLineFlag = true;
         //To ensure we don't count too many tabs
@@ -156,7 +157,7 @@ export function processString(string) {
 
     //Also checks to see if within brackets ({[]}), note this can handle multiple embedded 
     //brackets since Open brackets have a corresponding closing bracket unlike quotes
-    if (openingBrackets.includes(currentChar)) {
+    if (openingBrackets.includes(currentChar) && !commentFlag && !commentFlag2) {
       bracketsStack.push(currentChar);
       insideBrackets = true;
     } else if (closingBrackets.includes(currentChar)) {
@@ -174,11 +175,10 @@ export function processString(string) {
         newLineFlag = false;
         nextLineFlag = true;
       }
-    }
-
-    //If a new line character is actually at the end of a line of code, not after a comment
-    //not within some eg "string\n" and not between some brackets eg {entry1: 1,\nentry2: 2}
-    if (!newLineFlag) {
+    } else {
+      //If a new line character is actually at the end of a line of code, not after a comment
+      //not within some eg "string\n" and not between some brackets eg {entry1: 1,\nentry2: 2}
+      //Then it marks a new instruction
       if (currentChar == '\n' && acceptNewLines && acceptNewLines2 && !insideBrackets) {
         newLineFlag = true;
         tabCount = 0;
@@ -186,7 +186,7 @@ export function processString(string) {
     }
 
     //If we're not processing over a new line then append the character
-    //If it's the first character then need to append the appropriate number of tabs
+    //If it's the first character of an instruction then need to append the appropriate number of tabs
     if (!newLineFlag && !commentFlag && !commentFlag2 && (nextLineFlag == true || codeArray.length == 0)) {
       if (tabCount > 0) {
         codeArray.push('\t');
@@ -199,11 +199,16 @@ export function processString(string) {
       }
       
       nextLineFlag = false;
-    } else if (!newLineFlag && !commentFlag&& !commentFlag2) {
+
+    //Also want to ignore new line characters within dictionaries.
+    //We used to pass a code array to the front end but at some point
+    //That changed to a string (array.join('\n')) Which means if we leave new line characters
+    //On the end of a dictionary within a given array element they will be displayed as 
+    //Separate code blocks on the front end
+    } else if (!newLineFlag && !commentFlag && !commentFlag2
+              && !(currentChar == '\n' && insideBrackets)) {
       codeArray[codeArray.length - 1] += currentChar;
     }
-    
   }
-
   return codeArray;
 }
