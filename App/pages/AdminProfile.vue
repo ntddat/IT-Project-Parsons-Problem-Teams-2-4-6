@@ -25,12 +25,12 @@
                 </div>
                 <div class="stats">
                     <div class="stat">
-                        <h2>{{ accuracy }}%</h2>
+                        <h2>{{ summary.accuracy }}%</h2>
                         <p>Accuracy</p>
                     </div>
                     <div class="stat1"></div>
                     <div class="stat">
-                        <h2>{{ exercises }}</h2>
+                        <h2>{{ summary.numQuestions }}</h2>
                         <p>Exercises</p>
                     </div>
                 </div>
@@ -46,13 +46,12 @@
 
                 <div class="scrolling-wrapper">
                     <ul class="history-list">
-                        <li @click="toggleDropdown(index)" v-for="(item, index) in history" :key="index" class="history-item">
+                        <li @click="toggleDropdown(topic)" v-for="(item, topic) in topicsInfo" :key="topic" class="history-item">
                             <div class="history-topic">
-                                <img class="tubiao" src="/App/tubiao.png" /> {{ item.title }}
+                                <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
                             </div>
-                            <div class="history-practice">{{ item.practice }}</div>
+                            <div class="history-practice">{{ item.numQuestions }}</div>
                             <div class="history-accuracy">{{ item.accuracy }}%</div>
-                            <!--Student Summary-->
                             <div v-show="item.isExpanded" class="dropdown-content">
                                 <div class="summary-header">
                                     <span class="header-ID">ID</span>
@@ -62,11 +61,11 @@
                                 </div>
                                 <div class="scrolling-wrapper">
                                     <ul class="summary-list">
-                                        <li v-for="(item, index) in summary" :key="index" class="summary-item" @click="gotoHistory()">
-                                            <div class="item-id">{{item.index}}-{{item.studentID}}</div>
-                                            <div class="item-answered">{{item.answered}}</div>
-                                            <div class="item-accuracy">{{item.accuracy}}%</div>
-                                            <div class="item-time">{{item.min}}</div>
+                                        <li v-for="(user, userID) in item.users" :key="userID" class="summary-item" @click="gotoHistory(user.userID)">
+                                            <div class="item-id">{{user.userID}}</div>
+                                            <div class="item-answered">{{user.numQuestions}}</div>
+                                            <div class="item-accuracy">{{user.accuracy}}%</div>
+                                            <div class="item-time">{{user.totalTime}}</div>
                                         </li>
                                     </ul>
                                 </div>
@@ -81,39 +80,20 @@
 <script>
 // import {getCookie, setCookie} from "../libs/cookie.js"
 
+
 export default {
+    mounted () {
+        this.setSummaryData()
+    },
     data() {
         return {
             userName: "Admin",
-            accuracy: 60,
-            exercises: 7,
+            summary:{
+                accuracy: null,
+                numQuestions: null,
+            },
+            topicsInfo: []
             // Sample data with more rows to demonstrate scrolling
-            history: [
-                { title: "Decision Tree Classifier", practice: 90, accuracy: 77 },
-                { title: "Linear Regression", practice: 100, accuracy: 80 },
-                { title: "Correlation", practice: 78, accuracy: 65 },
-                { title: "NMI", practice: 133, accuracy: 70 },
-                { title: "DataFrame", practice: 45, accuracy: 88 },
-                { title: "Sentence splitting using nltk", practice: 75, accuracy: 85 },
-                { title: "Reading/Writing CSV files", practice: 50, accuracy: 82 }
-            ],
-            summary: [
-                {index: "1", studentID:"xxxx", answered:50, accuracy:66, min:150.25},
-                {index: "2", studentID:"xxxx", answered:100, accuracy:55, min:170.36},
-                {index: "3", studentID:"xxxx", answered:67, accuracy:80, min:34.45},
-                {index: "4", studentID:"xxxx", answered:45, accuracy:100, min:8.72},
-                {index: "5", studentID:"xxxx", answered:25, accuracy:70, min:300.98},
-                {index: "6", studentID:"xxxx", answered:66, accuracy:88, min:10.77},
-                {index: "8", studentID:"xxxx", answered:110, accuracy:78, min:23.88},
-                {index: "9", studentID:"xxxx", answered:44, accuracy:33, min:48.26},
-                {index: "10", studentID:"xxxx", answered:78, accuracy:66, min:22.49},
-                {index: "11", studentID:"xxxx", answered:45, accuracy:55, min:34.98},
-                {index: "12", studentID:"xxxx", answered:56, accuracy:48, min:57.15},
-                {index: "13", studentID:"xxxx", answered:25, accuracy:75, min:13.52},
-                {index: "14", studentID:"xxxx", answered:10, accuracy:50, min:22.69},
-                {index: "15", studentID:"xxxx", answered:0, accuracy:0, min:0.00},
-                {index: "16", studentID:"xxxx", answered:4, accuracy:100, min:35.21},
-            ]
         };
     },
     methods: {
@@ -125,12 +105,48 @@ export default {
             this.$router.push('/Generator')
         },
 
-        toggleDropdown(index){
-            this.history[index].isExpanded = !this.history[index].isExpanded;
+        toggleDropdown(topic){
+            this.topicsInfo[topic].isExpanded = !this.topicsInfo[topic].isExpanded;
         },
-        gotoHistory(){
-            this.$router.push('/History');
+        async setSummaryData(){
+            const datas = await getSummary()
+            if (datas) {
+                this.summary.accuracy = datas.summary.accuracy
+                this.summary.numQuestions = datas.summary.numQuestions
+                this.topicsInfo = datas.topicsInfo
+                console.log(datas.topicsInfo)
+            } else {
+                console.error("Lack of data");
+            }
+            
+        },
+        gotoHistory(inUserID){
+            this.$router.push({
+                path:'/History',
+                query:{
+                    isAdmin: true,
+                    userID: inUserID
+                }
+            });
         }
+    }
+};
+export async function getSummary(){
+    const url = 'http://localhost:8383/api/admin/summary';
+    const options = {
+        method: 'GET',
+        headers:{
+            "Content-Type": "application/json"
+        },
+    };
+    try {
+        const response = await fetch(url,options);
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error("Error:",error);
+        return await getSummary();
     }
 };
 </script>
@@ -288,7 +304,7 @@ export default {
 
 .history-item {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 2.5fr 1.7fr 1.4fr;
     padding: 15px 0;
     align-items: center;
     cursor: pointer;
@@ -348,7 +364,7 @@ export default {
 .summary-header{
     display: grid;
     color: #333;
-    grid-template-columns: 1.5fr 2.4fr 2.4fr 2.9fr;;
+    grid-template-columns: 1.5fr 2.4fr 2.4fr 2.9fr;
     text-align: center;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
@@ -366,6 +382,7 @@ export default {
     grid-template-columns: 1.1fr 1.5fr 1.4fr 1.4fr;
     gap: 60px;
     padding: 10px 0;
+    padding-left: 25px;
     border-bottom: 1px solid #a6a4a4;
 }
 .summary-item:hover {background-color: #94f0a9;border-radius: 5px}
