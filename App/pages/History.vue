@@ -514,6 +514,11 @@ export default {
     /* Center items vertically */
     cursor: pointer;
 }
+.history-item:hover{
+    /* background-color: #ccf6b34b; */
+    background-color: #7ea3684b;
+}
+
 .tubiao{
     width: 34px;
     padding: 8px;
