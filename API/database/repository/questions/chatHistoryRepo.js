@@ -79,7 +79,7 @@ const chatHistoryRepo = {
         _id: 0,
       }
     );
-    console.log(backup);
+
     return backup;
   }
   
