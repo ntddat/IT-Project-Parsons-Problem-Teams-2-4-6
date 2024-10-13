@@ -2,12 +2,13 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Importing our modules
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
-import { generatePrompt, findClosestTopic } from "../utils/constants/TopicsContexts.js";
+import { findClosestTopic } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
 import { PythonShell } from 'python-shell';
 import chatHistoryRepo from '../database/repository/questions/chatHistoryRepo.js';
 import { getQuestionsDbName } from '../utils/functions/dbName.js';
 import { timeoutRetry } from '../utils/functions/TimeoutRetry.js';
+import { generatePrompt } from './prompts.js';
 
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
 
@@ -46,14 +47,13 @@ async function askGemini(topic, context, userID) {
     let syntaxPassed = false;
     let prompt, result, resp, fixed_resp;
 
-    let closestTopic = findClosestTopic(topic);
-
     console.log("----------\n");
     console.log("START\n");
     console.log("----------\n");
 
     console.log("\nPROMPT:\n");
-    prompt = generatePrompt(topic, context);
+    let closestTopic = findClosestTopic(topic);
+    prompt = generatePrompt(closestTopic, context);
     console.log(prompt);
     //Attempt to prompt gemini, if it fails prompt again
     try {
