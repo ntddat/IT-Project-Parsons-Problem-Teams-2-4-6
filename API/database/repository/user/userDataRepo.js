@@ -191,7 +191,7 @@ const userDataRepo = {
       const selectedTopic = updatedTopic.topicSummary[0];
       const numQuestionsTopic = selectedTopic.attemptedQuestions.length;
       const numCorrectTopic = selectedTopic.correctQuestions.length;
-      const accuracyTopic = numQuestionsTopic === 0 ? 0 : Math.round((numCorrectTopic / numQuestionsTopic) * 100);
+      const accuracyTopic = numQuestionsTopic === 0 ? 0 : Math.round((numCorrectTopic / numQuestionsTopic) * 100 * 100) / 100;
 
       // Second update: update the number of questions and correct in the topic
       await userDataModel.updateOne(
@@ -222,7 +222,7 @@ const userDataRepo = {
       });
 
       const overallAccuracy = totalNumQuestions === 0 ? 0 
-        : Math.round((totalNumCorrect / totalNumQuestions) * 100); // Rounded to 2 decimal places
+        : Math.round((totalNumCorrect / totalNumQuestions) * 100 * 100) / 100; // Rounded to 2 decimal places
 
       // Third update: update the total number of questions and correct in the user's data, and accuracy of the topic and the overall user
       return await userDataModel.updateOne(

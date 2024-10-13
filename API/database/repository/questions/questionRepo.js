@@ -32,7 +32,7 @@ const questionRepo = {
       const numCorrect = await questionModel.countDocuments({ correct: true });
       // calculate accuracy as a percentage
       const accuracy = (totalQuestions > 0)
-        ? Math.round((numCorrect / totalQuestions) * 100) 
+        ? Math.round((numCorrect / totalQuestions) * 100 * 100) / 100
         : 0;
       console.log("ACCURACY: ", accuracy);
       return accuracy;
@@ -67,7 +67,7 @@ const questionRepo = {
             accuracy: {
               $cond: [
                 { $eq: ["$numQuestions", 0] }, 0,
-                { $round: [{$multiply: [{ $divide: ["$correctQuestions", "$numQuestions"] }, 100] }]} // percentage
+                { $round: [{$multiply: [{ $divide: ["$correctQuestions", "$numQuestions"] }, 100] }, 2]} // percentage
               ]
             }
           }
