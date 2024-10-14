@@ -191,6 +191,7 @@ export function generatePrompt(topic, context) {
     // code formatting requirements
     prompt += "- The code must not contain any lines of comments or explanations in the code\n"; 
     prompt += "- The code must be at least 20 lines long, excluding any empty lines\n";
+    prompt += "- Generate a different response from everything in this chat history.\n";
 
     prompt += "Format the response in JSON format with the following attributes:\n";
 
