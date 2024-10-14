@@ -103,24 +103,24 @@ export default {
       selectedContext: '', 
       // Options for the topic dropdown menu
       items1: [
-        'DataFrame',
-        'NMI (Normalised Mutual Information)',
-        'Sentence splitting using nltk (i.e. nltk.sent_tokenize())',
         'Correlation',
-        'Linear Regression',
+        'DataFrame',
         'Decision Tree Classifier',
-        'Reading/Writing CSV files'
-      ],
+        'Linear Regression',
+        'NMI (Normalised Mutual Information)',
+        'Reading/Writing CSV files',
+        'Sentence splitting using nltk (i.e. nltk.sent_tokenize())'
+        ],
       // Options for the context dropdown menu
       items2: [
-        'Koala Population in Australia',
-        'Global Temperature Trends',
-        'Predicting Disease Outbreaks',
         'Customer Purchase Behavior',
+        'Global Temperature Trends',
+        'Koala Population in Australia',
+        'Predicting Disease Outbreaks',
         'Stock Market Prediction',
         'Student Performance Prediction',
-        'Traffic Flow Analysis',
         'Sales Forecasting',
+        'Traffic Flow Analysis',
         'Inventory Management'
       ],
       loading: false

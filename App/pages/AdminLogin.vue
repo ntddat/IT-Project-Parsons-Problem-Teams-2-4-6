@@ -32,6 +32,9 @@
               class="fas" 
               :class="showPassword ? 'fa-eye' : 'fa-eye-slash'"
               @click="togglePasswordVisibility"
+              @keydown.enter.prevent="handleLogin"
+              tabindex="0"
+              aria-label="Toggle password visibility"
             ></i>
           </div>
         </div>
