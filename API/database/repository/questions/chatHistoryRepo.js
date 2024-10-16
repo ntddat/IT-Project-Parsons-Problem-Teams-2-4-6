@@ -80,6 +80,18 @@ const chatHistoryRepo = {
       }
     );
 
+    if (backup == null || userID == null) {
+      backup = await chatHistoryModel.findOne(
+        {
+          topic: topic,
+          context: context,
+        },
+        {
+          question: 1,
+          _id: 0,
+        }
+      );
+    }
     return backup;
   }
   
