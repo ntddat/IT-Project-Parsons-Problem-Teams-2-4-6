@@ -36,8 +36,8 @@
                             <img @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
                         </h1> 
                         <div v-else>
-                            <input v-model="newName" @keyup.enter="saveName" 
-                                type="text" class="name-input" autofocus/>
+                            <input v-model="newName" @keyup.enter="saveName"
+                                type="text" class="name-input" autofocus/>·
                             <button class="changeNameButton" @click="saveName">Change</button>
                             <button class="changeNameButton" @click="NotChangeName">Not Now</button>
                         </div>
@@ -194,10 +194,9 @@ import { getUserID, getUserHistory } from "../libs/user.js"
 export default {
     mounted () {
         const isAdmin = (this.$route.query.isAdmin);
-            // console.log("isAdmin: "+ isAdmin + " type: " + typeof(isAdmin))
-            // console.log("cookie-acception: " + this.$cookies.get('acception'))
         this.notShowPopWin = (isAdmin == 'true') || (this.$cookies.get('acception') == 'true')
-            // console.log("acceptCookie: " + this.acceptCookie)
+        
+        
         
         // use different methods get user id
         if (this.notShowPopWin && !this.$route.query.userID) {
@@ -217,10 +216,6 @@ export default {
         if (this.$cookies.isKey('name') && !(isAdmin == 'true')) {
             this.userName = this.$cookies.get('name')
         }
-        // const userID = this.$cookies.get('userID')
-        // console.log("UserID: "+ userID + "type: " + typeof(userID))
-        // const datas = await getUserHistory(userID) 
-        // console.log(datas.userData.accuracy)
     },
     data() {
         return {

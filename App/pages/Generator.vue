@@ -72,7 +72,9 @@
       </div>
     </div>
     <div v-if="loading" class="loading-overlay">
-      <img src="../loading3.gif" width="50" height="50" lass="loading-icon"/>
+      <!-- <img src="../loading3.gif" width="50" height="50" lass="loading-icon"/> -->
+      <img src="../load.gif" width="200" height="200" lass="loading-icon"/>
+      <!-- <img src="../loading.gif" width="200" height="200" lass="loading-icon"/> -->
       <p class="loading-text">{{ loadingWord }}</p>
     </div>
   </div>
@@ -409,7 +411,7 @@ export default {
 }
 
 .loading-text {
-  margin-top: 60px;
+  margin-top: 20px;
   color: #333; /* Darker color for contrast */
   font-size: 20px;
   font-weight: bold;
