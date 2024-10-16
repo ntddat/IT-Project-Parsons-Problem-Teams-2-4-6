@@ -1,5 +1,12 @@
 <template>
-    
+    <div v-if="showAlertWin" class="modal-backdrop">
+      <div class="modal-content">
+        <p id="cookieWords">{{ alertWords }}</p>
+        <button id="accept-btn" @click="showAlertWin = false">OK</button>
+      </div>
+    </div>
+
+
     <body>
         <!-- 导航 + 计时 -->
         <div id=" top-panel">
@@ -35,7 +42,7 @@
             <div id="left-panel">
 
                 <div v-if="loading" id="loading-overlay">
-                    <img src="../loading3.gif" width="50" height="50" lass="loading-icon"/>
+                    <img src="../load.gif" width="200" height="200" lass="loading-icon"/>
                     <p class="loading-text">{{ loadingWord }}</p>
                 </div>
 
@@ -149,6 +156,8 @@
                 elapsedTime: 0,
                 timerLock: false,
                 intervalId: null,
+                showAlertWin: false,
+                alertWords: "",
             }
         },
         
@@ -347,7 +356,9 @@
 
             duplicateCheck(code){
                 if (code == this.prevAnswerCode){
-                    alert("code is same as previous");
+                    // alert("code is same as previous");
+                    this.alertWords = "code is same as previous";
+                    this.showAlertWin = true;
                     return true;
                 }
                 this.prevAnswerCode = code;
@@ -638,12 +649,16 @@
                         // console.log(solution.output);
                         // console.log(studentAnswer.output);
                         this.sendAttempt(0); // 提交错误的尝试
-                        alert("your output is different with correct output");
+                        // alert("your output is different with correct output");
+                        this.alertWords = "your output is different with correct output";
+                        this.showAlertWin = true;
                     }
                 } else {
                     console.log("Error occurred:", studentAnswer.error);
                     this.sendAttempt(0); // 提交错误的尝试
-                    alert("There is error in your code");
+                    // alert("There is error in your code");
+                    this.alertWords = "There is error in your code";
+                    this.showAlertWin = true;
                 }
                 
             },
@@ -654,7 +669,28 @@
     
     <style scoped>
     /* Overall Layout */
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.183);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
     
+    }
+
+    .modal-content {
+        display: flex;
+        padding: 20px;
+        background-color: rgb(204, 223, 197);
+        border-radius: 10px;
+        flex-direction: column;
+        border:2px solid #156B3A
+    }
     html {
         height: 100%;
         
@@ -1014,6 +1050,7 @@
         border-bottom: 3px solid #6e8c64;
         /* border-radius: 9px; */
         margin-bottom: 0;
+        white-space: nowrap;
     }
     #topicdescription, #questiondescription, #expectedoutput{
         margin-left: 10px;
