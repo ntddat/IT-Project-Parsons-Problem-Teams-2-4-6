@@ -76,6 +76,14 @@
       <div class="spinner"></div>
       <p class="loading-text">{{ loadingWord }}</p>
     </div>
+
+    <div id="errorMessage" v-if="showError" style="display: flex;">
+                <button id="escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
+                <p>{{ errorMessage }}</p>
+                <div id="button-container">
+                    <button id="error-retry-btn" @click="closePop" class="finish-button">Try Again</button>
+                </div>
+      </div>
   </div>
 </template>
 
@@ -124,7 +132,8 @@ export default {
         'Traffic Flow Analysis',
         'Inventory Management'
       ],
-      loading: false
+      loading: false,
+      showError: false,
     };
   },
 
@@ -156,6 +165,15 @@ export default {
         }
       })
     },
+
+    closePop(){
+            this.showError = false;
+        },
+    showErrorPop(errorMessage){
+            this.errorMessage = errorMessage;
+            this.showError = true;
+    },
+
     // cookie pop up 
     async accept() {       // handle acceptance
       this.showPopUp = false;
@@ -212,7 +230,21 @@ export default {
     },
     sendData() {
       if (!this.selectedTopic || !this.selectedContext) {
-        alert('Please select both a topic and a context before proceeding.');
+        var errorMessage;
+        if(!this.selectedTopic && !this.selectedContext){
+          errorMessage = 'Please select both a topic and a context before proceeding.';
+        }
+        else{
+          if(!this.selectedTopic){
+            errorMessage = 'Please select a topic before proceeding.';
+          }
+          else{
+            errorMessage = 'Please select a context before proceeding.';
+          }
+        }
+
+
+        this.showErrorPop(errorMessage);
         return; // Stop execution if no topic or context is selected
       }
       var payload;
@@ -535,4 +567,86 @@ export default {
 .nav-link:hover {
   color: #156B3A;
 }
+#errorMessage {
+        font-size: 14px;
+    }
+
+#errorMessage {
+    height: 10%;
+    width: 40%;
+    display: none;
+    position: fixed;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px;
+    background-color: rgb(224, 247, 216);
+    border: 1px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    border-radius: 10px;
+    text-align: center;
+    align-self: center;
+    font-size: 18px;
+}
+
+#escape-btn {
+    width: 25px;
+    padding: 0%;
+    margin: 0%;
+    position: absolute;
+    /* left: 15px; */
+    right: 3px;
+    top: 15px;
+    background-color: transparent;
+    border: none;
+    display: inline-flex;
+}
+
+#escape-btn i {
+    display: inline-block;
+    transition: transform 0.5s ease;
+    transform-origin: 30% 50%;
+}
+
+#escape-btn:hover i {
+    transform: scale(2.0) rotate(360deg);
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
+}
+
+#button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#button-group i {
+    font-size: 14px;
+}
+
+#button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    gap: 50px;
+}
+
+#button-container button {
+    padding: 3px;
+    background-color: rgba(0, 255, 255, 0);
+    border: 1px solid rgb(0, 0, 0);
+    border-radius: 5px;
+    margin: 10px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+
 </style>
