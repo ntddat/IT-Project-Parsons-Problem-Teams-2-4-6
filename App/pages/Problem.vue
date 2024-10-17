@@ -35,7 +35,7 @@
             <div id="left-panel">
 
                 <div v-if="loading" id="loading-overlay">
-                    <img src="../loading3.gif" width="50" height="50" lass="loading-icon"/>
+                    <div class="spinner"></div>
                     <p class="loading-text">{{ loadingWord }}</p>
                 </div>
 
@@ -1043,6 +1043,82 @@
         overflow: auto;
         scrollbar-gutter: stable;
     } */
+     /* From Uiverse.io by satyamchaudharydev */ 
+
+    /* 加载动画，别动 */
+    /* 加载动画，别动 */
+    /* 加载动画，别动 */
+    /* 要改叫我，我来改 */
+    /* If need change, just tell me, i will do it */
+    .spinner {
+        --size: 35px;
+        --first-block-clr: #17743f;
+        --second-block-clr: #FF8E54;
+        --clr: #111;
+        width: 200px;
+        height: 200px;
+        position: relative;
+    }
+
+    .spinner::after,.spinner::before {
+        box-sizing: border-box;
+        position: absolute;
+        content: "";
+        width: var(--size);
+        height: var(--size);
+        top: 50%;
+        animation: up 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+        left: 50%;
+        background: var(--first-block-clr);
+    }
+
+    .spinner::after {
+        background: var(--second-block-clr);
+        top: calc(50% - var(--size));
+        left: calc(50% - var(--size));
+        animation: down 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+    }
+
+    @keyframes down {
+        0%, 100% {
+            transform: none;
+        }
+
+        25% {
+            transform: translateX(100%);
+        }
+
+        50% {
+            transform: translateX(100%) translateY(100%);
+        }
+
+        75% {
+            transform: translateY(100%);
+        }
+    }
+
+    @keyframes up {
+        0%, 100% {
+            
+        }
+
+        25% {
+            transform: translateX(-100%);
+        }
+
+        50% {
+            transform: translateX(-100%) translateY(-100%);
+        }
+
+        75% {
+            transform: translateY(-100%);
+        }
+    }
+    /* 加载动画，别动 */
+    /* 加载动画，别动 */
+    /* 加载动画，别动 */
+    /* 要改叫我，我来改 */
+    /* If need change, just tell me, i will do it */
     
     
     button i {
