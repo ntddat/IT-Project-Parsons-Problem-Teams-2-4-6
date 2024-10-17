@@ -250,15 +250,6 @@ export default {
         if (this.userID) {
             this.setUserData()
         }
-        if (this.$cookies.isKey('name') && !(isAdmin == 'true')) {
-            this.userName = this.$cookies.get('name')
-        }
-
-        // if (this.showData) {
-        //     this.$nextTick(() => {
-        //         this.setRadar(); // Make sure DOM is inuse
-        //     });
-        // }
     },
     data() {
         return {
@@ -497,7 +488,7 @@ export default {
 .profile-pic {
     width: 80px;
     height: 80px;
-    background-color: #e61b0c;
+    background-color: #FF9843;
     border-radius: 50%;
     display: flex;
     justify-content: center;
