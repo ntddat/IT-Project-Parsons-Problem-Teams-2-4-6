@@ -344,14 +344,6 @@ export default {
                             {
                                 value: this.getAccuracyList(),
                                 name: 'Accuarcy',
-
-                                // lineStyle: {
-                                //     color: '#E92B3B'  // 设置 Accuracy 的线条颜色
-                                // },
-                                // areaStyle: {
-                                //     color: '#E92B3B'  // 设置 Accuracy 的区域颜色
-                                // }
- 
                             }
                         ],
                     }
@@ -364,11 +356,7 @@ export default {
 </script>
 
 <style scoped>
-#graph {
-    width: 600px;
-    height: 600px;
-    margin: 20px auto;
-}
+
 
 * {
     box-sizing: border-box;
@@ -562,6 +550,12 @@ export default {
     overflow: auto;
 }
 
+#graph {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+}
+
 .tooltip-box {
     position: absolute;
     background-color: #333;
@@ -583,7 +577,6 @@ export default {
     padding: 0;
     font-weight: 600;
 }
-
 
 .history-header {
     display: grid;
