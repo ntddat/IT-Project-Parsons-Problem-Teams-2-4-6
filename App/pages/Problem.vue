@@ -96,13 +96,21 @@
             </div>
 
             <div id="resultMessage">
-                <button id="escape-btn"><i class="fa-solid fa-xmark"></i></button>
+                <button id="escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
                 <p>Correct answer! Congratulations!</p>
                 <div id="button-container">
                     <button id="window-regenerate-btn" @click="windowRegenerate"
                         class="finish-button">Regenerate</button>
                     <button id="window-retry-btn" class="finish-button">Try Again</button>
                     <button id="window-back-btn" class="finish-button" @click="goBackHome">Back Home</button>
+                </div>
+            </div>
+
+            <div id="errorMessage" v-if="showError" style="display: flex;">
+                <button id="escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
+                <p>{{ errorMessage }}</p>
+                <div id="button-container">
+                    <button id="error-retry-btn" @click="closePop" class="finish-button">Try Again</button>
                 </div>
             </div>
 
@@ -152,6 +160,8 @@ export default {
             elapsedTime: 0,
             timerLock: false,
             intervalId: null,
+            showError: false,  
+            errorMessage: '',
         }
     },
 
@@ -189,6 +199,10 @@ export default {
 
         goBackHome() {
             this.$router.push('/Generator'); // 跳转到 "/Generator" 页面
+        },
+
+        closePop(){
+            this.showError = false;
         },
 
         // Mid resize
@@ -349,9 +363,15 @@ export default {
             this.isRegenerateDisabled = false;
         },
 
+        showErrorPop(errorMessage){
+            this.errorMessage = errorMessage;
+            this.showError = true;
+        },
+
         duplicateCheck(code) {
             if (code == this.prevAnswerCode) {
-                alert("code is same as previous");
+                // alert("code is same as previous");
+                this.showErrorPop("code is same as previous")
                 return true;
             }
             this.prevAnswerCode = code;
@@ -531,7 +551,8 @@ export default {
 
         displayErrors(fb) {
             if (fb.errors.length > 0) {
-                console.log('wrong code order ┑(￣Д ￣)┍');
+                this.showErrorPop('wrong code order ┑(￣Д ￣)┍')
+                // console.log('wrong code order ┑(￣Д ￣)┍');
                 // alert(fb.errors[0]);
             }
         },
@@ -576,6 +597,9 @@ export default {
 
 
                 document.getElementById('submit-btn').addEventListener('click', async () => {
+                    console.log('feedback');
+                    console.log(parson.getFeedback());
+                    console.log('feedback finish');
                     // console.log("press submit");
                     var studentCode = this.getStudentCode(parson);
                     var feedback = parson.getFeedback();
@@ -601,9 +625,9 @@ export default {
                     parson.shuffleLines();
                 });
 
-                document.getElementById('escape-btn').addEventListener('click', () => {
-                    document.getElementById('resultMessage').style.display = 'none';
-                });
+                // document.getElementById('escape-btn').addEventListener('click', () => {
+                //     document.getElementById('resultMessage').style.display = 'none';
+                // });
 
                 // document.getElementById('regenerate-btn').addEventListener('click',() => {
 
@@ -1322,6 +1346,26 @@ button i {
     font-size: 18px;
 }
 
+#errorMessage {
+    height: 10%;
+    width: 40%;
+    display: none;
+    position: fixed;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px;
+    background-color: rgb(224, 247, 216);
+    border: 1px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    border-radius: 10px;
+    text-align: center;
+    align-self: center;
+    font-size: 18px;
+}
+
 /* @media (max-width: 768px) {
         main {
             flex-direction: column;
@@ -1454,6 +1498,10 @@ button i {
     }
 
     #resultMessage {
+        font-size: 14px;
+    }
+
+    #errorMessage {
         font-size: 14px;
     }
 
