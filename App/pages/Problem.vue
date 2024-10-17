@@ -527,13 +527,14 @@
 
             displayErrors(fb) {
                 if (fb.errors.length > 0) {
-                    alert(fb.errors[0]);
+                    console.log('wrong code order ┑(￣Д ￣)┍');
+                    // alert(fb.errors[0]);
                 }
             },
 
             initializeParsonsWidget(question) {
                 //question = testSample;
-                console.log(question);
+                // console.log(question);//显示答案，记得注释掉
                 
                 
                 this.runCode(question).then(solution => {
@@ -544,7 +545,7 @@
                         sortableId: 'sortable',
                         trashId: 'sortableTrash',
                         max_wrong_lines: 1,
-                        feedback_cb : this.displayErrors,
+                        feedback_cb : this.displayErrors.bind(this),
                         can_indent: true
                     });
                     // console.log(parson);
@@ -555,6 +556,7 @@
                         this.refreshOutput();
                         // console.log("0000");
                         var studentCode = this.getStudentCode(parson);
+                        // const feedback = parson.getFeedback();
                         if(!this.emptyCheck(studentCode)){
 
                             this.runCode(studentCode).then(
@@ -572,6 +574,7 @@
                     document.getElementById('submit-btn').addEventListener('click', async () => {
                         // console.log("press submit");
                         var studentCode = this.getStudentCode(parson);
+                        var feedback = parson.getFeedback();
                         //runsubmit should be a no return function, this is now for testing
                         this.stopTimer();
                         this.blockSubmission();
@@ -638,13 +641,14 @@
                         // console.log(solution.output);
                         // console.log(studentAnswer.output);
                         this.sendAttempt(0); // 提交错误的尝试
-                        alert("your output is different with correct output");
+                        alert("Oops, some errors here ~ （；´д｀）ゞ");
                     }
-                } else {
-                    console.log("Error occurred:", studentAnswer.error);
-                    this.sendAttempt(0); // 提交错误的尝试
-                    alert("There is error in your code");
-                }
+                } 
+                // else {
+                //     console.log("Error occurred:", studentAnswer.error);
+                //     this.sendAttempt(0);
+                //     alert("There is error in your code");
+                // }
                 
             },
         }
@@ -1009,8 +1013,9 @@
         border-radius: 5px; 
         max-height: calc(70%);
     }
+
     #topicdescription{
-        width: min-content;
+        width: calc(50%);
         border-bottom: 3px solid #6e8c64;
         /* border-radius: 9px; */
         margin-bottom: 0;

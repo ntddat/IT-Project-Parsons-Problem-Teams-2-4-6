@@ -110,7 +110,7 @@ ul.correct {
 }
 
 li.incorrectIndent {
-    border: 1px solid rgba(255, 0, 0, 0);
+    border: 1px solid rgb(255, 0, 0);
     border-left: 10px solid red;
     background-color: red;
 }
