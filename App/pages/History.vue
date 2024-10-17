@@ -1,9 +1,5 @@
 <template>
     <div class="history">
-        <!-- <div v-show="showTooltip" :style="tooltipStyle" class="tooltip-box">
-                Click for more info!
-        </div> -->
-
         <!-- Navigation Bar -->
         <nav class="top">
             <div class="back-links" v-if="showBack" @click="backButton">
@@ -20,7 +16,7 @@
                 <img src="/App/logo.png" alt="Logo" class="top-logo" />
                 <div class="web-name">Learnr</div>
             </div>
- 
+
 
             <div class="info-mes">Get more information by clicking on the list below</div>
             <div class="nav-links">
@@ -101,11 +97,7 @@
             </div>
 
             <!-- History Section -->
-            <div class="hover-container history-container">
-
-                <!-- <div v-show="showTooltip" :style="tooltipStyle" class="tooltip-box">
-                Click for more info!
-            </div> -->
+            <div class="history-container">
                 <!-- History Header -->
                 <div class="history-header">
                     <span class="header-topic">Topic</span>
@@ -196,16 +188,48 @@
                 </ul>
             </div>
 
+            <div class="graph-container">
+                <div id="graph"></div>
+            </div>
 
         </div>
+
+
     </div>
 </template>
 
 <script>
-// import {getCookie, setCookie} from "../libs/cookie.js"
+import * as echarts from 'echarts/core';
+import { BarChart, RadarChart } from 'echarts/charts';
+import {
+    TitleComponent,
+    TooltipComponent,
+    GridComponent,
+    DatasetComponent,
+    TransformComponent,
+    LegendComponent,
+} from 'echarts/components';
+import { LabelLayout, UniversalTransition } from 'echarts/features';
+import { CanvasRenderer } from 'echarts/renderers';
+
 import { getUserID, getUserHistory } from "../libs/user.js"
 
 export default {
+    created() {
+        echarts.use([
+            TitleComponent,
+            TooltipComponent,
+            GridComponent,
+            DatasetComponent,
+            TransformComponent,
+            BarChart,
+            RadarChart,
+            LegendComponent,
+            LabelLayout,
+            UniversalTransition,
+            CanvasRenderer
+        ]);
+    },
     mounted() {
         const from = (this.$route.query.from)
         if (from == "Admin") {
@@ -222,12 +246,19 @@ export default {
                 this.showBack = true
             }
         }
+
         if (this.userID) {
             this.setUserData()
         }
         if (this.$cookies.isKey('name') && !(isAdmin == 'true')) {
             this.userName = this.$cookies.get('name')
         }
+
+        // if (this.showData) {
+        //     this.$nextTick(() => {
+        //         this.setRadar(); // Make sure DOM is inuse
+        //     });
+        // }
     },
     data() {
         return {
@@ -242,6 +273,7 @@ export default {
             editing: false,
             showBack: false,
             backWords: null,
+            myChart: null
         };
     },
     methods: {
@@ -273,7 +305,9 @@ export default {
             this.accuracy = datas.userData.accuracy
             this.exercises = datas.userData.numQuestions
             this.topicSummary = datas.userData.topicSummary
-            // console.log(datas.userData.accuracy)
+            this.$nextTick(() => {
+                this.setRadar(); // Make sure DOM is inuse
+            });
         },
         async accept() {
             this.$cookies.set('acception', true, '3m');
@@ -288,11 +322,92 @@ export default {
             this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded =
                 !this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded
         },
+        getFormattedTopicList() {
+            return this.topicSummary.map(topic => {
+                const cleanedTopic = topic.topic.replace(/\([^)]*\)/g, '').trim();
+                const firstTwoWords = cleanedTopic.split(' ').slice(0, 2).join(' ');
+                const formattedName = firstTwoWords.length > 10 ? firstTwoWords.replace(' ', '\n') : firstTwoWords;
+                return {
+                    name: formattedName,
+                    max: 100
+                };
+            });
+        },
+
+
+        getPracticeList() {
+            const maxNumQuestions = Math.max(...this.topicSummary.map(topic => topic.numQuestions));
+            const normalizedNumQuestions = this.topicSummary.map(topic => topic.numQuestions / maxNumQuestions * 100);
+            return normalizedNumQuestions;
+        },
+        getAccuracyList() {
+            return this.topicSummary.map(topic => topic.accuracy);
+        },
+
+        setRadar() {
+            this.myChart = echarts.init(document.getElementById('graph'));
+            let option = {
+                color: ['#67F9D8', '#5AB2FF'],
+                title: {
+                    text: ''
+                },
+                legend: {
+                    data: ['Total Practice', 'Accuarcy'],
+                    // lineStyle: ["#FF6C22", "#2B3499"]
+                },
+                radar: {
+                    // shape: 'circle',
+                    indicator: this.getFormattedTopicList(),
+                    center: ['50%', '50%'],  // 控制雷达图的位置
+                    radius: '70%',
+                    name: {
+                        textStyle: {
+                            color: '#0D0D0D', // 设置 indicator 名称的颜色为红色
+                            fontSize: 14 // 可以设置字体大小
+                        }
+                    }
+                },
+                axisName: {},
+                series: [
+                    {
+                        name: 'Practice VS Accuarcy',
+                        type: 'radar',
+                        areaStyle: {},
+                        data: [
+                            {
+                                value: this.getPracticeList(),
+                                name: 'Total Practice',
+
+                            },
+                            {
+                                value: this.getAccuracyList(),
+                                name: 'Accuarcy',
+
+                                // lineStyle: {
+                                //     color: '#E92B3B'  // 设置 Accuracy 的线条颜色
+                                // },
+                                // areaStyle: {
+                                //     color: '#E92B3B'  // 设置 Accuracy 的区域颜色
+                                // }
+ 
+                            }
+                        ],
+                    }
+                ]
+            };
+            this.myChart.setOption(option);
+        },
     },
 };
 </script>
 
 <style scoped>
+#graph {
+    width: 600px;
+    height: 600px;
+    margin: 20px auto;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -321,6 +436,7 @@ export default {
 .back-links:hover {
     color: #156B3A;
 }
+
 .back-links:hover .top-logo path {
     fill: #156B3A;
 }
@@ -477,9 +593,12 @@ export default {
     overflow: auto;
 }
 
-.hover-container {
-    display: inline-block;
-    position: relative;
+.graph-container {
+    max-width: 1000px;
+    padding: 20px;
+    border-top: 1px solid #777777;
+    padding-top: 30px;
+    overflow: auto;
 }
 
 .tooltip-box {
