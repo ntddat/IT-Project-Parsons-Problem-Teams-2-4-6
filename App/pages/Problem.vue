@@ -514,8 +514,10 @@ export default {
         //add more parameters
         async sendAttempt(correctness) {
             if (this.$cookies.get('acception') !== 'true') {
+                console.log("returned");
                 return;
             }
+            console.log("submitting");
             //todo change time to a variable
             var pack = {
                 questionID: this.questionID,
@@ -597,9 +599,7 @@ export default {
 
 
                 document.getElementById('submit-btn').addEventListener('click', async () => {
-                    console.log('feedback');
-                    console.log(parson.getFeedback());
-                    console.log('feedback finish');
+                    
                     // console.log("press submit");
                     var studentCode = this.getStudentCode(parson);
                     var feedback = parson.getFeedback();
@@ -607,7 +607,7 @@ export default {
                     this.stopTimer();
                     this.blockSubmission();
                     if (!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)) {
-                        await this.runSubmit(studentCode, solution);
+                        await this.runSubmit(studentCode, solution,parson);
                         this.refreshTimer();
                     }
                     this.startTimer();
@@ -647,15 +647,24 @@ export default {
 
 
 
-        async runSubmit(studentCode, solution) {
+        async runSubmit(studentCode, solution,parson) {
 
             this.refreshOutput();
+            console.log(1);
             const studentAnswer = await this.runCode(studentCode);
             // console.log("studentanswer", studentAnswer);
             console.log("running");
             // 显示输出结果
             document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
-
+            console.log('feedback');
+            console.log(parson.getFeedback());
+            console.log(1);
+            if(parson.getFeedback() == ''){
+                document.getElementById('resultMessage').style.display = 'block'; // 显示弹窗
+                this.sendAttempt(1); // 提交正确的尝试
+                return;
+            }
+            console.log('feedback finish');
             if (!studentAnswer.error) {
                 const solutionOutputString = solution.output.trim();
                 const studentOutputString = studentAnswer.output.trim();
@@ -669,14 +678,15 @@ export default {
                     // console.log(solution.output);
                     // console.log(studentAnswer.output);
                     this.sendAttempt(0); // 提交错误的尝试
-                    alert("Oops, some errors here ~ （；´д｀）ゞ");
+                    this.showErrorPop("Oops, some logic errors here ~ （；´д｀）ゞ")
+                    
                 }
             }
-            // else {
-            //     console.log("Error occurred:", studentAnswer.error);
-            //     this.sendAttempt(0);
-            //     alert("There is error in your code");
-            // }
+            else {
+                console.log("Error occurred:", studentAnswer.error);
+                this.sendAttempt(0);
+                this.showErrorPop("There is error in your code")
+            }
 
         },
     }
