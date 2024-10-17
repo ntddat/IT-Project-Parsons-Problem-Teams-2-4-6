@@ -65,35 +65,8 @@
                 </div>
             </div>
 
-            <!-- Recent Problem Section -->
-            <div class="recent-container" v-if="false">
-                <div class="recent-header">Recent Five Questions</div>
-                <div class="recent-datas">
-                    <div class="question-header">
-                        <span class="question-topic">Question</span>
-                        <span class="question-attempts">Attempts</span>
-                        <span class="question-time">Time</span>
-                        <span class="question-correct">Correct</span>
-                    </div>
-
-                    <ul class="question-datas">
-                        <li v-for="(attempt, attemptIndex) in recent" :key="attemptIndex" class="question-data">
-                            <div class="topic">
-                                {{ history[attempt.topic].title }}
-                            </div>
-                            <div class="attempt">
-                                {{ attempt.attempt }}
-                            </div>
-                            <div class="time">
-                                {{ (attempt.time / 60).toFixed(2) }}
-                            </div>
-                            <div class="correct">
-                                <img :src="attempt.correctness ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
-                                    alt="Correctness">
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+            <div class="graph-container">
+                <div id="graph"></div>
             </div>
 
             <!-- History Section -->
@@ -188,9 +161,7 @@
                 </ul>
             </div>
 
-            <div class="graph-container">
-                <div id="graph"></div>
-            </div>
+            
 
         </div>
 
@@ -586,7 +557,6 @@ export default {
 
 .graph-container {
     max-width: 1000px;
-    padding: 20px;
     border-top: 1px solid #777777;
     padding-top: 30px;
     overflow: auto;
