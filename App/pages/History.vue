@@ -41,7 +41,7 @@
                         <!-- Name Edit -->
                         <h1 v-if="!editing" @click="startEditing">
                             {{ userName }}
-                            <img @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
+                            <img v-show="canEditName" @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
                         </h1>
                         <div v-else>
                             <input v-model="newName" @keyup.enter="saveName" type="text" class="name-input" autofocus />
@@ -207,6 +207,7 @@ export default {
             this.userID = this.$route.query.userID
             this.backWords = "Admin"
             this.showBack = true
+            this.canEditName =false
             this.showData = true
         } else {
             this.showData = this.$cookies.get('acception') == 'true'
@@ -235,7 +236,8 @@ export default {
             editing: false,
             showBack: false,
             backWords: null,
-            myChart: null
+            myChart: null,
+            canEditName: true,
         };
     },
     methods: {
@@ -261,7 +263,6 @@ export default {
                 this.editing = false;
             }
         },
-
         async setUserData() {
             const datas = await getUserHistory(this.userID)
             this.accuracy = datas.userData.accuracy
@@ -295,8 +296,6 @@ export default {
                 };
             });
         },
-
-
         getPracticeList() {
             const maxNumQuestions = Math.max(...this.topicSummary.map(topic => topic.numQuestions));
             const normalizedNumQuestions = this.topicSummary.map(topic => topic.numQuestions / maxNumQuestions * 100);
@@ -305,27 +304,26 @@ export default {
         getAccuracyList() {
             return this.topicSummary.map(topic => topic.accuracy);
         },
-
         setRadar() {
             this.myChart = echarts.init(document.getElementById('graph'));
             let option = {
-                color: ['#67F9D8', '#5AB2FF'],
+                color: ['#F1E3D3', '#5B9279'],
+                // color: ['#B0A2C4', '#465946'], //#FFFFFF #465946
                 title: {
                     text: ''
                 },
                 legend: {
                     data: ['Total Practice', 'Accuarcy'],
-                    // lineStyle: ["#FF6C22", "#2B3499"]
                 },
                 radar: {
                     // shape: 'circle',
                     indicator: this.getFormattedTopicList(),
-                    center: ['50%', '50%'],  // 控制雷达图的位置
+                    center: ['50%', '50%'],  
                     radius: '70%',
                     name: {
                         textStyle: {
-                            color: '#0D0D0D', // 设置 indicator 名称的颜色为红色
-                            fontSize: 14 // 可以设置字体大小
+                            color: '#0D0D0D', 
+                            fontSize: 14,
                         }
                     }
                 },
@@ -339,7 +337,6 @@ export default {
                             {
                                 value: this.getPracticeList(),
                                 name: 'Total Practice',
-
                             },
                             {
                                 value: this.getAccuracyList(),
@@ -551,7 +548,7 @@ export default {
 }
 
 #graph {
-    width: 400px;
+    width: 700px;
     height: 400px;
     margin: auto;
 }
