@@ -129,6 +129,10 @@ export default {
   },
 
   mounted () {
+      // sessionStorage.setItem('UserID', 12);
+      // const sessionData = sessionStorage.getItem('UserID');
+      // console.log(typeof(sessionData) + ' ' + sessionData); -> String
+
       this.checkPopUp();
       // const userID = getUserID()
       // console.log(userID)
@@ -145,9 +149,10 @@ export default {
       this.$router.push({
         path: '/History',
         query: {
-          isAdmin: false,
-          // userID: getCookie("userID")
-          userID: this.$cookies.get('userID')
+          // isAdmin: false,
+          // // userID: getCookie("userID")
+          // userID: this.$cookies.get('userID')
+          from: "Generator"
         }
       })
     },

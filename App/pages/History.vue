@@ -6,10 +6,22 @@
 
         <!-- Navigation Bar -->
         <nav class="top">
-            <div class="header">
+            <div class="back-links" v-if="showBack" @click="backButton">
+                <svg t="1729144190487" class="top-logo" viewBox="0 0 1024 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="4866" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    width="25px" height="25px">
+                    <path
+                        d="M485.6 249.9L198.2 498c-8.3 7.1-8.3 20.8 0 27.9l287.4 248.2c10.7 9.2 26.4 0.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z m320 0L518.2 498c-4.1 3.6-6.2 8.8-6.2 14 0 5.2 2.1 10.4 6.2 14l287.4 248.2c10.7 9.2 26.4 0.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z"
+                        fill="#2c2c2c" p-id="4867"></path>
+                </svg>
+                <div class="back">Back to {{ backWords }}</div>
+            </div>
+            <div class="header" v-else>
                 <img src="/App/logo.png" alt="Logo" class="top-logo" />
                 <div class="web-name">Learnr</div>
             </div>
+ 
+
             <div class="info-mes">Get more information by clicking on the list below</div>
             <div class="nav-links">
                 <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
@@ -17,14 +29,14 @@
             </div>
         </nav>
 
-        <div id="notacceptCookie" v-if="!notShowPopWin">
+        <div id="notacceptCookie" v-if="!showData">
             <div id="cookie-request">You must accept the cookie if you want check this page</div>
             <button @click="accept" id="accept-btn">Accept</button>
         </div>
-        
+
         <div id="cont_box" v-else>
-        <!-- Profile Section -->
-        <div class="profile-container">
+            <!-- Profile Section -->
+            <div class="profile-container">
                 <div class="profile-header">
                     <div class="profile-pic">
                         <span class="profile-initial">{{ userName.charAt(0).toUpperCase() }}</span>
@@ -34,10 +46,9 @@
                         <h1 v-if="!editing" @click="startEditing">
                             {{ userName }}
                             <img @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
-                        </h1> 
+                        </h1>
                         <div v-else>
-                            <input v-model="newName" @keyup.enter="saveName" 
-                                type="text" class="name-input" autofocus/>
+                            <input v-model="newName" @keyup.enter="saveName" type="text" class="name-input" autofocus />
                             <button class="changeNameButton" @click="saveName">Change</button>
                             <button class="changeNameButton" @click="NotChangeName">Not Now</button>
                         </div>
@@ -57,11 +68,11 @@
                     </div>
                 </div>
             </div>
-            
-        <!-- Recent Problem Section -->
-        <div class="recent-container" v-if="false">
-            <div class="recent-header">Recent Five Questions</div>
-                <div class="recent-datas">    
+
+            <!-- Recent Problem Section -->
+            <div class="recent-container" v-if="false">
+                <div class="recent-header">Recent Five Questions</div>
+                <div class="recent-datas">
                     <div class="question-header">
                         <span class="question-topic">Question</span>
                         <span class="question-attempts">Attempts</span>
@@ -69,7 +80,7 @@
                         <span class="question-correct">Correct</span>
                     </div>
 
-                    <ul class = "question-datas">
+                    <ul class="question-datas">
                         <li v-for="(attempt, attemptIndex) in recent" :key="attemptIndex" class="question-data">
                             <div class="topic">
                                 {{ history[attempt.topic].title }}
@@ -78,109 +89,112 @@
                                 {{ attempt.attempt }}
                             </div>
                             <div class="time">
-                                {{ (attempt.time/60).toFixed(2)  }}
+                                {{ (attempt.time / 60).toFixed(2) }}
                             </div>
                             <div class="correct">
-                                <img :src="attempt.correctness ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
+                                <img :src="attempt.correctness ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
+                                    alt="Correctness">
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
 
-        <!-- History Section -->
-        <div class="hover-container history-container" @mousemove="updateMousePosition" @mouseleave="hideTooltip">
-            
-            <!-- <div v-show="showTooltip" :style="tooltipStyle" class="tooltip-box">
+            <!-- History Section -->
+            <div class="hover-container history-container">
+
+                <!-- <div v-show="showTooltip" :style="tooltipStyle" class="tooltip-box">
                 Click for more info!
             </div> -->
-            <!-- History Header -->
-            <div class="history-header">
-                <span class="header-topic">Topic</span>
-                <span class="tit_text header-practice">Total Practice</span>
-                <span class="tit_text header-accuracy">Accuracy</span>
-            </div>
-            <!-- History detail -->
-            <ul class="history-list">
-                <li  v-for="(item, index) in topicSummary" :key="index" >
-                <div @click="questionDropdown(index)" class="history-item">
-                    <div class="history-topic">
-                        <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
-                    </div>
-                    <div class="history-practice">
-                        {{ item.numQuestions }}
-                    </div>
-                    <div class="history-accuracy">
-                        {{ item.accuracy }}%
-                    </div>
+                <!-- History Header -->
+                <div class="history-header">
+                    <span class="header-topic">Topic</span>
+                    <span class="tit_text header-practice">Total Practice</span>
+                    <span class="tit_text header-accuracy">Accuracy</span>
                 </div>
+                <!-- History detail -->
+                <ul class="history-list">
+                    <li v-for="(item, index) in topicSummary" :key="index">
+                        <div @click="questionDropdown(index)" class="history-item">
+                            <div class="history-topic">
+                                <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
+                            </div>
+                            <div class="history-practice">
+                                {{ item.numQuestions }}
+                            </div>
+                            <div class="history-accuracy">
+                                {{ item.accuracy }}%
+                            </div>
+                        </div>
 
-                <!-- Question details -->
-                <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
-                <!-- <div v-show="true" class="question-dropdown"> -->
-                    <!-- Question Dropdown Head -->
-                    <div class="question-header">
-                        <span class="question-topic">Question</span>
-                        <span class="question-attempts">Attempts</span>
-                        <span class="question-time">Total-Time (minutes)</span>
-                        <span class="question-correct">Had Been Correct</span>
-                    </div>
+                        <!-- Question details -->
+                        <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
+                            <!-- <div v-show="true" class="question-dropdown"> -->
+                            <!-- Question Dropdown Head -->
+                            <div class="question-header">
+                                <span class="question-topic">Question</span>
+                                <span class="question-attempts">Attempts</span>
+                                <span class="question-time">Total-Time (minutes)</span>
+                                <span class="question-correct">Had Been Correct</span>
+                            </div>
 
-                    <!-- Question Dropdown data -->
-                    <ul class = "question-datas">
-                        <li @click="attemptDropdown(index, questionIndex)" 
-                        v-for="(question, questionIndex) in item.attemptedQuestions" 
-                        :key="questionIndex" class="question-data">  
-                            <div class="question">
-                                <!-- {{ question.questionID }} -->
-                                  {{ questionIndex + 1 }}
-                            </div>
-                            <div class="attempts">
-                                {{ question.numAttempts }}
-                            </div>
-                            <div class="time">
-                                {{ (question.totalTime/60).toFixed(2) }}
-                            </div>
-                            <div class="correct">
-                                <img :src="question.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
-                            </div>
-                            
-                            <!-- Attempts Dropdown -->
-                            <div v-show="question.isExpanded" class="attempt-dropdown">
-                            <!-- <div v-show="true" class="attempt-dropdown"> -->
-                                <!-- Attempt Dropdown Header -->
-                                <div class="attempts-header">
-                                    <span class="question-topic">Attempt</span>
-                                    <span class="question-time">Time (minutes)</span>
-                                    <span class="question-correct">Correct</span>
-                                </div>
+                            <!-- Question Dropdown data -->
+                            <ul class="question-datas">
+                                <li @click="attemptDropdown(index, questionIndex)"
+                                    v-for="(question, questionIndex) in item.attemptedQuestions" :key="questionIndex"
+                                    class="question-data">
+                                    <div class="question">
+                                        <!-- {{ question.questionID }} -->
+                                        {{ questionIndex + 1 }}
+                                    </div>
+                                    <div class="attempts">
+                                        {{ question.numAttempts }}
+                                    </div>
+                                    <div class="time">
+                                        {{ (question.totalTime / 60).toFixed(2) }}
+                                    </div>
+                                    <div class="correct">
+                                        <img :src="question.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
+                                            alt="Correctness">
+                                    </div>
 
-                                <!-- Attempt Dropdown data -->
-                                <ul class="attempts-datas">
-                                    <li v-for="(attempt, attemptIndex) in question.attempts" 
-                                    :key="attemptIndex" class="attempts-data">
-                                        <div class="attempt">
-                                            {{ attempt.attemptID }}
+                                    <!-- Attempts Dropdown -->
+                                    <div v-show="question.isExpanded" class="attempt-dropdown">
+                                        <!-- <div v-show="true" class="attempt-dropdown"> -->
+                                        <!-- Attempt Dropdown Header -->
+                                        <div class="attempts-header">
+                                            <span class="question-topic">Attempt</span>
+                                            <span class="question-time">Time (minutes)</span>
+                                            <span class="question-correct">Correct</span>
                                         </div>
-                                        <div class="time">
-                                            {{ (attempt.time/60).toFixed(2) }}
-                                        </div>
-                                        <!-- <div class="date">
+
+                                        <!-- Attempt Dropdown data -->
+                                        <ul class="attempts-datas">
+                                            <li v-for="(attempt, attemptIndex) in question.attempts" :key="attemptIndex"
+                                                class="attempts-data">
+                                                <div class="attempt">
+                                                    {{ attempt.attemptID }}
+                                                </div>
+                                                <div class="time">
+                                                    {{ (attempt.time / 60).toFixed(2) }}
+                                                </div>
+                                                <!-- <div class="date">
                                             {{ attempt.date }}
                                         </div> -->
-                                        <div class="correct">
-                                            <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'" alt="Correctness">
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>                  
+                                                <div class="correct">
+                                                    <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
+                                                        alt="Correctness">
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
 
-                </li>
-            </ul>
-        </div>
+                    </li>
+                </ul>
+            </div>
 
 
         </div>
@@ -192,39 +206,32 @@
 import { getUserID, getUserHistory } from "../libs/user.js"
 
 export default {
-    mounted () {
-        const isAdmin = (this.$route.query.isAdmin);
-            // console.log("isAdmin: "+ isAdmin + " type: " + typeof(isAdmin))
-            // console.log("cookie-acception: " + this.$cookies.get('acception'))
-        this.notShowPopWin = (isAdmin == 'true') || (this.$cookies.get('acception') == 'true')
-            // console.log("acceptCookie: " + this.acceptCookie)
-        
-        // use different methods get user id
-        if (this.notShowPopWin && !this.$route.query.userID) {
-            this.userID = this.$cookies.get('userID')
-            // console.log("get id from cookie")
-        }
-        else {
+    mounted() {
+        const from = (this.$route.query.from)
+        if (from == "Admin") {
             this.userID = this.$route.query.userID
-            // console.log("get id from previous page")
+            this.backWords = "Admin"
+            this.showBack = true
+            this.showData = true
+        } else {
+            this.showData = this.$cookies.get('acception') == 'true'
+            this.userID = this.$cookies.get('userID')
+            this.backWords = "Question"
+            if (from == "History") {
+                this.backWords = "Question"
+                this.showBack = true
+            }
         }
-
-        // id user id exist, then get userdata
         if (this.userID) {
             this.setUserData()
         }
-
         if (this.$cookies.isKey('name') && !(isAdmin == 'true')) {
             this.userName = this.$cookies.get('name')
         }
-        // const userID = this.$cookies.get('userID')
-        // console.log("UserID: "+ userID + "type: " + typeof(userID))
-        // const datas = await getUserHistory(userID) 
-        // console.log(datas.userData.accuracy)
     },
     data() {
         return {
-            notShowPopWin: null,
+            showData: null,
             // acceptCookie: true,
             userName: "Student",
             newName: null,
@@ -232,14 +239,15 @@ export default {
             accuracy: null,
             exercises: null,
             topicSummary: null,
-            editing: false, 
-
-            mouseX: 0,
-            mouseY: 0,
-            showTooltip: false,
+            editing: false,
+            showBack: false,
+            backWords: null,
         };
     },
     methods: {
+        backButton() {
+            this.$router.go(-1)
+        },
         startEditing() {
             this.editing = true;
             this.newName = this.userName;
@@ -252,7 +260,7 @@ export default {
         },
         saveName() {
             if (this.newName.trim().length === 0 || this.newName.trim().length > 15) {
-                alert("name must not empty, max length 15"); 
+                alert("name must not empty, max length 15");
             } else {
                 this.userName = this.newName.trim();
                 this.$cookies.set('name', this.userName, '3m');
@@ -261,7 +269,7 @@ export default {
         },
 
         async setUserData() {
-            const datas = await getUserHistory(this.userID) 
+            const datas = await getUserHistory(this.userID)
             this.accuracy = datas.userData.accuracy
             this.exercises = datas.userData.numQuestions
             this.topicSummary = datas.userData.topicSummary
@@ -274,32 +282,12 @@ export default {
             this.$router.go(0);
         },
         questionDropdown(index) {
-        this.topicSummary[index].isExpanded = !this.topicSummary[index].isExpanded;
+            this.topicSummary[index].isExpanded = !this.topicSummary[index].isExpanded;
         },
         attemptDropdown(topicIndex, questionIndex) {
-        this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded = 
-        !this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded
+            this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded =
+                !this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded
         },
-        updateMousePosition(event) {
-            this.mouseX = event.pageX ;
-            this.mouseY = event.pageY;
-            this.showTooltip = true; // 显示提示框
-
-            // console.log(this.mouseX + ' ' + this.mouseY)
-        },
-        hideTooltip() {
-            this.showTooltip = false; // 隐藏提示框
-        },
-    },
-    computed: {
-      // 根据鼠标位置动态调整提示框的样式
-      tooltipStyle() {
-        return {
-        //   top: `${this.mouseY}px`,
-            top: `0`,
-            left: `${this.mouseX }`,
-        };
-      },
     },
 };
 </script>
@@ -310,25 +298,42 @@ export default {
 }
 
 .top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .header {
-  display: flex;
-  align-items: center;
-  padding: 15px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}
+
+.back-links {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    color: #333333;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.back-links:hover {
+    color: #156B3A;
+}
+.back-links:hover .top-logo path {
+    fill: #156B3A;
 }
 
 .top-logo {
-  height: 25px; /* Adjust as needed */
-  margin-right: 10px;
+    height: 25px;
+    /* Adjust as needed */
+    margin-right: 10px;
 }
 
 .web-name {
-  font-size: 21px;
-  font-weight: bold;
+    font-size: 21px;
+    font-weight: bold;
 }
 
 .info-mes {
@@ -337,20 +342,22 @@ export default {
 }
 
 .nav-links {
-  display: flex;
-  gap: 20px;
-  width: auto; /* Set width to auto to adjust based on content */
-  margin-right: 30px; /* Move nav bar slightly away from the right edge */
+    display: flex;
+    gap: 20px;
+    width: auto;
+    /* Set width to auto to adjust based on content */
+    margin-right: 30px;
+    /* Move nav bar slightly away from the right edge */
 }
 
 .nav-link {
-  text-decoration: none;
-  color: #333333;
-  font-weight: bold;
+    text-decoration: none;
+    color: #333333;
+    font-weight: bold;
 }
 
 .nav-link:hover {
-  color: #156B3A;
+    color: #156B3A;
 }
 
 #cont_box {
@@ -393,18 +400,21 @@ export default {
     font-weight: bold;
     color: #333333;
 }
+
 .name-input {
     background-color: transparent;
     width: auto;
     height: 35px;
     font-size: 15px;
 }
+
 .changeNameButton {
     background-color: transparent;
     width: auto;
     height: 35px;
     margin-left: 20px;
 }
+
 .profile-info h3 {
     font-weight: bold;
     color: #333333;
@@ -447,10 +457,11 @@ export default {
     padding: 20px;
     border-top: 1px solid #777777;
     padding-top: 20px;
-    overflow: auto; 
+    overflow: auto;
     font-weight: 600;
     color: #3e3e3e;
 }
+
 .recent-header {
     font-size: 20px;
     font-weight: bold;
@@ -463,24 +474,28 @@ export default {
     padding: 20px;
     border-top: 1px solid #777777;
     padding-top: 30px;
-    overflow: auto; 
+    overflow: auto;
 }
 
 .hover-container {
     display: inline-block;
     position: relative;
 }
-  
+
 .tooltip-box {
     position: absolute;
-    background-color: #333; /* 提示框背景色 */
-    color: #fff;            /* 提示框文字颜色 */
+    background-color: #333;
+    /* 提示框背景色 */
+    color: #fff;
+    /* 提示框文字颜色 */
     padding: 8px;
     border-radius: 4px;
     font-size: 12px;
-    z-index: 1000;          /* 保证提示框在最上层 */
+    z-index: 1000;
+    /* 保证提示框在最上层 */
     white-space: nowrap;
-    pointer-events: none;   /* 避免提示框阻止鼠标事件 */
+    pointer-events: none;
+    /* 避免提示框阻止鼠标事件 */
 }
 
 .history-list {
@@ -502,9 +517,11 @@ export default {
     align-items: center;
     /* Ensure Topic is left-aligned */
 }
-.history-header .tit_text{
+
+.history-header .tit_text {
     text-align: center;
 }
+
 .history-item {
     position: relative;
     display: grid;
@@ -515,18 +532,20 @@ export default {
     /* Center items vertically */
     cursor: pointer;
 }
-.history-item:hover{
+
+.history-item:hover {
     /* background-color: #ccf6b34b; */
     background-color: #7ea3684b;
 }
 
-.tubiao{
+.tubiao {
     width: 34px;
     padding: 8px;
     background: #cccccc9b;
-    border-radius:10px ;
+    border-radius: 10px;
     margin-right: 10px;
 }
+
 .history-topic {
     display: flex;
     align-items: center;
@@ -545,10 +564,12 @@ export default {
     font-size: 18px;
     color: #3e3e3e;
 }
-.history-accuracy{
+
+.history-accuracy {
     justify-content: right;
 }
-.history-header .header-accuracy{
+
+.history-header .header-accuracy {
     text-align: right;
 }
 
@@ -566,11 +587,11 @@ export default {
     color: #3e3e3e;
     /* overflow-y: auto;
     max-height: 350px; */
-    margin-top: 20px; 
-    
+    margin-top: 20px;
+
 }
 
-.attempt-dropdown{
+.attempt-dropdown {
     /* padding-left: 20px;
     padding-right: 20px; */
     /* width: 80%; */
@@ -585,16 +606,18 @@ export default {
     border: solid #777777;
     border-width: 1px 0 1px;
     color: #3e3e3e;
-    margin-top: 20px; 
+    margin-top: 20px;
     /* margin: 20 auto */
 }
 
 .question-datas {
     overflow-y: auto;
-    max-height: 350px; 
+    max-height: 350px;
     /* margin-top: 10px; */
-    margin: 0; /* 移除外边距 */
-    padding: 0; /* 移除内边距 */
+    margin: 0;
+    /* 移除外边距 */
+    padding: 0;
+    /* 移除内边距 */
 }
 
 /* scroll bar style */
@@ -602,6 +625,7 @@ export default {
     background-color: #CFD1B8;
     border-radius: 10px;
 }
+
 .question-datas::-webkit-scrollbar-thumb {
     background-color: #A8BA99;
     border-radius: 10px;
@@ -610,7 +634,7 @@ export default {
 .question-header {
     position: sticky;
     /* position: relative; */
-    top : 0;
+    top: 0;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     padding: 10px 0;
@@ -624,7 +648,7 @@ export default {
 .attempts-header {
     /* position: sticky; */
     position: relative;
-    top : 0;
+    top: 0;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     padding: 10px 0;
@@ -643,17 +667,22 @@ export default {
     padding: 10px 0;
     align-items: center;
     border-radius: 40px
-    /* Center items vertically */
+        /* Center items vertically */
 }
+
 .question-data:hover {
     /* background-color: #b3c1a0; */
     /* background-color: #538665; */
     background-color: #ccf6b34b;
 }
+
 .attempts-datas {
-    margin: 0; /* 移除外边距 */
-    padding: 0; /* 移除内边距 */
+    margin: 0;
+    /* 移除外边距 */
+    padding: 0;
+    /* 移除内边距 */
 }
+
 .attempts-data {
     position: relative;
     display: grid;
@@ -662,23 +691,27 @@ export default {
     padding: 10px 0;
     align-items: center;
     border-radius: 40px
-    /* Center items vertically */
+        /* Center items vertically */
 }
 
 .question {
     /* padding-left: 120px; */
     text-align: center
 }
+
 .topic {
     padding-left: 10px
 }
+
 .attempts {
     text-align: center
-    /* padding-left: 85px; */
+        /* padding-left: 85px; */
 }
+
 .attempt {
     text-align: center
 }
+
 .time {
     /* padding-left: 90px; */
     text-align: center
@@ -687,14 +720,18 @@ export default {
 .date {
     text-align: center
 }
+
 .correct {
     text-align: center
 }
+
 .correct img {
-  width: 20px; /* 根据需求调整图片大小 */
-  height: 20px;
+    width: 20px;
+    /* 根据需求调整图片大小 */
+    height: 20px;
 }
-#notacceptCookie{
+
+#notacceptCookie {
     display: flex;
     /* justify-content: center; 水平居中 */
     align-items: center;
@@ -703,13 +740,15 @@ export default {
     margin-top: 12.5%;
     margin-bottom: 25%;
 }
-#cookie-request{
+
+#cookie-request {
     /* justify-content: center; */
     font-weight: 600;
     font-size: 32px;
     color: #c93c32;
 }
-#accept-btn{
+
+#accept-btn {
     border: none;
     border-radius: 7px;
     padding: 10px;
@@ -720,9 +759,9 @@ export default {
     /* box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.3), inset -3px -3px 8px rgba(255, 255, 255, 0.1); */
     transition: all 0.3s ease;
 }
-#accept-btn:hover{
+
+#accept-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2);
 }
-
 </style>

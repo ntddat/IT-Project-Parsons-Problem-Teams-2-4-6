@@ -127,8 +127,9 @@ export default {
             this.$router.push({
                 path:'/History',
                 query:{
-                    isAdmin: true,
-                    userID: inUserID
+                    // isAdmin: true,
+                    userID: inUserID,
+                    from: "Admin"
                 }
             });
         }
