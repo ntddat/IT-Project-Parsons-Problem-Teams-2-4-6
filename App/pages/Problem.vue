@@ -96,13 +96,21 @@
             </div>
 
             <div id="resultMessage">
-                <button id="escape-btn"><i class="fa-solid fa-xmark"></i></button>
+                <button id="escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
                 <p>Correct answer! Congratulations!</p>
                 <div id="button-container">
                     <button id="window-regenerate-btn" @click="windowRegenerate"
                         class="finish-button">Regenerate</button>
                     <button id="window-retry-btn" class="finish-button">Try Again</button>
                     <button id="window-back-btn" class="finish-button" @click="goBackHome">Back Home</button>
+                </div>
+            </div>
+
+            <div id="errorMessage" v-if="showError" style="display: flex;">
+                <button id="escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
+                <p>{{ errorMessage }}</p>
+                <div id="button-container">
+                    <button id="error-retry-btn" @click="closePop" class="finish-button">Try Again</button>
                 </div>
             </div>
 
@@ -152,6 +160,8 @@ export default {
             elapsedTime: 0,
             timerLock: false,
             intervalId: null,
+            showError: false,  
+            errorMessage: '',
         }
     },
 
@@ -189,6 +199,10 @@ export default {
 
         goBackHome() {
             this.$router.push('/Generator'); // 跳转到 "/Generator" 页面
+        },
+
+        closePop(){
+            this.showError = false;
         },
 
         // Mid resize
@@ -349,9 +363,15 @@ export default {
             this.isRegenerateDisabled = false;
         },
 
+        showErrorPop(errorMessage){
+            this.errorMessage = errorMessage;
+            this.showError = true;
+        },
+
         duplicateCheck(code) {
             if (code == this.prevAnswerCode) {
-                alert("code is same as previous");
+                // alert("code is same as previous");
+                this.showErrorPop("code is same as previous")
                 return true;
             }
             this.prevAnswerCode = code;
@@ -494,8 +514,10 @@ export default {
         //add more parameters
         async sendAttempt(correctness) {
             if (this.$cookies.get('acception') !== 'true') {
+                console.log("returned");
                 return;
             }
+            console.log("submitting");
             //todo change time to a variable
             var pack = {
                 questionID: this.questionID,
@@ -531,7 +553,8 @@ export default {
 
         displayErrors(fb) {
             if (fb.errors.length > 0) {
-                console.log('wrong code order ┑(￣Д ￣)┍');
+                this.showErrorPop('wrong code order ┑(￣Д ￣)┍')
+                // console.log('wrong code order ┑(￣Д ￣)┍');
                 // alert(fb.errors[0]);
             }
         },
@@ -576,6 +599,7 @@ export default {
 
 
                 document.getElementById('submit-btn').addEventListener('click', async () => {
+                    
                     // console.log("press submit");
                     var studentCode = this.getStudentCode(parson);
                     var feedback = parson.getFeedback();
@@ -583,7 +607,7 @@ export default {
                     this.stopTimer();
                     this.blockSubmission();
                     if (!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)) {
-                        await this.runSubmit(studentCode, solution);
+                        await this.runSubmit(studentCode, solution,parson);
                         this.refreshTimer();
                     }
                     this.startTimer();
@@ -601,9 +625,9 @@ export default {
                     parson.shuffleLines();
                 });
 
-                document.getElementById('escape-btn').addEventListener('click', () => {
-                    document.getElementById('resultMessage').style.display = 'none';
-                });
+                // document.getElementById('escape-btn').addEventListener('click', () => {
+                //     document.getElementById('resultMessage').style.display = 'none';
+                // });
 
                 // document.getElementById('regenerate-btn').addEventListener('click',() => {
 
@@ -623,15 +647,24 @@ export default {
 
 
 
-        async runSubmit(studentCode, solution) {
+        async runSubmit(studentCode, solution,parson) {
 
             this.refreshOutput();
+            console.log(1);
             const studentAnswer = await this.runCode(studentCode);
             // console.log("studentanswer", studentAnswer);
             console.log("running");
             // 显示输出结果
             document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
-
+            console.log('feedback');
+            console.log(parson.getFeedback());
+            console.log(1);
+            if(parson.getFeedback() == ''){
+                document.getElementById('resultMessage').style.display = 'block'; // 显示弹窗
+                this.sendAttempt(1); // 提交正确的尝试
+                return;
+            }
+            console.log('feedback finish');
             if (!studentAnswer.error) {
                 const solutionOutputString = solution.output.trim();
                 const studentOutputString = studentAnswer.output.trim();
@@ -645,14 +678,15 @@ export default {
                     // console.log(solution.output);
                     // console.log(studentAnswer.output);
                     this.sendAttempt(0); // 提交错误的尝试
-                    alert("Oops, some errors here ~ （；´д｀）ゞ");
+                    this.showErrorPop("Oops, some logic errors here ~ （；´д｀）ゞ")
+                    
                 }
             }
-            // else {
-            //     console.log("Error occurred:", studentAnswer.error);
-            //     this.sendAttempt(0);
-            //     alert("There is error in your code");
-            // }
+            else {
+                console.log("Error occurred:", studentAnswer.error);
+                this.sendAttempt(0);
+                this.showErrorPop("There is error in your code")
+            }
 
         },
     }
@@ -1322,6 +1356,26 @@ button i {
     font-size: 18px;
 }
 
+#errorMessage {
+    height: 10%;
+    width: 40%;
+    display: none;
+    position: fixed;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px;
+    background-color: rgb(224, 247, 216);
+    border: 1px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    border-radius: 10px;
+    text-align: center;
+    align-self: center;
+    font-size: 18px;
+}
+
 /* @media (max-width: 768px) {
         main {
             flex-direction: column;
@@ -1454,6 +1508,10 @@ button i {
     }
 
     #resultMessage {
+        font-size: 14px;
+    }
+
+    #errorMessage {
         font-size: 14px;
     }
 
