@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Importing our modules
-import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
+import { outputParserJson, replaceSpacesWithTabs, processString, checkUnusedFunctions} from "./OutputParser.js";
 import { findClosestTopic } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
 import { PythonShell } from 'python-shell';
@@ -94,6 +94,10 @@ async function askGemini(topic, context, userID, regeneration) {
     fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
     fixed_resp.Code = processString(fixed_resp.Code); 
     fixed_resp.Code = fixed_resp.Code.join('\n');
+
+
+    console.log(checkUnusedFunctions(fixed_resp.Code));
+    console.log(checkUnusedFunctions(test_string));
 
     return {
       success: true,
