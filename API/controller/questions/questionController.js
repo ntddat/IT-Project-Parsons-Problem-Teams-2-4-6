@@ -11,7 +11,7 @@ const questionController = {
   // Response: { success, message }
   generateQuestion: async (req, res) => {
     try {
-      const { topic, context, userID } = req.query; // Destructure the topic and context from req.body
+      const { topic, context, userID, regeneration } = req.query; // Destructure the topic and context from req.body
       if (!topic || !context) {
         return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
@@ -23,7 +23,7 @@ const questionController = {
     
       const questionID = await questionService.generateNewQuestionID(questionsDbName);
       
-      const question = await askGemini(topic, context, userID);
+      const question = await askGemini(topic, context, userID, regeneration);
       if (!question.success) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,

@@ -425,11 +425,15 @@ export default {
                     topic: this.topic,
                     context: this.context,
                     userID: this.$cookies.get("userID"),
+                    //Can't use booleans as they will be converted into string by the get request for URL
+                    regeneration: "yes"
                 };
             } else {
                 payload = {
                     topic: this.topic,
-                    context: this.context
+                    context: this.context,
+                    //Can't use booleans as they will be converted into string by the get request for URL
+                    regeneration: "yes"
                 };
             }
 

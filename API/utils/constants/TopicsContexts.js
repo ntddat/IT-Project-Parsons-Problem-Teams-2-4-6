@@ -151,8 +151,6 @@ function editDistance(s1, s2) {
 * The context of the prompt should be randomly generated based 
 * on each individual context 
 * 
-* TODO: discuss whether the prompt should ask for JSON formatted response
-* or just plain response 
 */
 export function generatePrompt(topic, context) {
  let prompt = "Generate a piece of Python code with the following specifications:\n";

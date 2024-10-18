@@ -38,7 +38,7 @@ async function saveChatHistory(userID, topic, question, context, prompt, questio
 }
 
 // TODO: Separate compiler part into separate file, then use that for merging part
-async function askGemini(topic, context, userID) {
+async function askGemini(topic, context, userID, regeneration) {
   try {
     // Starting a full chat
     const questionsDbName = await getQuestionsDbName();
@@ -53,7 +53,7 @@ async function askGemini(topic, context, userID) {
 
     console.log("\nPROMPT:\n");
     let closestTopic = findClosestTopic(topic);
-    prompt = generatePrompt(closestTopic, context);
+    prompt = generatePrompt(closestTopic, context, regeneration);
     console.log(prompt);
     //Attempt to prompt gemini, if it fails prompt again
     try {

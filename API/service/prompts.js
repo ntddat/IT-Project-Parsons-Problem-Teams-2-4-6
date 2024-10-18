@@ -10,13 +10,20 @@ let ptr = 1;
  * @param {string} context 
  * @returns The prompt to be fed into Gemini API
  */
-export function generatePrompt(topic, context) {
+export function generatePrompt(topic, context, regeneration) {
   
   if (Object.values(TOPICS).indexOf(topic) === -1) {
     throw "Invalid topic passed";
   }
   
   let prompt = "With the topic of \"" + topic + "\" and context \"" + context + "\", follow these steps:\n";
+
+  //If we regenerate then we want gemini to give a different question 
+  //regeneration has to be of string type so we don't use booleans 
+  //This is because we always use axios.get which converts everything into string so it can be put in URL
+  if (regeneration == "yes") {
+    prompt += "- Ensure you response is completely different from your past responses.\n"
+  }
   
   let coreTechniqeIndex = Math.floor(Math.random() * SUBTOPICS.get(topic).length);
   let coreTechniqe = SUBTOPICS.get(topic)[coreTechniqeIndex];
@@ -27,7 +34,7 @@ export function generatePrompt(topic, context) {
 
   // since NLTK works with a different form of data, consider it seperately
   if (topic === TOPICS.NLTK) {
-    prompt += "- Create a Python string relating to tne given context.\n"
+    prompt += "- Create a Python string relating to the given context.\n"
     prompt += "- Generate a piece of Python code using the created string using the core technique: \"" + coreTechniqe + "\".\n";
   } else {
     prompt += "- Create " + dataFormat[ptr] + " based on the given context.\n";

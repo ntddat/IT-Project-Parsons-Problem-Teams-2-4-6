@@ -250,14 +250,18 @@ export default {
       var payload;
       if (this.$cookies.isKey("userID")) {
         payload = {
-        topic: this.selectedTopic,
-        context: this.selectedContext,
-        userID : this.$cookies.get("userID"),
+          topic: this.selectedTopic,
+          context: this.selectedContext,
+          userID : this.$cookies.get("userID"),
+          //Can't use booleans as they will be converted into string by the get request for URL
+          regeneration: "no"
         };
       } else {
         payload = {
-        topic: this.selectedTopic,
-        context: this.selectedContext
+          topic: this.selectedTopic,
+          context: this.selectedContext,
+          //Can't use booleans as they will be converted into string by the get request for URL
+          regeneration: "no"
         };
       }
        
