@@ -2,7 +2,7 @@
 
 .sortable-code {
     /* background-color: #ff0000; */
-    width: 85%; 
+    width: 100%; 
     position: static;
     padding-left: 0px;
     
@@ -78,7 +78,7 @@ ul.output::-webkit-scrollbar-corner {
     background: transparent; 
 }
 .sortable-code li {
-    width: 80%;
+    width: 90%;
     -moz-border-radius:10px;
     -webkit-border-radius:10px;
     border-radius: 5px;

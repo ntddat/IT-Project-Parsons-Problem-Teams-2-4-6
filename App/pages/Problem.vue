@@ -95,9 +95,9 @@
                 </div>
             </div>
 
-            <div id="resultMessage">
-                <button id="escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
-                <p>Correct answer! Congratulations!</p>
+            <div class="popupwindows" id="resultMessage">
+                <button class="escape-btn" id="correct-escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
+                <p class="popupnotices">Yepi!<br>Correct answer! Congratulations! q(≧▽≦q)</p>
                 <div id="button-container">
                     <button id="window-regenerate-btn" @click="windowRegenerate"
                         class="finish-button">Regenerate</button>
@@ -106,9 +106,10 @@
                 </div>
             </div>
 
-            <div id="errorMessage" v-if="showError" style="display: flex;">
-                <button id="escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
-                <p>{{ errorMessage }}</p>
+            <div class="popupwindows" id="errorMessage" v-if="showError" style="display: flex;">
+                <button class="escape-btn" id="error-escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
+                <!-- <p>Oops~</p> -->
+                <p class="popupnotices">Oops~<br>{{ errorMessage }}</p>
                 <div id="button-container">
                     <button id="error-retry-btn" @click="closePop" class="finish-button">Try Again</button>
                 </div>
@@ -154,7 +155,7 @@ export default {
             loading: false,
             sharelink: '',
             prevAnswerCode: '',
-            loadingWord: "Regenerating questions may take some time, please be patient...",
+            loadingWord: "Regenerating questions may take some time, please be patient... {{{(>_<)}}}",
             isRegenerateDisabled: false,
             isSubmitDisabled: false,
             elapsedTime: 0,
@@ -371,7 +372,7 @@ export default {
         duplicateCheck(code) {
             if (code == this.prevAnswerCode) {
                 // alert("code is same as previous");
-                this.showErrorPop("code is same as previous")
+                this.showErrorPop("Code is same as previous Σ(っ °Д °;)っ")
                 return true;
             }
             this.prevAnswerCode = code;
@@ -557,8 +558,8 @@ export default {
 
         displayErrors(fb) {
             if (fb.errors.length > 0) {
-                this.showErrorPop('wrong code order ┑(￣Д ￣)┍')
-                // console.log('wrong code order ┑(￣Д ￣)┍');
+                // this.showErrorPop('wrong code order \n ┑(￣Д ￣)┍')
+                console.log('wrong code order ┑(￣Д ￣)┍'); //别改  ||  Do not change it
                 // alert(fb.errors[0]);
             }
         },
@@ -629,9 +630,13 @@ export default {
                     parson.shuffleLines();
                 });
 
-                // document.getElementById('escape-btn').addEventListener('click', () => {
-                //     document.getElementById('resultMessage').style.display = 'none';
-                // });
+                document.getElementById('correct-escape-btn').addEventListener('click', () => {
+                    document.getElementById('resultMessage').style.display = 'none';
+                });
+
+                document.getElementById('error-escape-btn').addEventListener('click', () => {
+                    document.getElementById('resultMessage').style.display = 'none';
+                });
 
                 // document.getElementById('regenerate-btn').addEventListener('click',() => {
 
@@ -689,7 +694,7 @@ export default {
             else {
                 console.log("Error occurred:", studentAnswer.error);
                 this.sendAttempt(0);
-                this.showErrorPop("There is error in your code")
+                this.showErrorPop('There is error in your code (╯‵□′)╯︵┻━┻');
             }
 
         },
@@ -980,6 +985,10 @@ main {
         text-align: flex-start;
     } */
 
+#output-icon{
+    font-size: 22px;
+}
+
 #output i {
     font-size: 12px;
 }
@@ -1111,19 +1120,15 @@ main {
         scrollbar-gutter: stable;
     } */
 #sortableTrash {
-    width: auto;
+    width: calc(100% - 45px); /* 确保宽度适应父容器 */
     background: #13d4bd00;
     max-height: 50%;
-    /* border: 1px solid #dcdcdc; */
-    border-radius: 10px;
-    /* padding: 20px; */
-    /* box-shadow: 0 2px 8px rgba(131, 40, 40, 0.1); */
-    flex-shrink: 0;
     overflow-y: auto;
     font-size: 12px;
-    margin: 5px 10px;
-    margin-left: 35px;
-    /* scrollbar-gutter: stable; */
+    margin: 5px 35px; /* 左右外边距 */
+    border-left: 3px solid #6e8c64;
+    padding: 10px; /* 添加内边距来增加可视空间 */
+    box-sizing: border-box; /* 确保 padding 包含在宽度内 */
 }
 
 /* 鼠标悬浮时显示滚动条 */
@@ -1240,6 +1245,7 @@ button i {
 
 /* 鼠标悬停时的效果 */
 #button-group button:hover {
+    color: #F26B1D;
     border: 2px solid #e2b00e;
     transform: translateY(-3px);
     /* 悬浮效果 */
@@ -1257,12 +1263,11 @@ button i {
 #regenerate-btn button {
     border: none;
     border-radius: 5px;
-    background: #FF8E54;
-
+    background: #F2CB05;
 }
 
 #regenerate-btn button:hover {
-    border: 2px solid #DFF497;
+    border: 2px solid #F28705;
     transform: translateY(-1px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.2);
 }
@@ -1279,6 +1284,35 @@ button i {
     font-size: 14px;
 }
 
+/* 以下为弹窗格式 */
+.popupwindows {
+    height: 10%;
+    width: 30%;
+    display: none;
+    position: fixed;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px;
+    padding-bottom: 43px;
+    background-color: #DFF497;
+    border: 1px solid black;
+    box-shadow: 0 0 10px #00000080;
+    z-index: 1000;
+    border-radius: 10px;
+    text-align: center;
+    align-self: center;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.popupwindows{
+    margin: 0;
+    padding-top: 0;
+    /* padding-bottom: 0; */
+}
+
 #button-container {
     display: flex;
     flex-direction: row;
@@ -1286,27 +1320,23 @@ button i {
     text-align: center;
     justify-content: center;
     gap: 50px;
+    /* margin-bottom: 15px; */
 }
 
 #button-container button {
     padding: 3px;
-    background-color: rgba(0, 255, 255, 0);
-    border: 1px solid rgb(0, 0, 0);
+    background-color: #00ffff00;
+    border: 1px solid #000000;
     border-radius: 5px;
     margin: 10px;
     transition: all 0.3s ease;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
     font-weight: 500;
 }
 
 #button-container button:hover {
-    background-color: #dd8b33f4;
-}
-
-#resultMessage p {
-    margin: 0;
-    margin-top: 15px;
+    background-color: #FFA173;
 }
 
 #window-back-btn .nav-link {
@@ -1316,7 +1346,7 @@ button i {
     font-weight: 500;
 }
 
-#escape-btn {
+.escape-btn {
     width: 25px;
     padding: 0%;
     margin: 0%;
@@ -1329,56 +1359,18 @@ button i {
     display: inline-flex;
 }
 
-#escape-btn i {
+.escape-btn i {
     display: inline-block;
     transition: transform 0.5s ease;
     transform-origin: 30% 50%;
 }
 
-#escape-btn:hover i {
+.escape-btn:hover i {
     transform: scale(2.0) rotate(360deg);
     /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
 }
+/* 以上为弹窗格式 */
 
-#resultMessage {
-    height: 10%;
-    width: 40%;
-    display: none;
-    position: fixed;
-    flex-direction: column;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 30px;
-    background-color: rgb(224, 247, 216);
-    border: 1px solid black;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    border-radius: 10px;
-    text-align: center;
-    align-self: center;
-    font-size: 18px;
-}
-
-#errorMessage {
-    height: 10%;
-    width: 40%;
-    display: none;
-    position: fixed;
-    flex-direction: column;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 30px;
-    background-color: rgb(224, 247, 216);
-    border: 1px solid black;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    border-radius: 10px;
-    text-align: center;
-    align-self: center;
-    font-size: 18px;
-}
 
 /* @media (max-width: 768px) {
         main {
@@ -1511,7 +1503,7 @@ button i {
         text-align: center;
     }
 
-    #resultMessage {
+    .popupwindows {
         font-size: 14px;
     }
 
