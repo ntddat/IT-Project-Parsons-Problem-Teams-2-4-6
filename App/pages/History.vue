@@ -39,7 +39,7 @@
                     </div>
                     <div class="profile-info">
                         <!-- Name Edit -->
-                        <h1 v-if="!editing" @click="startEditing">
+                        <h1 v-if="!editing">
                             {{ userName }}
                             <img v-show="canEditName" @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
                         </h1>
@@ -183,7 +183,7 @@ import {
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 
-import { getUserID, getUserHistory } from "../libs/user.js"
+import { getUserID, getUserHistory, changeUserName } from "../libs/user.js"
 
 export default {
     created() {
@@ -212,7 +212,6 @@ export default {
         } else {
             this.showData = this.$cookies.get('acception') == 'true'
             this.userID = this.$cookies.get('userID')
-            this.backWords = "Question"
             if (from == "History") {
                 this.backWords = "Question"
                 this.showBack = true
@@ -247,9 +246,6 @@ export default {
         startEditing() {
             this.editing = true;
             this.newName = this.userName;
-            // this.$nextTick(() => {
-            //     document.addEventListener('click', this.handleClickOutside);
-            // });
         },
         NotChangeName() {
             this.editing = false;
@@ -257,17 +253,22 @@ export default {
         saveName() {
             if (this.newName.trim().length === 0 || this.newName.trim().length > 15) {
                 alert("name must not empty, max length 15");
+            } else if (this.newName.trim() == this.userName) {
+                console.log("same name")
+                this.editing = false;
             } else {
                 this.userName = this.newName.trim();
-                this.$cookies.set('name', this.userName, '3m');
+                changeUserName(this.userID, this.newName.trim())
                 this.editing = false;
             }
         },
         async setUserData() {
             const datas = await getUserHistory(this.userID)
+            //  console.log(datas)
             this.accuracy = datas.userData.accuracy
             this.exercises = datas.userData.numQuestions
             this.topicSummary = datas.userData.topicSummary
+            this.userName = datas.userData.name
             this.$nextTick(() => {
                 this.setRadar(); // Make sure DOM is inuse
             });

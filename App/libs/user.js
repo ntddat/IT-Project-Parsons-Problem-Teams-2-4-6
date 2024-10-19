@@ -42,26 +42,36 @@ export async function getUserHistory(userID) {
     }
 }
 
-export async function changeUserName(name, userID) {
+export async function changeUserName(userID, name) {
     const url = 'http://localhost:8383/api/user/changeUsername';
     
     const pack = {
-        userName : name,
-        userID : userID,
-    }
+        userID: userID,
+        newUsername: name,
+    };
 
+    console.log(pack);
+    
     const options = {
         method: 'POST',
-        headers:{
-        "Content-Type": "application/json"
+        headers: {
+            "Content-Type": "application/json"
         },
-        body: pack,
+        body: JSON.stringify(pack),  // Stringify the payload as JSON
     };
-    try{
-        const response = await fetch(url,options);
+    
+    try {
+        const response = await fetch(url, options);
 
-    }catch (error) {
-        console.error('Error:',error);
-        await changeUserName(name, userID);
+        if (!response.ok) {  // Check if the response status is not OK
+            const errorData = await response.json();  // Parse the error message
+            console.error('Error:', errorData.message); 
+        } else {
+            const data = await response.json();
+            console.log('Success:', data);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
