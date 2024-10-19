@@ -41,3 +41,27 @@ export async function getUserHistory(userID) {
         return await getUserHistory(userID);
     }
 }
+
+export async function changeUserName(name, userID) {
+    const url = 'http://localhost:8383/api/user/changeUsername';
+    
+    const pack = {
+        userName : name,
+        userID : userID,
+    }
+
+    const options = {
+        method: 'POST',
+        headers:{
+        "Content-Type": "application/json"
+        },
+        body: pack,
+    };
+    try{
+        const response = await fetch(url,options);
+
+    }catch (error) {
+        console.error('Error:',error);
+        await changeUserName(name, userID);
+    }
+}
