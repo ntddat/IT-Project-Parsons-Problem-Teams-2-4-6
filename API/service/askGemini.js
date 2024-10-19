@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import LZString from 'lz-string';
 
 // Importing our modules
 import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
@@ -95,10 +96,12 @@ async function askGemini(topic, context, userID, regeneration) {
     fixed_resp.Code = processString(fixed_resp.Code); 
     fixed_resp.Code = fixed_resp.Code.join('\n');
 
+    let compressedResp = LZString.compressToEncodedURIComponent(JSON.stringify(fixed_resp));
+
     return {
       success: true,
       message: "Asked Gemini successfully",
-      fixed_resp: fixed_resp,
+      fixed_resp: compressedResp,
     };
   } catch (e) {
     console.error("Error generating question:", e);
