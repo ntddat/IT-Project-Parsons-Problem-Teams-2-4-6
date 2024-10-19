@@ -153,7 +153,7 @@ export default {
             context: '',
             questionID: '',
             loading: false,
-            sharelink: '',
+            shareLink: '',
             prevAnswerCode: '',
             loadingWord: "Regenerating questions may take some time, please be patient... {{{(>_<)}}}",
             isRegenerateDisabled: false,
@@ -286,20 +286,20 @@ export default {
             this.topic = this.$route.query.topic;
             this.context = this.$route.query.context;
 
-            var compressedData = this.$route.query.shareLink;
-            // var data =  JSON.parse(this.$route.query.response);
-            this.sharelink = JSON.parse(LZString.decompressFromEncodedURIComponent(compressedData));
+            const questionData = JSON.parse(LZString.decompressFromEncodedURIComponent(this.$route.query.shareLink));
+            console.log(questionData);
+            
             //todo uncomment below code after merging with new server
             //initialCode = data.question
-            this.questionInitializer(this.sharelink);
+            this.questionInitializer(questionData);
 
         },
         questionInitializer(data) {
-            const initialCode = data.question.Code; // Update initial code
+            const initialCode = data.Code; // Update initial code
 
             this.questionID = data.questionID;
-            document.getElementById('questiondescription').textContent = data.question.Description;
-            document.getElementById('expectedoutput').textContent = data.question.ExpectedOutput;
+            document.getElementById('questiondescription').textContent = data.Description;
+            document.getElementById('expectedoutput').textContent = data.ExpectedOutput;
             // todo 改成七选一的topic
             document.getElementById('topicdescription').textContent = this.topic;
             this.initializeParsonsWidget(initialCode); // Initialize Parsons widget with fetched code
