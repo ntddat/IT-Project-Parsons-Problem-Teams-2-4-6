@@ -285,9 +285,11 @@ export default {
             this.topic = this.$route.query.topic;
             this.context = this.$route.query.context;
 
-            var compressedData = this.$route.query.shareLink;
-            // var data =  JSON.parse(this.$route.query.response);
-            this.sharelink = JSON.parse(LZString.decompressFromEncodedURIComponent(compressedData));
+            // decoding the shareLink
+            this.sharelink = JSON.parse(LZString.decompressFromEncodedURIComponent(this.$route.query.shareLink));
+            var compressedData = this.sharelink.question;
+            // decoding the question
+            this.sharelink.question = JSON.parse(LZString.decompressFromEncodedURIComponent(compressedData));
             //todo uncomment below code after merging with new server
             //initialCode = data.question
             this.questionInitializer(this.sharelink);
