@@ -277,10 +277,10 @@ export default {
         // Encoding again to ensure the shareLink is still randomized characters, and not a JSON obj
         const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(response.data));
         //console.log(compressedData);
-        this.$router.push({ 
+        this.$router.push({
           path: '/Problem', 
-          query: { 
-            shareLink: compressedData,
+          query: {
+            shareLink: response.data.question,  //response.data.question encodes all the question details
             // response: JSON.stringify(response.data),  // assuming the result is in response.data.result
             topic: this.selectedTopic, 
             context: this.selectedContext 
