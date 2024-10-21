@@ -17,6 +17,7 @@ dotenv.config();
  * @returns {string | null} The fixed code, or null if the code cannot be fixed within the alloted time   
  */
 export async function timeoutRetry(code, fileName, fileContent, ms) {
+  let regenDelay = 125;
   
   const delay = ms => new Promise(res => setTimeout(res, ms));
   // create a new API endpoint for code regen
@@ -65,10 +66,12 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
         code = parseResponse(respText);
       } catch (chatError) {
         console.log("Error during chat AI response:", chatError);
+        console.log("Doubling regen delay in case of too frequent prompting error")
+        regenDelay = regenDelay * 2;
       }
 
       // Wait for a short delay before retrying
-      await delay(125);
+      await delay(regenDelay);
     }
 
     // If the code has been successfully fixed, break out of the loop
@@ -77,17 +80,6 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
     }
   }
 
-  code = 'import pandas as pd\n' +
-  '\n' +
-  '# Load the data\n' +
-  'data = pd.read_csv("student_performance.csv")\n' +
-  '\n' +
-  "# Group the data by 'Subject' and calculate the mean score for each subject\n" +
-  'def calculate_average_score   (df):\n' +
-  "\treturn df.groupby('Subject')['Score'].mean()\n" +
-  '\n' +
-  '# Print the average score for each subject\n' +
-  'print(calculate_average_score_main(data))';
   //Remove comments from code
   code = replaceSpacesWithTabs(code); 
   code = processString(code); 
@@ -96,8 +88,7 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
   //Ensure that the code doesn't contain any functions that are never called
   let unusedFunction = checkUnusedFunctions(code);
   while(unusedFunction) {
-    console.log("Did not call function:", unusedFunction);
-    console.log("function call check failed!\n") 
+    console.log("Not all functions called! Did not call function:", unusedFunction);
 
     // If there's an error, regenerate the code
     let errMsg = "You did not call the function" + unusedFunction;
@@ -113,11 +104,12 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
       code = parseResponse(respText);
     } catch (chatError) {
       console.log("Error during chat AI response:", chatError);
+      console.log("Doubling regen delay in case of too frequent prompting error")
+      regenDelay = regenDelay * 2;
     }
     unusedFunction = checkUnusedFunctions(code);
-    console.log(unusedFunction);
     // Wait for a short delay before retrying
-    await delay(125);
+    await delay(regenDelay);
   }
 
   console.log(regen);
