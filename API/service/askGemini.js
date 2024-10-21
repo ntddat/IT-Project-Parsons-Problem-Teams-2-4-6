@@ -106,7 +106,7 @@ async function askGemini(topic, context, userID, regeneration) {
      'print(calculate_average_score_main(data))';
 
     console.log(checkUnusedFunctions(fixed_resp.Code));
-    console.log(checkUnusedFunctions(test_string));
+    //console.log(checkUnusedFunctions(test_string));
 
     return {
       success: true,

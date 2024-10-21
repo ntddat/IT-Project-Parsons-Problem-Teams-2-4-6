@@ -225,7 +225,7 @@ export function processString(string) {
  * start with def and aren't included within '' and "". Then 
  * This does not account for the possibility of a function call beingincluded within
  * An if statement that may or may not be used. 
- * @returns true if at least one function unused or false if all functions used
+ * @returns The function name of unused function or false if all functions used
  */
 
 export function checkUnusedFunctions(pythonCode) {
@@ -268,10 +268,9 @@ export function checkUnusedFunctions(pythonCode) {
       r = pythonCode.indexOf(functionName, r + 1);        
     }
 
-    console.log(count);
     //If a function name appears once then it was only defined and never called
     if (count < 2) {
-      return true;
+      return lookForCalls[i];
     }
   }
   //All function names appeared atleast twice so we assume all functions were called

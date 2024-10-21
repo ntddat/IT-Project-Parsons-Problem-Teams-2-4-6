@@ -77,13 +77,48 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
     }
   }
 
+  code = 'import pandas as pd\n' +
+  '\n' +
+  '# Load the data\n' +
+  'data = pd.read_csv("student_performance.csv")\n' +
+  '\n' +
+  "# Group the data by 'Subject' and calculate the mean score for each subject\n" +
+  'def calculate_average_score   (df):\n' +
+  "\treturn df.groupby('Subject')['Score'].mean()\n" +
+  '\n' +
+  '# Print the average score for each subject\n' +
+  'print(calculate_average_score_main(data))';
   //Remove comments from code
   code = replaceSpacesWithTabs(code); 
   code = processString(code); 
   code = code.join('\n');
 
   //Ensure that the code doesn't contain any functions that are never called
+  let unusedFunction = checkUnusedFunctions(code);
+  while(unusedFunction) {
+    console.log("Did not call function:", unusedFunction);
+    console.log("function call check failed!\n") 
 
+    // If there's an error, regenerate the code
+    let errMsg = "You did not call the function" + unusedFunction;
+    let reprompt = regenPrompt(code, fileName, fileContent, errMsg);
+
+    try {
+      let resp = await chat.sendMessage(reprompt);
+      let respText = resp.response.text();
+      console.log("retrying:")
+      console.log(respText);
+
+      // Parse the AI response to generate new code
+      code = parseResponse(respText);
+    } catch (chatError) {
+      console.log("Error during chat AI response:", chatError);
+    }
+    unusedFunction = checkUnusedFunctions(code);
+    console.log(unusedFunction);
+    // Wait for a short delay before retrying
+    await delay(125);
+  }
 
   console.log(regen);
 
