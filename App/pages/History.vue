@@ -1,5 +1,5 @@
 <template>
-    <div class="history">
+    <div class="history" >
         <!-- Navigation Bar -->
         <nav class="top">
             <div class="back-links" v-if="showBack" @click="backButton">
@@ -16,157 +16,164 @@
                 <img src="/App/logo.png" alt="Logo" class="top-logo" />
                 <div class="web-name">Learnr</div>
             </div>
-
-
-            <div class="info-mes">Get more information by clicking on the list below</div>
+            <div class="info-mes" v-if="showData">Get more information by clicking on the list below</div>
             <div class="nav-links">
                 <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
                 <router-link to="/Generator" class="nav-link">Home</router-link>
             </div>
         </nav>
 
-        <div id="notacceptCookie" v-if="!showData">
-            <div id="cookie-request">You must accept the cookie if you want check this page</div>
-            <button @click="accept" id="accept-btn">Accept</button>
+        <!-- Loading GIF -->
+        <div v-if="isLoading">
+            <img src="../load.gif" class="load-gif">
         </div>
 
-        <div id="cont_box" v-else>
-            <!-- Profile Section -->
-            <div class="profile-container">
-                <div class="profile-header">
-                    <div class="profile-pic">
-                        <span class="profile-initial">{{ userName.charAt(0).toUpperCase() }}</span>
-                    </div>
-                    <div class="profile-info">
-                        <!-- Name Edit -->
-                        <h1 v-if="!editing">
-                            {{ userName }}
-                            <img v-show="canEditName" @click="startEditing" src="/App/assets/icon/edit.png" width="20" height="20"></img>
-                        </h1>
-                        <div v-else>
-                            <input v-model="newName" @keyup.enter="saveName" type="text" class="name-input" autofocus />
-                            <button class="changeNameButton" @click="saveName">Change</button>
-                            <button class="changeNameButton" @click="NotChangeName">Not Now</button>
-                        </div>
-
-                        <h3>#{{ userID.toString().padStart(5, '0') }}</h3>
-                    </div>
-                </div>
-                <div class="stats">
-                    <div class="stat">
-                        <h2>{{ accuracy }}%</h2>
-                        <p>Accuracy</p>
-                    </div>
-                    <div class="stat1"></div>
-                    <div class="stat">
-                        <h2>{{ exercises }}</h2>
-                        <p>Exercises</p>
-                    </div>
-                </div>
+        <!-- After loading -->
+        <div v-show="!isLoading">
+            <!-- Not accept Page -->
+            <div id="notacceptCookie" v-if="!showData">
+                <div id="cookie-request">You must accept the cookie if you want check this page</div>
+                <button @click="accept" id="accept-btn">Accept</button>
             </div>
 
-            <div class="graph-container">
-                <div id="graph"></div>
-            </div>
-
-            <!-- History Section -->
-            <div class="history-container">
-                <!-- History Header -->
-                <div class="history-header">
-                    <span class="header-topic">Topic</span>
-                    <span class="tit_text header-practice">Total Practice</span>
-                    <span class="tit_text header-accuracy">Accuracy</span>
-                </div>
-                <!-- History detail -->
-                <ul class="history-list">
-                    <li v-for="(item, index) in topicSummary" :key="index">
-                        <div @click="questionDropdown(index)" class="history-item">
-                            <div class="history-topic">
-                                <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
-                            </div>
-                            <div class="history-practice">
-                                {{ item.numQuestions }}
-                            </div>
-                            <div class="history-accuracy">
-                                {{ item.accuracy }}%
-                            </div>
+            <!-- User data Page -->
+            <div id="cont_box" v-else>
+                <!-- Profile Section -->
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="profile-pic">
+                            <span class="profile-initial">{{ userName.charAt(0).toUpperCase() }}</span>
                         </div>
-
-                        <!-- Question details -->
-                        <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
-                            <!-- <div v-show="true" class="question-dropdown"> -->
-                            <!-- Question Dropdown Head -->
-                            <div class="question-header">
-                                <span class="question-topic">Question</span>
-                                <span class="question-attempts">Attempts</span>
-                                <span class="question-time">Total-Time (minutes)</span>
-                                <span class="question-correct">Had Been Correct</span>
+                        <div class="profile-info">
+                            <!-- Name Edit -->
+                            <h1 v-if="!editing">
+                                {{ userName }}
+                                <img v-show="canEditName" @click="startEditing" src="/App/assets/icon/edit.png"
+                                    width="20" height="20"></img>
+                            </h1>
+                            <div v-else>
+                                <input v-model="newName" @keyup.enter="saveName" type="text" class="name-input"
+                                    autofocus />
+                                <button class="changeNameButton" @click="saveName">Change</button>
+                                <button class="changeNameButton" @click="NotChangeName">Not Now</button>
                             </div>
 
-                            <!-- Question Dropdown data -->
-                            <ul class="question-datas">
-                                <li @click="attemptDropdown(index, questionIndex)"
-                                    v-for="(question, questionIndex) in item.attemptedQuestions" :key="questionIndex"
-                                    class="question-data">
-                                    <div class="question">
-                                        <!-- {{ question.questionID }} -->
-                                        {{ questionIndex + 1 }}
-                                    </div>
-                                    <div class="attempts">
-                                        {{ question.numAttempts }}
-                                    </div>
-                                    <div class="time">
-                                        {{ (question.totalTime / 60).toFixed(2) }}
-                                    </div>
-                                    <div class="correct">
-                                        <img :src="question.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
-                                            alt="Correctness">
-                                    </div>
+                            <h3>#{{ userID.toString().padStart(5, '0') }}</h3>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <h2>{{ accuracy }}%</h2>
+                            <p>Accuracy</p>
+                        </div>
+                        <div class="stat1"></div>
+                        <div class="stat">
+                            <h2>{{ exercises }}</h2>
+                            <p>Exercises</p>
+                        </div>
+                    </div>
+                </div>
 
-                                    <!-- Attempts Dropdown -->
-                                    <div v-show="question.isExpanded" class="attempt-dropdown">
-                                        <!-- <div v-show="true" class="attempt-dropdown"> -->
-                                        <!-- Attempt Dropdown Header -->
-                                        <div class="attempts-header">
-                                            <span class="question-topic">Attempt</span>
-                                            <span class="question-time">Time (minutes)</span>
-                                            <span class="question-correct">Correct</span>
+                <!-- Graph Section -->
+                <div class="graph-container">
+                    <div id="graph"></div>
+                </div>
+
+                <!-- History Section -->
+                <div class="history-container">
+                    <!-- History Header -->
+                    <div class="history-header">
+                        <span class="header-topic">Topic</span>
+                        <span class="tit_text header-practice">Total Practice</span>
+                        <span class="tit_text header-accuracy">Accuracy</span>
+                    </div>
+                    <!-- History detail -->
+                    <ul class="history-list">
+                        <li v-for="(item, index) in topicSummary" :key="index">
+                            <div @click="questionDropdown(index)" class="history-item">
+                                <div class="history-topic">
+                                    <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
+                                </div>
+                                <div class="history-practice">
+                                    {{ item.numQuestions }}
+                                </div>
+                                <div class="history-accuracy">
+                                    {{ item.accuracy }}%
+                                </div>
+                            </div>
+
+                            <!-- Question details -->
+                            <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
+                                <!-- <div v-show="true" class="question-dropdown"> -->
+                                <!-- Question Dropdown Head -->
+                                <div class="question-header">
+                                    <span class="question-topic">Question</span>
+                                    <span class="question-attempts">Attempts</span>
+                                    <span class="question-time">Total-Time (minutes)</span>
+                                    <span class="question-correct">Had Been Correct</span>
+                                </div>
+
+                                <!-- Question Dropdown data -->
+                                <ul class="question-datas">
+                                    <li @click="attemptDropdown(index, questionIndex)"
+                                        v-for="(question, questionIndex) in item.attemptedQuestions"
+                                        :key="questionIndex" class="question-data">
+                                        <div class="question">
+                                            <!-- {{ question.questionID }} -->
+                                            {{ questionIndex + 1 }}
+                                        </div>
+                                        <div class="attempts">
+                                            {{ question.numAttempts }}
+                                        </div>
+                                        <div class="time">
+                                            {{ (question.totalTime / 60).toFixed(2) }}
+                                        </div>
+                                        <div class="correct">
+                                            <img :src="question.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
+                                                alt="Correctness">
                                         </div>
 
-                                        <!-- Attempt Dropdown data -->
-                                        <ul class="attempts-datas">
-                                            <li v-for="(attempt, attemptIndex) in question.attempts" :key="attemptIndex"
-                                                class="attempts-data">
-                                                <div class="attempt">
-                                                    {{ attempt.attemptID }}
-                                                </div>
-                                                <div class="time">
-                                                    {{ (attempt.time / 60).toFixed(2) }}
-                                                </div>
-                                                <!-- <div class="date">
+                                        <!-- Attempts Dropdown -->
+                                        <div v-show="question.isExpanded" class="attempt-dropdown">
+                                            <!-- <div v-show="true" class="attempt-dropdown"> -->
+                                            <!-- Attempt Dropdown Header -->
+                                            <div class="attempts-header">
+                                                <span class="question-topic">Attempt</span>
+                                                <span class="question-time">Time (minutes)</span>
+                                                <span class="question-correct">Correct</span>
+                                            </div>
+
+                                            <!-- Attempt Dropdown data -->
+                                            <ul class="attempts-datas">
+                                                <li v-for="(attempt, attemptIndex) in question.attempts"
+                                                    :key="attemptIndex" class="attempts-data">
+                                                    <div class="attempt">
+                                                        {{ attempt.attemptID }}
+                                                    </div>
+                                                    <div class="time">
+                                                        {{ (attempt.time / 60).toFixed(2) }}
+                                                    </div>
+                                                    <!-- <div class="date">
                                             {{ attempt.date }}
                                         </div> -->
-                                                <div class="correct">
-                                                    <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
-                                                        alt="Correctness">
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                                                    <div class="correct">
+                                                        <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
+                                                            alt="Correctness">
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
 
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
-
-            
-
         </div>
-
-
     </div>
+
 </template>
 
 <script>
@@ -202,15 +209,24 @@ export default {
         ]);
     },
     mounted() {
+        window.scrollTo(0, 0);
+
+        setTimeout(() => {
+            this.isLoading = false;
+        }, 500);
+
         const from = (this.$route.query.from)
         if (from == "Admin") {
             this.userID = this.$route.query.userID
             this.backWords = "Admin"
             this.showBack = true
-            this.canEditName =false
+            this.canEditName = false
             this.showData = true
         } else {
             this.showData = this.$cookies.get('acception') == 'true'
+            if (!this.showData) {
+                return
+            }
             this.userID = this.$cookies.get('userID')
             if (from == "History") {
                 this.backWords = "Question"
@@ -218,7 +234,7 @@ export default {
             }
         }
 
-        if (this.userID) {
+        if (this.showData) {
             this.setUserData()
         }
     },
@@ -226,7 +242,7 @@ export default {
         return {
             showData: null,
             // acceptCookie: true,
-            userName: "Student",
+            userName: null,
             newName: null,
             userID: null,
             accuracy: null,
@@ -237,6 +253,7 @@ export default {
             backWords: null,
             myChart: null,
             canEditName: true,
+            isLoading: true,
         };
     },
     methods: {
@@ -319,11 +336,11 @@ export default {
                 radar: {
                     // shape: 'circle',
                     indicator: this.getFormattedTopicList(),
-                    center: ['50%', '50%'],  
+                    center: ['50%', '50%'],
                     radius: '70%',
                     name: {
                         textStyle: {
-                            color: '#0D0D0D', 
+                            color: '#0D0D0D',
                             fontSize: 14,
                         }
                     }
@@ -354,8 +371,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 * {
     box-sizing: border-box;
 }
@@ -364,6 +379,15 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.load-gif {
+  position: fixed; /* 固定在屏幕中央 */
+  top: 50%;        /* 垂直居中 */
+  left: 50%;       /* 水平居中 */
+  transform: translate(-50%, -50%); /* 通过平移将元素的中心点移到屏幕中心 */
+  width: 60px;    /* 宽度 */
+  height: 60px;   /* 高度 */
 }
 
 .header {
