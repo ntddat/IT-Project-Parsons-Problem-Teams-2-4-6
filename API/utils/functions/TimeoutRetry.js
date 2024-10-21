@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { createCSV } from "./compiler.js";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PythonShell } from 'python-shell';
+import {replaceSpacesWithTabs, processString, checkUnusedFunctions} from '../../service/OutputParser.js';
 
 //import messages from '../constants/messages.js';
 
@@ -75,6 +76,14 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
       break;
     }
   }
+
+  //Remove comments from code
+  code = replaceSpacesWithTabs(code); 
+  code = processString(code); 
+  code = code.join('\n');
+
+  //Ensure that the code doesn't contain any functions that are never called
+
 
   console.log(regen);
 

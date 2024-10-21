@@ -67,7 +67,7 @@ const chatHistoryRepo = {
   },
   getBackupQuestion: async (userID, topic, context, questionsDbName) => {
     const chatHistoryModel = await getChatHistoryModel(questionsDbName);
-    const backup = await chatHistoryModel.findOne(
+    let backup = await chatHistoryModel.findOne(
       { 
         userID: {$ne:userID},
         topic: topic,
