@@ -455,7 +455,9 @@ export default {
                 .then(response => {
                     //console.log('Data received successfully:', response.data);
                     // Push to Problem page, passing the received data via query parameters
-                    this.questionInitializer(response.data);
+                    const questionData = JSON.parse(LZString.decompressFromEncodedURIComponent(response.data.question));
+                    console.log(questionData);
+                    this.questionInitializer(questionData);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);

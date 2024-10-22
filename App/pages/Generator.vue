@@ -279,7 +279,7 @@ export default {
         console.log('Data received successfully:', response.data);
         // Push to Problem page, passing the received data via query parameters
         // Encoding again to ensure the shareLink is still randomized characters, and not a JSON obj
-        const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(response.data));
+        //const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(response.data));
         //console.log(compressedData);
         this.$router.push({
           path: '/Problem', 
