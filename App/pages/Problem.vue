@@ -636,9 +636,9 @@ export default {
                     document.getElementById('resultMessage').style.display = 'none';
                 });
 
-                document.getElementById('error-escape-btn').addEventListener('click', () => {
-                    document.getElementById('resultMessage').style.display = 'none';
-                });
+                // document.getElementById('error-escape-btn').addEventListener('click', () => {
+                //     document.getElementById('resultMessage').style.display = 'none';
+                // });
 
                 // document.getElementById('regenerate-btn').addEventListener('click',() => {
 
@@ -661,20 +661,16 @@ export default {
         async runSubmit(studentCode, solution,parson) {
 
             this.refreshOutput();
-            console.log(1);
+            // console.log(1);
             const studentAnswer = await this.runCode(studentCode);
             // console.log("studentanswer", studentAnswer);
-            console.log("running");
+            // console.log("running");
             // 显示输出结果
             document.getElementById('output').textContent = studentAnswer.output || studentAnswer.error;
-            console.log('feedback');
-            console.log(parson.getFeedback());
-            console.log(1);
-            if(parson.getFeedback() == ''){
-                document.getElementById('resultMessage').style.display = 'block'; // 显示弹窗
-                this.sendAttempt(1); // 提交正确的尝试
-                return;
-            }
+            // console.log('feedback');
+            // console.log(parson.getFeedback());
+            // console.log(1);
+            
             console.log('feedback finish');
             if (!studentAnswer.error) {
                 const solutionOutputString = solution.output.trim();
@@ -682,12 +678,22 @@ export default {
 
                 if (solutionOutputString === studentOutputString) {
                     console.log("same");
-                    document.getElementById('resultMessage').style.display = 'block'; // 显示弹窗
-                    this.sendAttempt(1); // 提交正确的尝试
+                    if(parson.getFeedback() === ''){
+                        document.getElementById('resultMessage').style.display = 'block';
+                        // li.style.backgroundolor = "#efffef";
+                        this.sendAttempt(1); // 提交正确的尝试
+                    }else{
+                        console.log("Order is not the same, but output is correct ^o^y");
+                        document.getElementById('resultMessage').style.display = 'block';
+                        // li.style.backgroundcolor = "#efffef";
+                        this.sendAttempt(1); // 提交正确的尝试
+                    }
+                    
                 } else {
                     //  console.log("not same");
                     // console.log(solution.output);
                     // console.log(studentAnswer.output);
+                    
                     this.sendAttempt(0); // 提交错误的尝试
                     this.showErrorPop("Oops, some logic errors here ~ （；´д｀）ゞ")
                     
@@ -767,7 +773,7 @@ main {
     flex-direction: row;
     position: relative;
     margin-top: 0;
-    max-height: 89vh;
+    max-height: 90vh;
 }
 
 #top-panel {
@@ -1097,6 +1103,7 @@ main {
 
 #question-content {
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: #C4D6BE;
     margin: 0 10px;
     border: 1px solid #C4D6BE;
@@ -1126,6 +1133,7 @@ main {
     background: #13d4bd00;
     max-height: 50%;
     overflow-y: auto;
+    overflow-x: hidden;
     font-size: 12px;
     margin: 5px 35px; /* 左右外边距 */
     border-left: 3px solid #6e8c64;
@@ -1288,8 +1296,8 @@ button i {
 
 /* 以下为弹窗格式 */
 .popupwindows {
-    height: 10%;
-    width: 30%;
+    height: 100px;
+    width: 500px;
     display: none;
     position: fixed;
     flex-direction: column;
@@ -1298,7 +1306,7 @@ button i {
     transform: translate(-50%, -50%);
     padding: 30px;
     padding-bottom: 43px;
-    background-color: #DFF497;
+    background-color: #DAFDBA;
     border: 1px solid black;
     box-shadow: 0 0 10px #00000080;
     z-index: 1000;
@@ -1313,6 +1321,10 @@ button i {
     margin: 0;
     padding-top: 0;
     /* padding-bottom: 0; */
+}
+
+#errorMessage{
+ background-color: #fe7e88;
 }
 
 #button-container {
@@ -1507,10 +1519,17 @@ button i {
 
     .popupwindows {
         font-size: 14px;
+        height: 65px;
+        width: 300px;
+        
     }
 
     #errorMessage {
         font-size: 14px;
+    }
+
+    #button-container{
+        gap: 10px;
     }
 
     #button-container button {
@@ -1518,6 +1537,7 @@ button i {
         font-size: 12px;
         font-weight: 500;
         min-width: 70px;
+        
         white-space: nowrap;
     }
 

@@ -18,7 +18,8 @@
 }
 #sortable { width: 90%;}
 .sortable-code ul {
-    font-size: 120%;
+    width: 100%;
+    font-size: 125%;
     font-family: monospace;
     list-style: none;
     background-color: #0a0ad400;
@@ -36,7 +37,8 @@
   box-sizing: content-box;
 }
 ul.output {
-    background-color: #C4D6BE;
+    /* background-color: #C4D6BE; */
+    /* background-color: #B2DFDB; */
     /* background-color: #FFBABA; */
     border: 1px solid #0e0ea500;;
     max-height: calc(100% - 60px);
@@ -64,7 +66,7 @@ ul.output:hover {
 }
 
 ul.output::-webkit-scrollbar-corner {
-    background-color: #C4D6BE; /* 设置滚动条交汇处的背景颜色，确保与整体一致 */
+    background-color: #C4D6BE; 
 }
 *:not(body)::-webkit-scrollbar-thumb {
     background-color: #5e766950; 
@@ -84,6 +86,8 @@ ul.output::-webkit-scrollbar-corner {
     border-radius: 5px;
     background-color:#f9f7ea;
     border:1px solid rgb(193, 193, 193);
+    /* background-color:#F4F4F9;
+    border:1px solid #ced7e3; */
     padding:15px;
     margin-top: 5px;
     white-space: normal;

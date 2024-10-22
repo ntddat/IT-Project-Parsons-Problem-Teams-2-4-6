@@ -102,7 +102,7 @@ export default {
     return {
       cookieWords: "We are using Cookie to record your past data. By clicking 'Accept', you agree to our use of cookies",
       showPopUp: true, 
-      loadingWord: "Generating questions may take some time, please be patient...",
+      loadingWord: "Generating questions may take some time, please be patient...{{{(>_<)}}}",
 
       isTopicDropdownVisible: false,
       isContextDropdownVisible: false,

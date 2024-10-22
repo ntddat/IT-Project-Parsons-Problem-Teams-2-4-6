@@ -24,8 +24,9 @@
         </nav>
 
         <!-- Loading GIF -->
-        <div v-if="isLoading">
-            <img src="../load.gif" class="load-gif">
+        <div v-if="isLoading" class="loading-overlay">
+            <div class="spinner"></div>
+            <p class="loading-text">{{ loadingWord }}</p>
         </div>
 
         <!-- After loading -->
@@ -254,6 +255,7 @@ export default {
             myChart: null,
             canEditName: true,
             isLoading: true,
+            loadingWord: "Reading and analyzing may take some time, please be patient... {{{(>_<)}}}",
         };
     },
     methods: {
@@ -448,6 +450,80 @@ export default {
     color: #156B3A;
 }
 
+/* 动画 */
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+}
+
+.spinner {
+    --size: 35px;
+    --first-block-clr: #17743f;
+    --second-block-clr: #FF8E54;
+    --clr: #111;
+    width: 200px;
+    height: 200px;
+    position: relative;
+}
+
+.spinner::after,.spinner::before {
+    box-sizing: border-box;
+    position: absolute;
+    content: "";
+    width: var(--size);
+    height: var(--size);
+    top: 50%;
+    animation: up 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+    left: 50%;
+    background: var(--first-block-clr);
+}
+
+.spinner::after {
+    background: var(--second-block-clr);
+    top: calc(50% - var(--size));
+    left: calc(50% - var(--size));
+    animation: down 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
+}
+
+@keyframes down {
+    0%, 100% {
+        transform: none;
+    }
+
+    25% {
+        transform: translateX(100%);
+    }
+
+    50% {
+        transform: translateX(100%) translateY(100%);
+    }
+
+    75% {
+        transform: translateY(100%);
+    }
+}
+
+@keyframes up {
+    0%, 100% {
+        
+    }
+
+    25% {
+        transform: translateX(-100%);
+    }
+
+    50% {
+        transform: translateX(-100%) translateY(-100%);
+    }
+
+    75% {
+        transform: translateY(-100%);
+    }
+}
+/* 动画 */
 #cont_box {
     max-width: 1000px;
     margin: 0px auto;
