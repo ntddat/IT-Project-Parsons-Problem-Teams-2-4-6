@@ -102,7 +102,7 @@ export default {
     return {
       cookieWords: "We are using Cookie to record your past data. By clicking 'Accept', you agree to our use of cookies",
       showPopUp: true, 
-      loadingWord: "Generating questions may take some time, please be patient...{{{(>_<)}}}",
+      loadingWord: "Generating questions may take some time, please be patient...",
 
       isTopicDropdownVisible: false,
       isContextDropdownVisible: false,
@@ -277,6 +277,7 @@ export default {
       })
       .then(response => {
         console.log('Data received successfully:', response.data);
+        console.log(response.data.questionID);
         // Push to Problem page, passing the received data via query parameters
         // Encoding again to ensure the shareLink is still randomized characters, and not a JSON obj
         //const compressedData = LZString.compressToEncodedURIComponent(JSON.stringify(response.data));
@@ -285,6 +286,8 @@ export default {
           path: '/Problem', 
           query: {
             shareLink: response.data.question,  //response.data.question encodes all the question details
+            questionID : response.data.questionID,
+
             // response: JSON.stringify(response.data),  // assuming the result is in response.data.result
             topic: this.selectedTopic, 
             context: this.selectedContext 

@@ -285,10 +285,10 @@ export default {
         initializer() {
             this.topic = this.$route.query.topic;
             this.context = this.$route.query.context;
-
+            this.questionID = this.$route.query.questionID;
+            console.log(this.questionID);
             const questionData = JSON.parse(LZString.decompressFromEncodedURIComponent(this.$route.query.shareLink));
             console.log(questionData);
-            
             //todo uncomment below code after merging with new server
             //initialCode = data.question
             this.questionInitializer(questionData);
@@ -296,8 +296,8 @@ export default {
         },
         questionInitializer(data) {
             const initialCode = data.Code; // Update initial code
-
-            this.questionID = data.questionID;
+            console.log(data);
+            //this.questionID = data.questionID;
             document.getElementById('questiondescription').textContent = data.Description;
             document.getElementById('expectedoutput').textContent = data.ExpectedOutput;
             // todo 改成七选一的topic
@@ -437,7 +437,7 @@ export default {
                     regeneration: "yes"
                 };
             }
-
+            
             console.log('Sending data to backend:', payload);
 
             this.loading = true;
@@ -457,6 +457,7 @@ export default {
                     // Push to Problem page, passing the received data via query parameters
                     const questionData = JSON.parse(LZString.decompressFromEncodedURIComponent(response.data.question));
                     console.log(questionData);
+                    this.questionID = response.data.questionID;
                     this.questionInitializer(questionData);
                 })
                 .catch(error => {
@@ -526,6 +527,7 @@ export default {
             }
             console.log("submitting");
             //todo change time to a variable
+            console.log(this.questionID);
             var pack = {
                 questionID: this.questionID,
                 userID: this.$cookies.get('userID'),
@@ -548,7 +550,7 @@ export default {
                 console.log(pack);
                 const response = await fetch(url, options);
                 const result = await response.json(); // Convert the response to JSON
-                console.log(result); // Output the response to the console
+                // console.log(result); // Output the response to the console
 
                 //return result;
                 // Display the output or errors from the Python code execution
@@ -620,7 +622,7 @@ export default {
                     this.startTimer();
                     this.activeSubmission();
                 });
-
+ 
                 document.getElementById('reset-btn').addEventListener('click', () => {
                     parson.shuffleLines(); // Reshuffle the blocks for a new attempt
                     // this.refreshTimer();
