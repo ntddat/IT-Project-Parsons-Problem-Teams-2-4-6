@@ -36,6 +36,7 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
   // establish the timer
   let regen = true;
   let fixed = false;
+  let unusedFunction = true;
   
   setTimeout(function() {
     regen = false;
@@ -87,7 +88,7 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
   code = code.join('\n');
 
   //Ensure that the code doesn't contain any functions that are never called
-  let unusedFunction = checkUnusedFunctions(code);
+  unusedFunction = checkUnusedFunctions(code);
   while(unusedFunction) {
     console.log("Not all functions called! Did not call function:", unusedFunction);
 
