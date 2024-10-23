@@ -39,6 +39,7 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
   
   setTimeout(function() {
     regen = false;
+    unusedFunction = false;
   }, ms);
 
   while (regen) {
