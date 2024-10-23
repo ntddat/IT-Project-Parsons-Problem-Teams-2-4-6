@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import LZString from 'lz-string';
 
 // Importing our modules
-import { outputParserJson, replaceSpacesWithTabs, processString } from "./OutputParser.js";
+import { outputParserJson, checkUnusedFunctions} from "./OutputParser.js";
 import { findClosestTopic } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
 import { PythonShell } from 'python-shell';
@@ -92,9 +92,22 @@ async function askGemini(topic, context, userID, regeneration) {
       let backup = await chatHistoryRepo.getBackupQuestion(userID, topic, context, questionsDbName);
       fixed_resp = outputParserJson(backup.question); 
     } 
-    fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
-    fixed_resp.Code = processString(fixed_resp.Code); 
-    fixed_resp.Code = fixed_resp.Code.join('\n');
+    
+
+    let test_string = 'import pandas as pd\n' +
+     '\n' +
+     '# Load the data\n' +
+     'data = pd.read_csv("student_performance.csv")\n' +
+     '\n' +
+     "# Group the data by 'Subject' and calculate the mean score for each subject\n" +
+     'def calculate_average_score   (df):\n' +
+     "\treturn df.groupby('Subject')['Score'].mean()\n" +
+     '\n' +
+     '# Print the average score for each subject\n' +
+     'print(calculate_average_score_main(data))';
+
+    console.log(checkUnusedFunctions(fixed_resp.Code));
+    //console.log(checkUnusedFunctions(test_string));
 
     let compressedResp = LZString.compressToEncodedURIComponent(JSON.stringify(fixed_resp));
 

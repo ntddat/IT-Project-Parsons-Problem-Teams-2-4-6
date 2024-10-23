@@ -56,7 +56,6 @@ export function replaceSpacesWithTabs(inputString) {
 /**
  * @function processString
  * @param {*} string 
- * POSSIBLE THAT THERE ARE SOME CHATGPT RESPONSE FORMATS THIS DOESN'T HANDLE
  * Filters out comments
  * Filters out any \n followed by spaces, tabs or \n and uses that to mark the start of a new instruction
  * Accounts for print statements containing \n
@@ -211,4 +210,70 @@ export function processString(string) {
     }
   }
   return codeArray;
+}
+
+/**
+ * @function checkUnusedFunctions
+ * @param {*} string 
+ * Checks if the code gemini generated defines any functions that aren't subsequently used
+ * MAKES THE ASSUMPTION THAT IF THE FUNCTION NAME APPEARS TWICE AND THE CODE IS SYNTACTICALLY CORRECT
+ * THEN THE FUNCTION MUST BE CALLED AT LEAST ONCE
+ * 
+ * ^This fails if a function name is a substring of another
+ * 
+ * It first identifies the names of all defined functions. Then it matches for strings that don't
+ * start with def and aren't included within '' and "". Then 
+ * This does not account for the possibility of a function call beingincluded within
+ * An if statement that may or may not be used. 
+ * @returns The function name of unused function or false if all functions used
+ */
+
+export function checkUnusedFunctions(pythonCode) {
+  let defFlag = false;
+  let functionName = "";
+  let lookForCalls = [];
+  //make a list of names of defined functions
+  for (let i = 0; i < pythonCode.length - 2; i++) {
+    if (!defFlag && pythonCode[i] == "d" && pythonCode[i+1] == "e" && pythonCode[i+2] == "f") {
+      defFlag = true;
+      i = i + 2;
+      continue;
+    }
+
+    //Look for the end of a function name
+    if (defFlag && (pythonCode[i] == "(")) {
+      defFlag = false;
+      lookForCalls.push(functionName);
+      functionName = "";
+    }
+
+    //If we just saw a def then start building function name
+    if (defFlag && pythonCode[i] != " "){
+      functionName = functionName + pythonCode[i];
+    }
+  }
+
+
+  for (let i = 0; i < lookForCalls.length; i++) {
+    let functionName = lookForCalls[i];
+    let r =pythonCode.indexOf(functionName);
+    let count = 0;
+    let endOfName = 0;
+    while (r != -1) {
+      //only increment count if the function name isn't a substring of another
+      endOfName = r + lookForCalls[i].length;
+      if (pythonCode[endOfName] == " " || pythonCode[endOfName] == "(" || pythonCode[endOfName] == "\n") {
+        count++;
+      }
+      r = pythonCode.indexOf(functionName, r + 1);        
+    }
+
+    //If a function name appears once then it was only defined and never called
+    if (count < 2) {
+      return lookForCalls[i];
+    }
+  }
+  //All function names appeared atleast twice so we assume all functions were called
+  return false;
+
 }

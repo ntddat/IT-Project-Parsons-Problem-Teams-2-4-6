@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { createCSV } from "./compiler.js";
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { PythonShell } from 'python-shell';
+import {replaceSpacesWithTabs, processString, checkUnusedFunctions} from '../../service/OutputParser.js';
 
 //import messages from '../constants/messages.js';
 
@@ -16,6 +17,7 @@ dotenv.config();
  * @returns {string | null} The fixed code, or null if the code cannot be fixed within the alloted time   
  */
 export async function timeoutRetry(code, fileName, fileContent, ms) {
+  let regenDelay = 125;
   
   const delay = ms => new Promise(res => setTimeout(res, ms));
   // create a new API endpoint for code regen
@@ -64,16 +66,50 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
         code = parseResponse(respText);
       } catch (chatError) {
         console.log("Error during chat AI response:", chatError);
+        console.log("Doubling regen delay in case of too frequent prompting error")
+        regenDelay = regenDelay * 2;
       }
 
       // Wait for a short delay before retrying
-      await delay(125);
+      await delay(regenDelay);
     }
 
     // If the code has been successfully fixed, break out of the loop
     if (fixed) {
       break;
     }
+  }
+
+  //Remove comments from code
+  code = replaceSpacesWithTabs(code); 
+  code = processString(code); 
+  code = code.join('\n');
+
+  //Ensure that the code doesn't contain any functions that are never called
+  let unusedFunction = checkUnusedFunctions(code);
+  while(unusedFunction) {
+    console.log("Not all functions called! Did not call function:", unusedFunction);
+
+    // If there's an error, regenerate the code
+    let errMsg = "You did not call the function" + unusedFunction;
+    let reprompt = regenPrompt(code, fileName, fileContent, errMsg);
+
+    try {
+      let resp = await chat.sendMessage(reprompt);
+      let respText = resp.response.text();
+      console.log("retrying:")
+      console.log(respText);
+
+      // Parse the AI response to generate new code
+      code = parseResponse(respText);
+    } catch (chatError) {
+      console.log("Error during chat AI response:", chatError);
+      console.log("Doubling regen delay in case of too frequent prompting error")
+      regenDelay = regenDelay * 2;
+    }
+    unusedFunction = checkUnusedFunctions(code);
+    // Wait for a short delay before retrying
+    await delay(regenDelay);
   }
 
   console.log(regen);
