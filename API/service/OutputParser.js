@@ -262,7 +262,7 @@ export function checkUnusedFunctions(pythonCode) {
     while (r != -1) {
       //only increment count if the function name isn't a substring of another
       endOfName = r + lookForCalls[i].length;
-      if (pythonCode[endOfName] == " " || pythonCode[endOfName] == "(" || pythonCode[endOfName] == "\n") {
+      if (pythonCode[endOfName] == " " || pythonCode[endOfName] == "(" || pythonCode[endOfName] == "," || pythonCode[endOfName] == "\n") {
         count++;
       }
       r = pythonCode.indexOf(functionName, r + 1);        
