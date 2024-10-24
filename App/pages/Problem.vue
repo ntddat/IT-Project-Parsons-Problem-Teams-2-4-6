@@ -163,6 +163,7 @@ export default {
             intervalId: null,
             showError: false,  
             errorMessage: '',
+            isEventListenerAttached: false,
         }
     },
 
@@ -569,8 +570,7 @@ export default {
         },
 
         initializeParsonsWidget(question) {
-            //question = testSample;
-            // console.log(question);//显示答案，记得注释掉
+
 
 
             this.runCode(question).then(solution => {
@@ -587,74 +587,86 @@ export default {
                 // console.log(parson);
                 parson.init(question);
                 parson.shuffleLines();
-
-                document.getElementById('run-btn').addEventListener('click', () => {
-                    this.refreshOutput();
-                    // console.log("0000");
-                    var studentCode = this.getStudentCode(parson);
-                    // const feedback = parson.getFeedback();
-                    if (!this.emptyCheck(studentCode)) {
-
-                        this.runCode(studentCode).then(
-                            result => {
-                                document.getElementById('output').textContent = result.output || result.error;
-                                console.log("run-btn");
-                            }
-                        )
-                    }
-
-                    //document.getElementById('output').textContent = studentCode; // Display the code
-                });
+                if(this.isEventListenerAttached){
+                    this.isEventListenerAttached = false;
+                    document.getElementById('run-btn').removeEventListener('click', this.runListener);
+                    document.getElementById('submit-btn').removeEventListener('click', this.submitListener);
+                    document.getElementById('reset-btn').removeEventListener('click', this.resetListener);
+                    document.getElementById('window-retry-btn').removeEventListener('click', this.retryListener);
+                    document.getElementById('correct-escape-btn').removeEventListener('click', this.escapeListener);
+                }
 
 
-                document.getElementById('submit-btn').addEventListener('click', async () => {
-                    
-                    // console.log("press submit");
-                    var studentCode = this.getStudentCode(parson);
-                    var feedback = parson.getFeedback();
-                    //runsubmit should be a no return function, this is now for testing
-                    this.stopTimer();
-                    this.blockSubmission();
-                    if (!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)) {
-                        await this.runSubmit(studentCode, solution,parson);
-                        this.refreshTimer();
-                    }
-                    this.startTimer();
-                    this.activeSubmission();
-                });
- 
-                document.getElementById('reset-btn').addEventListener('click', () => {
-                    parson.shuffleLines(); // Reshuffle the blocks for a new attempt
-                    // this.refreshTimer();
-                    // this.startTimer();
-                });
+                if(!this.isEventListenerAttached){
+                    this.isEventListenerAttached = true;
+                    document.getElementById('run-btn').addEventListener('click', () => {
+                        this.refreshOutput();
+                        // console.log("0000");
+                        var studentCode = this.getStudentCode(parson);
+                        // const feedback = parson.getFeedback();
+                        if (!this.emptyCheck(studentCode)) {
 
-                document.getElementById('window-retry-btn').addEventListener('click', () => {
-                    document.getElementById('resultMessage').style.display = 'none';
-                    parson.shuffleLines();
-                });
+                            this.runCode(studentCode).then(
+                                result => {
+                                    document.getElementById('output').textContent = result.output || result.error;
+                                    console.log("run-btn");
+                                }
+                            )
+                        }
 
-                document.getElementById('correct-escape-btn').addEventListener('click', () => {
-                    document.getElementById('resultMessage').style.display = 'none';
-                });
+                        //document.getElementById('output').textContent = studentCode; // Display the code
+                    });
 
-                // document.getElementById('error-escape-btn').addEventListener('click', () => {
-                //     document.getElementById('resultMessage').style.display = 'none';
-                // });
 
-                // document.getElementById('regenerate-btn').addEventListener('click',() => {
+                    document.getElementById('submit-btn').addEventListener('click', async () => {
+                        
+                        // console.log("press submit");
+                        var studentCode = this.getStudentCode(parson);
+                        var feedback = parson.getFeedback();
+                        //runsubmit should be a no return function, this is now for testing
+                        this.stopTimer();
+                        this.blockSubmission();
+                        if (!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)) {
+                            await this.runSubmit(studentCode, solution,parson);
+                            this.refreshTimer();
+                        }
+                        this.startTimer();
+                        this.activeSubmission();
+                    });
+    
+                    document.getElementById('reset-btn').addEventListener('click', () => {
+                        parson.shuffleLines(); // Reshuffle the blocks for a new attempt
+                        // this.refreshTimer();
+                        // this.startTimer();
+                    });
 
-                //     console.log('regenerating');
-                //     //this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
-                //     this.regenerate();
+                    document.getElementById('window-retry-btn').addEventListener('click', () => {
+                        document.getElementById('resultMessage').style.display = 'none';
+                        parson.shuffleLines();
+                    });
 
-                // });
+                    document.getElementById('correct-escape-btn').addEventListener('click', () => {
+                        document.getElementById('resultMessage').style.display = 'none';
+                    });
 
-                // document.getElementById('window-regenerate-btn').addEventListener('click', () => {
-                //     document.getElementById('resultMessage').style.display = 'none';
-                //     this.regenerate();
+                    // document.getElementById('error-escape-btn').addEventListener('click', () => {
+                    //     document.getElementById('resultMessage').style.display = 'none';
+                    // });
 
-                // });
+                    // document.getElementById('regenerate-btn').addEventListener('click',() => {
+
+                    //     console.log('regenerating');
+                    //     //this.sendAttempt(0);//automatically mark as false if choose to regenerate, or -1 ?
+                    //     this.regenerate();
+
+                    // });
+
+                    // document.getElementById('window-regenerate-btn').addEventListener('click', () => {
+                    //     document.getElementById('resultMessage').style.display = 'none';
+                    //     this.regenerate();
+
+                    // });
+                }
             })
         },
 
