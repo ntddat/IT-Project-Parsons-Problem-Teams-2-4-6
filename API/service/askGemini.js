@@ -39,23 +39,23 @@ async function saveChatHistory(userID, topic, question, context, prompt, questio
 }
 
 // TODO: Separate compiler part into separate file, then use that for merging part
-async function askGemini(topic, context, userID, regeneration) {
+async function askGemini(topic, context, userID, regeneration, topicCounts, topicContextCounts) {
   try {
     // Starting a full chat
     const questionsDbName = await getQuestionsDbName();
-    const history = ((userID) ? (await chatHistoryRepo.getChatHistory(userID, questionsDbName)) : []);
-    const chat = model.startChat({ history })
+    //const history = ((userID) ? (await chatHistoryRepo.getChatHistory(userID, questionsDbName)) : []);
+    const chat = model.startChat({ })
     let syntaxPassed = false;
     let prompt, result, resp, fixed_resp;
-
-    console.log("----------\n");
-    console.log("START\n");
-    console.log("----------\n");
-
-    console.log("\nPROMPT:\n");
+    //
+    //console.log("----------\n");
+    //console.log("START\n");
+    //console.log("----------\n");
+    //
+    //console.log("\nPROMPT:\n");
     let closestTopic = findClosestTopic(topic);
     prompt = generatePrompt(closestTopic, context, regeneration);
-    console.log(prompt);
+    //console.log(prompt);
     //Attempt to prompt gemini, if it fails prompt again
     try {
       result = await chat.sendMessage(prompt);
@@ -77,14 +77,27 @@ async function askGemini(topic, context, userID, regeneration) {
       
     // until 20 secs have passed, keep regenerating the code
     // attempt to generate some functional code
-    let newCode = await timeoutRetry(fixed_resp.Code, fixed_resp.CSVName, fixed_resp.CSV, 20000);
+    let res = await timeoutRetry(fixed_resp.Code, fixed_resp.CSVName, fixed_resp.CSV, 20000, topicCounts, topicContextCounts);
+    if (res === null) {
+      topicCounts[0] += 1;
+      topicContextCounts[0] += 1;
+      return {
+        success: true,
+        message: "Asked Gemini successfully",
+        topic: topicCounts,
+        topicContext: topicContextCounts
+      };
+    }
+    let newCode = res.code;
+    topicCounts = res.topic;
+    topicContextCounts = res.context;
 
     // if it managed to generate a problem
     if (newCode !== null) {
       console.log("Generated syntactically correct code!\n");
       fixed_resp.Code = newCode;
       // store the code and prompt here.
-      saveChatHistory(userID, topic, resp, context, prompt, questionsDbName);
+      //saveChatHistory(userID, topic, resp, context, prompt, questionsDbName);
     }  
     // otherwise, get a backup problem
     else {
@@ -94,6 +107,8 @@ async function askGemini(topic, context, userID, regeneration) {
       fixed_resp.Code = replaceSpacesWithTabs(fixed_resp.Code); 
       fixed_resp.Code = processString(fixed_resp.Code); 
       fixed_resp.Code = fixed_resp.Code.join('\n');   
+      topicCounts[0] += 1;
+      topicContextCounts[0] += 1;
     } 
 
     let compressedResp = LZString.compressToEncodedURIComponent(JSON.stringify(fixed_resp));
@@ -102,6 +117,8 @@ async function askGemini(topic, context, userID, regeneration) {
       success: true,
       message: "Asked Gemini successfully",
       fixed_resp: compressedResp,
+      topic: topicCounts,
+      topicContext: topicContextCounts
     };
   } catch (e) {
     console.error("Error generating question:", e);

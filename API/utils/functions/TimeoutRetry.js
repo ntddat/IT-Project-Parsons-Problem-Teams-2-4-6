@@ -16,8 +16,8 @@ dotenv.config();
  * @param {number} ms The allowed time to regenerate code in milliseconds
  * @returns {string | null} The fixed code, or null if the code cannot be fixed within the alloted time   
  */
-export async function timeoutRetry(code, fileName, fileContent, ms) {
-  let regenDelay = 125;
+export async function timeoutRetry(code, fileName, fileContent, ms, topicCounts, topicContextCounts) {
+  let regenDelay = 2000;
   
   const delay = ms => new Promise(res => setTimeout(res, ms));
   // create a new API endpoint for code regen
@@ -33,12 +33,19 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
     createCSV(fileContent, fileName);
   } 
 
+  let errored = false;
+  let functioned = false;
+  let timedOut = false;
+
   // establish the timer
   let regen = true;
   let fixed = false;
+  let unusedFunction = true;
   
   setTimeout(function() {
     regen = false;
+    unusedFunction = false;
+    timedOut = true;
   }, ms);
 
   while (regen) {
@@ -62,6 +69,8 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
         let respText = resp.response.text();
         console.log(respText);
 
+        errored = true;
+
         // Parse the AI response to generate new code
         code = parseResponse(respText);
       } catch (chatError) {
@@ -69,6 +78,7 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
         console.log("Doubling regen delay in case of too frequent prompting error")
         regenDelay = regenDelay * 2;
       }
+      regenDelay = regenDelay * 2;
 
       // Wait for a short delay before retrying
       await delay(regenDelay);
@@ -86,8 +96,9 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
   code = code.join('\n');
 
   //Ensure that the code doesn't contain any functions that are never called
-  let unusedFunction = checkUnusedFunctions(code);
+  unusedFunction = checkUnusedFunctions(code);
   while(unusedFunction) {
+    functioned = true;
     console.log("Not all functions called! Did not call function:", unusedFunction);
 
     // If there's an error, regenerate the code
@@ -107,14 +118,33 @@ export async function timeoutRetry(code, fileName, fileContent, ms) {
       console.log("Doubling regen delay in case of too frequent prompting error")
       regenDelay = regenDelay * 2;
     }
+    regenDelay = regenDelay * 2;
     unusedFunction = checkUnusedFunctions(code);
     // Wait for a short delay before retrying
     await delay(regenDelay);
   }
 
   console.log(regen);
+  if (!timedOut) {
+    if (!errored && !functioned) {
+      topicCounts[1] += 1;
+      topicContextCounts[1] += 1;
+    }
+    else if (!errored && functioned) {
+      topicCounts[2] += 1;
+      topicContextCounts[2] += 1;
+    }
+    else if (errored && !functioned) {
+      topicCounts[3] += 1;
+      topicContextCounts[3] += 1;
+    }
+    else {
+      topicCounts[4] += 1;
+      topicContextCounts[4] += 1;
+    }
+  }
 
-  return regen ? code : null;
+  return regen ? {code: code, topic: topicCounts, context: topicContextCounts} : null;
 }
 
 function regenPrompt(code, filename, fileContent, msg) {
