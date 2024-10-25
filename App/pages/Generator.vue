@@ -3,7 +3,8 @@
     <div v-if="showPopUp" class="modal-backdrop">
       <div class="modal-content">
         <p id="cookieTop"><i class="fa-solid fa-cookie-bite"></i> Cookie</p>
-        <p id="cookieWords">{{ cookieWords }}</p>
+        <p id="cookieWords">{{ cookieWords1 }}</p>
+        <p id="cookieWords">{{ cookieWords2 }}</p>
         <button id="accept-btn" @click="accept">Accept</button>
         <button id="reject-btn" @click="reject">Reject</button>
       </div>
@@ -17,7 +18,7 @@
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
-        <!-- <div @click="cleanCookies" class="nav-link">Clean</div> -->
+        <div @click="cleanCookies" class="nav-link">Clean</div>
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
         <div @click="historyBotton" class="nav-link">History</div>
       </div>
@@ -100,7 +101,9 @@ export default {
   name: 'Generator',
   data() {
     return {
-      cookieWords: "We are using Cookie to record your past data. By clicking 'Accept', you agree to our use of cookies",
+      cookieWords1: "We use Cookies to keep track of what questions you've done in the past, \
+      and provide you with data analysis in the History Page.",
+      cookieWords2: "By clicking 'Accept', you agree with the storing of cookies on your device for these purposes.",
       showPopUp: true, 
       loadingWord: "Generating questions may take some time, please be patient...",
 
@@ -327,7 +330,8 @@ export default {
   background-color: rgb(204, 223, 197);
   border-radius: 10px;
   flex-direction: column;
-  border:2px solid #156B3A
+  border:2px solid #156B3A;
+  max-width: 81%;
 }
 #cookieTop{
   font-size: 30px;
