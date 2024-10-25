@@ -122,10 +122,10 @@ const userController = {
     try {
       const { userID, topic, correct, time, questionID } = req.body;
       if (!userID || !topic || correct === undefined || time === undefined || !questionID) {
-        return {
+        return res.status(httpCodes.BAD_REQUEST).json({
           success: false,
           message: "Please provide a valid userID, topic, correct, time, and questionID",
-        };
+        });
       }
 
       const usersDbName = await getUsersDbName();
