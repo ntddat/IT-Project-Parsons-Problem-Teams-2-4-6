@@ -38,9 +38,15 @@
             <div id="chartContainer">
                 <canvas id="barChart"></canvas>
             </div>
-            <div class="info-mes">See student performance by clicking on the list below</div>
+            <div class="info-mes">See student performance by clicking on the list below
+                <!--| Current View: -->
+                <!--<select v-model="showhistory">
+                    <option>Performance by Topic</option>
+                    <option>LeaderBoard</option>
+                </select> -->
+            </div>
             <!-- History Section with sliding list -->
-            <div class="history-container">
+            <div v-if="showhistory=='Performance by Topic'" class="history-container">
                 <div class="history-header">
                     <span class="header-topic">Topic</span>
                     <span class="tit_text header-practice">Total Questions</span>
@@ -77,8 +83,8 @@
                             </div>
                             <div class="scrolling-wrapper">
                                 <ul class="summary-list">
-                                    <li v-for="(user, userID) in sort_by_method(item)" :key="userID" class="summary-item">
-                                        <button class="detail-button" @click="gotoHistory(user.userID)">Detail</button>
+                                    <li v-for="(user, userID) in sort_by_method(item)" :key="userID" class="summary-item" @click=gotoHistory(user.userID)>
+                                        <!--button class="detail-button" @click="gotoHistory(user.userID)">Detail</!--button -->
                                         <div class="item-id">{{'#'+user.userID}}</div>
                                         <div class="item-answered">{{user.numQuestions}}</div>
                                         <div class="item-accuracy">{{user.accuracy}}%</div>
@@ -89,6 +95,25 @@
                         </div>
                         </li>
                     </ul>
+                </div>
+            <!-- LeaderBoard -->
+            </div>
+            <div v-if="showhistory=='LeaderBoard'" class="LeaderBoard">
+                <div class="LB">LeaderBoard</div>
+                <div class="LB-Title">
+                    <span class="LB-h">Total Question Practiced</span>
+                    <span class="LB-h">Overall Question Accuracy</span>
+                </div>
+                <div class="Leaderboards">
+                    <div class="LB-practice">
+                        <div class="scrolling-wrapper">
+
+                        </div>
+                    </div>
+                    <div class="LB-accuracy">
+                        <div class="scrolling-wrapper">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,12 +136,14 @@ export default {
     /*All the Datas stored here*/
     data() {
         return {
+            showhistory: 'Performance by Topic',
             userName: "Admin",
             summary:{
                 accuracy: null,
                 numQuestions: null,
             },
             topicsInfo: [],
+            LeaderBoard: [],
         }
     },
     methods: {
@@ -135,7 +162,8 @@ export default {
                 this.topicsInfo = datas.topicsInfo
                 this.renderBarChart();
                 this.setDefaultSort();
-                this.seticons()
+                this.seticons();
+                this.CalculateLeaderBoard();
                 //console.log(datas.topicsInfo)
             } else {
                 console.error("No data received");
@@ -281,6 +309,11 @@ export default {
                 }
             });
         },
+        CalculateLeaderBoard(){
+            this.topicsInfo.forEach(topic => {
+                topic.forEach(student)
+            });
+        }
     }
 };
 export async function getSummary(){
@@ -310,7 +343,7 @@ export async function getSummary(){
     color: #333333;
     font-weight: bold;
     align-items: center;
-    margin-left:270px;
+    margin-left:275px; /* 150 */
     margin-bottom: 15px;
 }
 .top {
@@ -429,7 +462,7 @@ export async function getSummary(){
     margin-top: 5px;
 }
 
-.history-container {
+.history-container,.LeaderBoard {
     max-width: 1000px;
     padding: 20px;
     border-top: 1px solid #777777;
@@ -550,6 +583,7 @@ button:focus {
     padding-left: 40px;
     max-height: 300px;
     min-width: 700px;
+    cursor: pointer;
 }
 .detail-button {
   margin-right: 10px; /* 在学生ID左侧留出一些空间 */
@@ -558,19 +592,33 @@ button:focus {
   border: none;
   padding: 5px 10px;
   border-radius: 5px;
-  cursor: pointer;
 }
 .summary-item {
     display: grid;
-    grid-template-columns:0fr 1.1fr 1.5fr 1.4fr 1.4fr;
+    grid-template-columns:1.5fr 1.5fr 1.4fr 1.4fr;
     gap: 0px;
     padding: 10px 0;
-    padding-left: 25px;
+    padding-left: 50px;
     border-bottom: 1px solid #a6a4a4;
 }
 .summary-item:hover {background-color: #ccf6b34b;border-radius: 5px}
 .history-item:hover {background-color: #7ea3684b;border-radius: 5px}
 #chartContainer{
-    height: 470px;
+    height: 480px;
+}
+.LB{
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+}
+.LB-Title{font-weight: bold;margin-bottom: 15px}
+.LB-Title,.Leaderboards{
+    display: grid;
+    grid-template-columns:1fr 1fr;
+    text-align: center;
+    align-items: center;
+    gap:200px;
 }
 </style>
