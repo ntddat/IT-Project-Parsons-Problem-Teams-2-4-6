@@ -1,4 +1,5 @@
 <template>
+    <!--Whole AdminProfile Page-->
     <div class="admin-profile">
         <!-- Navigation Bar -->
         <nav class="top">
@@ -38,13 +39,7 @@
             <div id="chartContainer">
                 <canvas id="barChart"></canvas>
             </div>
-            <div class="info-mes">See student performance by clicking on the list below
-                <!--| Current View: -->
-                <!--<select v-model="showhistory">
-                    <option>Performance by Topic</option>
-                    <option>LeaderBoard</option>
-                </select> -->
-            </div>
+            <div class="info-mes">See student performance by clicking on the list below</div>
             <!-- History Section with sliding list -->
             <div v-if="showhistory=='Performance by Topic'" class="history-container">
                 <div class="history-header">
@@ -84,7 +79,6 @@
                             <div class="scrolling-wrapper">
                                 <ul class="summary-list">
                                     <li v-for="(user, userID) in sort_by_method(item)" :key="userID" class="summary-item" @click=gotoHistory(user.userID)>
-                                        <!--button class="detail-button" @click="gotoHistory(user.userID)">Detail</!--button -->
                                         <div class="item-id">{{'#'+user.userID}}</div>
                                         <div class="item-answered">{{user.numQuestions}}</div>
                                         <div class="item-accuracy">{{user.accuracy}}%</div>
@@ -95,25 +89,6 @@
                         </div>
                         </li>
                     </ul>
-                </div>
-            <!-- LeaderBoard -->
-            </div>
-            <div v-if="showhistory=='LeaderBoard'" class="LeaderBoard">
-                <div class="LB">LeaderBoard</div>
-                <div class="LB-Title">
-                    <span class="LB-h">Total Question Practiced</span>
-                    <span class="LB-h">Overall Question Accuracy</span>
-                </div>
-                <div class="Leaderboards">
-                    <div class="LB-practice">
-                        <div class="scrolling-wrapper">
-
-                        </div>
-                    </div>
-                    <div class="LB-accuracy">
-                        <div class="scrolling-wrapper">
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -163,7 +138,6 @@ export default {
                 this.renderBarChart();
                 this.setDefaultSort();
                 this.seticons();
-                this.CalculateLeaderBoard();
                 //console.log(datas.topicsInfo)
             } else {
                 console.error("No data received");
@@ -309,11 +283,6 @@ export default {
                 }
             });
         },
-        CalculateLeaderBoard(){
-            this.topicsInfo.forEach(topic => {
-                topic.forEach(student)
-            });
-        }
     }
 };
 export async function getSummary(){
@@ -343,7 +312,7 @@ export async function getSummary(){
     color: #333333;
     font-weight: bold;
     align-items: center;
-    margin-left:275px; /* 150 */
+    margin-left:275px; /* 275 */
     margin-bottom: 15px;
 }
 .top {
@@ -586,8 +555,8 @@ button:focus {
     cursor: pointer;
 }
 .detail-button {
-  margin-right: 10px; /* 在学生ID左侧留出一些空间 */
-  background-color: #4CAF50; /* 绿色背景 */
+  margin-right: 10px; 
+  background-color: #4CAF50;
   color: rgb(65, 54, 54);
   border: none;
   padding: 5px 10px;

@@ -18,7 +18,7 @@
         <div class="web-name">Learnr</div>
       </div>
       <div class="nav-links">
-        <div @click="cleanCookies" class="nav-link">Clean</div>
+        <div @click="cleanCookies" class="nav-link"></div>
         <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
         <div @click="historyBotton" class="nav-link">History</div>
       </div>
