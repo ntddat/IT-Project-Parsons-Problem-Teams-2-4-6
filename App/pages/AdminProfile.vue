@@ -272,12 +272,12 @@ export default {
                     datasets: [
                         {
                             label: 'Total Questions',
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)', 
+                            backgroundColor: '#F1E3D3', 
                             data: totalQuestions, 
                         },
                         {
                             label: 'Correct Questions',
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)', 
+                            backgroundColor: '#5B9279', 
                             data: correctQuestions, 
                         }
                     ]
