@@ -1,10 +1,10 @@
-<!--
-    * @Description: History Page
-    * @Author: Peihong Yao
-    * @LastEditors: Peihong Yao
-    * @LastEditTime: 2024-10-27          
--->
-
+// ==========================================================
+// File: History.vue
+// Author: Team-4 Peihong Yao
+// Date: 2024-10-25
+// Description: This component is the history page of the web
+// Version: 1.0.0
+// ==========================================================
 <template>
     <div class="history">
         <!-- Navigation Bar -->
@@ -210,7 +210,6 @@ import {
 } from 'echarts/components';
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
-
 
 export default {
     created() {
@@ -442,7 +441,7 @@ export default {
                 return await getUserID();
             }
         },
-        
+
         // Send the changed userID to the database
         async changeUserName(userID, name) {
             const url = 'http://localhost:8383/api/user/changeUsername';
