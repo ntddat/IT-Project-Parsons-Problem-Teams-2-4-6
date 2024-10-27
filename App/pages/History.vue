@@ -1,5 +1,12 @@
+<!--
+    * @Description: History Page
+    * @Author: Peihong Yao
+    * @LastEditors: Peihong Yao
+    * @LastEditTime: 2024-10-27          
+-->
+
 <template>
-    <div class="history" >
+    <div class="history">
         <!-- Navigation Bar -->
         <nav class="top">
             <div class="back-links" v-if="showBack" @click="backButton">
@@ -22,23 +29,27 @@
                 <router-link to="/Generator" class="nav-link">Home</router-link>
             </div>
         </nav>
+        <!-- Navigation Bar -->
 
-        <!-- Loading GIF -->
+        <!-- Load animation -->
         <div v-if="isLoading" class="loading-overlay">
             <div class="spinner"></div>
             <p class="loading-text">{{ loadingWord }}</p>
         </div>
+        <!-- Load animation -->
 
-        <!-- After loading -->
+        <!-- Main Body -->
         <div v-show="!isLoading">
             <!-- Not accept Page -->
             <div id="notacceptCookie" v-if="!showData">
                 <div id="cookie-request">You must accept the cookie if you want check this page</div>
                 <button @click="accept" id="accept-btn">Accept</button>
             </div>
+            <!-- Not accept Page -->
 
             <!-- User data Page -->
             <div id="cont_box" v-else>
+
                 <!-- Profile Section -->
                 <div class="profile-container">
                     <div class="profile-header">
@@ -46,6 +57,7 @@
                             <span class="profile-initial">{{ userName.charAt(0).toUpperCase() }}</span>
                         </div>
                         <div class="profile-info">
+
                             <!-- Name Edit -->
                             <h1 v-if="!editing">
                                 {{ userName }}
@@ -58,8 +70,10 @@
                                 <button class="changeNameButton" @click="saveName">Change</button>
                                 <button class="changeNameButton" @click="NotChangeName">Not Now</button>
                             </div>
+                            <!-- Name Edit -->
 
                             <h3>#{{ userID.toString().padStart(5, '0') }}</h3>
+
                         </div>
                     </div>
                     <div class="stats">
@@ -74,11 +88,13 @@
                         </div>
                     </div>
                 </div>
+                <!-- Profile Section -->
 
                 <!-- Graph Section -->
                 <div class="graph-container">
                     <div id="graph"></div>
                 </div>
+                <!-- Graph Section -->
 
                 <!-- History Section -->
                 <div class="history-container">
@@ -88,6 +104,8 @@
                         <span class="tit_text header-practice">Total Practice</span>
                         <span class="tit_text header-accuracy">Accuracy</span>
                     </div>
+                    <!-- History Header -->
+
                     <!-- History detail -->
                     <ul class="history-list">
                         <li v-for="(item, index) in topicSummary" :key="index">
@@ -105,8 +123,7 @@
 
                             <!-- Question details -->
                             <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
-                                <!-- <div v-show="true" class="question-dropdown"> -->
-                                <!-- Question Dropdown Head -->
+
                                 <div class="question-header">
                                     <span class="question-topic">Question</span>
                                     <span class="question-attempts">Attempts</span>
@@ -114,13 +131,11 @@
                                     <span class="question-correct">Had Been Correct</span>
                                 </div>
 
-                                <!-- Question Dropdown data -->
                                 <ul class="question-datas">
                                     <li @click="attemptDropdown(index, questionIndex)"
                                         v-for="(question, questionIndex) in item.attemptedQuestions"
                                         :key="questionIndex" class="question-data">
                                         <div class="question">
-                                            <!-- {{ question.questionID }} -->
                                             {{ questionIndex + 1 }}
                                         </div>
                                         <div class="attempts">
@@ -134,17 +149,14 @@
                                                 alt="Correctness">
                                         </div>
 
-                                        <!-- Attempts Dropdown -->
+                                        <!-- Attempts details -->
                                         <div v-show="question.isExpanded" class="attempt-dropdown">
-                                            <!-- <div v-show="true" class="attempt-dropdown"> -->
-                                            <!-- Attempt Dropdown Header -->
                                             <div class="attempts-header">
                                                 <span class="question-topic">Attempt</span>
                                                 <span class="question-time">Time (minutes)</span>
                                                 <span class="question-correct">Correct</span>
                                             </div>
 
-                                            <!-- Attempt Dropdown data -->
                                             <ul class="attempts-datas">
                                                 <li v-for="(attempt, attemptIndex) in question.attempts"
                                                     :key="attemptIndex" class="attempts-data">
@@ -154,9 +166,6 @@
                                                     <div class="time">
                                                         {{ (attempt.time / 60).toFixed(2) }}
                                                     </div>
-                                                    <!-- <div class="date">
-                                            {{ attempt.date }}
-                                        </div> -->
                                                     <div class="correct">
                                                         <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
                                                             alt="Correctness">
@@ -164,22 +173,33 @@
                                                 </li>
                                             </ul>
                                         </div>
+                                        <!-- Attempts details -->
+
                                     </li>
                                 </ul>
+
                             </div>
+                            <!-- Question details -->
 
                         </li>
                     </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <!-- History detail -->
 
+                </div>
+                <!-- History Section -->
+
+            </div>
+            <!-- User data Page -->
+
+        </div>
+        <!-- Main Body -->
+
+    </div>
 </template>
 
 <script>
 import * as echarts from 'echarts/core';
-import { BarChart, RadarChart } from 'echarts/charts';
+import { RadarChart } from 'echarts/charts';
 import {
     TitleComponent,
     TooltipComponent,
@@ -191,7 +211,6 @@ import {
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 
-import { getUserID, getUserHistory, changeUserName } from "../libs/user.js"
 
 export default {
     created() {
@@ -201,7 +220,6 @@ export default {
             GridComponent,
             DatasetComponent,
             TransformComponent,
-            BarChart,
             RadarChart,
             LegendComponent,
             LabelLayout,
@@ -210,12 +228,15 @@ export default {
         ]);
     },
     mounted() {
+        // Start at the very top of the page
         window.scrollTo(0, 0);
 
+        // Load 0.5 seconds
         setTimeout(() => {
             this.isLoading = false;
         }, 500);
 
+        // Init page
         const from = (this.$route.query.from)
         if (from == "Admin") {
             this.userID = this.$route.query.userID
@@ -259,9 +280,12 @@ export default {
         };
     },
     methods: {
+        // Back to previous Page
         backButton() {
             this.$router.go(-1)
         },
+
+        // UserName edite  
         startEditing() {
             this.editing = true;
             this.newName = this.userName;
@@ -277,27 +301,12 @@ export default {
                 this.editing = false;
             } else {
                 this.userName = this.newName.trim();
-                changeUserName(this.userID, this.newName.trim())
+                this.changeUserName(this.userID, this.userName)
                 this.editing = false;
             }
         },
-        async setUserData() {
-            const datas = await getUserHistory(this.userID)
-            //  console.log(datas)
-            this.accuracy = datas.userData.accuracy
-            this.exercises = datas.userData.numQuestions
-            this.topicSummary = datas.userData.topicSummary
-            this.userName = datas.userData.name
-            this.$nextTick(() => {
-                this.setRadar(); // Make sure DOM is inuse
-            });
-        },
-        async accept() {
-            this.$cookies.set('acception', true, '3m');
-            this.userID = await getUserID()
-            this.$cookies.set('userID', this.userID, '3m');
-            this.$router.go(0);
-        },
+
+        // Drop down compount control
         questionDropdown(index) {
             this.topicSummary[index].isExpanded = !this.topicSummary[index].isExpanded;
         },
@@ -305,6 +314,8 @@ export default {
             this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded =
                 !this.topicSummary[topicIndex].attemptedQuestions[questionIndex].isExpanded
         },
+
+        // Radar chart 
         getFormattedTopicList() {
             return this.topicSummary.map(topic => {
                 const cleanedTopic = topic.topic.replace(/\([^)]*\)/g, '').trim();
@@ -328,7 +339,6 @@ export default {
             this.myChart = echarts.init(document.getElementById('graph'));
             let option = {
                 color: ['#F1E3D3', '#5B9279'],
-                // color: ['#B0A2C4', '#465946'], //#FFFFFF #465946
                 title: {
                     text: ''
                 },
@@ -336,7 +346,6 @@ export default {
                     data: ['Total Practice', 'Accuarcy'],
                 },
                 radar: {
-                    // shape: 'circle',
                     indicator: this.getFormattedTopicList(),
                     center: ['50%', '50%'],
                     radius: '70%',
@@ -368,7 +377,108 @@ export default {
             };
             this.myChart.setOption(option);
         },
+
+        // Set up data for this page
+        async setUserData() {
+            const datas = await this.getUserHistory(this.userID)
+            this.accuracy = datas.userData.accuracy
+            this.exercises = datas.userData.numQuestions
+            this.topicSummary = datas.userData.topicSummary
+            this.userName = datas.userData.name
+
+            // Make sure DOM is inuse
+            this.$nextTick(() => {
+                this.setRadar();
+            });
+        },
+
+        // Acquire user data from database
+        async getUserHistory(userID) {
+            const url = `http://localhost:8383/api/user/userData?userID=${userID}`;
+            const options = {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+            };
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+
+                return data;
+            } catch (error) {
+                console.error('Error:', error);
+                return await getUserHistory(userID);
+            }
+        },
+
+        // Get UserID from the back-end
+        async accept() {
+            this.$cookies.set('acception', true, '3m');
+            this.userID = await this.getUserID()
+            this.$cookies.set('userID', this.userID, '3m');
+            this.$router.go(0);
+        },
+
+        // Acquire unique identifier (UserID)
+        async getUserID() {
+            const url = 'http://localhost:8383/api/user/newUserID';
+
+            const options = {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            };
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                // console.log(data.userID.userID);
+                return data.userID;
+                // return response
+            } catch (error) {
+                console.error('Error:', error);
+                return await getUserID();
+            }
+        },
+        
+        // Send the changed userID to the database
+        async changeUserName(userID, name) {
+            const url = 'http://localhost:8383/api/user/changeUsername';
+
+            const pack = {
+                userID: userID,
+                newUsername: name,
+            };
+
+            console.log(pack);
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(pack),  // Stringify the payload as JSON
+            };
+
+            try {
+                const response = await fetch(url, options);
+
+                if (!response.ok) {  // Check if the response status is not OK
+                    const errorData = await response.json();  // Parse the error message
+                    console.error('Error:', errorData.message);
+                } else {
+                    const data = await response.json();
+                    console.log('Success:', data);
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        },
     },
+
 };
 </script>
 
@@ -384,12 +494,18 @@ export default {
 }
 
 .load-gif {
-  position: fixed; /* 固定在屏幕中央 */
-  top: 50%;        /* 垂直居中 */
-  left: 50%;       /* 水平居中 */
-  transform: translate(-50%, -50%); /* 通过平移将元素的中心点移到屏幕中心 */
-  width: 60px;    /* 宽度 */
-  height: 60px;   /* 高度 */
+    position: fixed;
+    /* 固定在屏幕中央 */
+    top: 50%;
+    /* 垂直居中 */
+    left: 50%;
+    /* 水平居中 */
+    transform: translate(-50%, -50%);
+    /* 通过平移将元素的中心点移到屏幕中心 */
+    width: 60px;
+    /* 宽度 */
+    height: 60px;
+    /* 高度 */
 }
 
 .header {
@@ -452,11 +568,11 @@ export default {
 
 /* 动画 */
 .loading-overlay {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .spinner {
@@ -469,7 +585,8 @@ export default {
     position: relative;
 }
 
-.spinner::after,.spinner::before {
+.spinner::after,
+.spinner::before {
     box-sizing: border-box;
     position: absolute;
     content: "";
@@ -489,7 +606,9 @@ export default {
 }
 
 @keyframes down {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: none;
     }
 
@@ -507,9 +626,9 @@ export default {
 }
 
 @keyframes up {
-    0%, 100% {
-        
-    }
+
+    0%,
+    100% {}
 
     25% {
         transform: translateX(-100%);
@@ -523,6 +642,7 @@ export default {
         transform: translateY(-100%);
     }
 }
+
 /* 动画 */
 #cont_box {
     max-width: 1000px;
