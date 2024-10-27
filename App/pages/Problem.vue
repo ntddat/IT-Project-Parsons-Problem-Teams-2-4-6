@@ -636,6 +636,7 @@ export default {
     
                     document.getElementById('reset-btn').addEventListener('click', () => {
                         parson.shuffleLines(); // Reshuffle the blocks for a new attempt
+                        this.refreshOutput();
                         // this.refreshTimer();
                         // this.startTimer();
                     });
