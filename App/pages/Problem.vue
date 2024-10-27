@@ -1,8 +1,9 @@
 // ==========================================================
 // File: Problem.vue
-// Author: Team-4 
+// Author: Team-4 Yuhao Liu & Xuanyu Liu
 // Date: 2024-10-25
 // Description: This component is the problem page of the web
+// allow user to drag and drop python code for exercise
 // Version: 1.0.0
 // ==========================================================
 <template>
@@ -290,6 +291,8 @@ export default {
                 document.body.style.cursor = 'default';
             });
         },
+
+        //initialize page details
         initializer() {
             this.topic = this.$route.query.topic;
             this.context = this.$route.query.context;
@@ -302,6 +305,8 @@ export default {
             this.questionInitializer(questionData);
 
         },
+
+        //initialize question blocks based on generated code
         questionInitializer(data) {
             const initialCode = data.Code; // Update initial code
             console.log(data);
@@ -313,6 +318,7 @@ export default {
             this.initializeParsonsWidget(initialCode); // Initialize Parsons widget with fetched code
         },
 
+        //timer functions
         startTimer() {
             this.elapsedTime = 0;
             this.timerLock = false;
@@ -324,7 +330,6 @@ export default {
                 }
             }, 1000);
         },
-
 
         updateTimeElapsed() {
             const minutes = Math.floor(this.elapsedTime / 60);
@@ -356,6 +361,7 @@ export default {
             document.getElementById('time-elapsed').textContent = '0 mins 0 seconds';
         },
 
+        //lock to prevent multiple submission that may shut down server
         blockSubmission() {
             this.isSubmitDisabled = true;
         },
@@ -364,6 +370,7 @@ export default {
             this.isSubmitDisabled = false;
         },
 
+        //lock to prevent multiple regeneration that may shut down server
         blockRegeneration() {
             this.isRegenerateDisabled = true;
         },
@@ -377,6 +384,7 @@ export default {
             this.showError = true;
         },
 
+        //prevent user to submit duplicate code
         duplicateCheck(code) {
             if (code == this.prevAnswerCode) {
                 // alert("code is same as previous");
@@ -415,14 +423,14 @@ export default {
 
 
 
-        //todo regenerate-btn 的功能
-        //todo window-regenerate-btn 的功能
+        //button on the success window to regenerate
         async windowRegenerate() {
             document.getElementById('resultMessage').style.display = 'none';
             this.regenerate();
         },
 
 
+        //allow user to regenerate a question with same topic and context
         async regenerate() {
             this.blockRegeneration();
             this.stopTimer();
@@ -483,14 +491,14 @@ export default {
                 });
         },
 
-
+        //refresh the output area
         refreshOutput() {
             document.getElementById('output').textContent = ""
             // document.getElementById('resultMessage').style.display = 'none';
         },
 
 
-
+        //prevent student submit meaning less empty code
         emptyCheck(studentCode) {
             if (studentCode === "") {
                 document.getElementById('output').textContent = "no blocks was used!";
@@ -499,6 +507,7 @@ export default {
             return false;
         },
 
+        //get the student-arranged block of code
         getStudentCode(parson) {
             console.log(parson);
             console.log(parson.modified_lines);
@@ -527,7 +536,6 @@ export default {
         },
 
         //sending the result back to server
-        //add more parameters
         async sendAttempt(correctness) {
             if (this.$cookies.get('acception') !== 'true') {
                 console.log("returned");
@@ -576,6 +584,7 @@ export default {
             }
         },
 
+        //Initialize the parsons problem and its related button's listeners 
         initializeParsonsWidget(question) {
 
 
@@ -679,7 +688,8 @@ export default {
         },
 
 
-
+        //Checks if students result is correct and send record to database
+        //shows if students result is correct on the page
         async runSubmit(studentCode, solution,parson) {
 
             this.refreshOutput();
