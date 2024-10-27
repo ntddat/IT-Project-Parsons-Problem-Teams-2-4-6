@@ -1,3 +1,10 @@
+// ==========================================================
+// File: Problem.vue
+// Author: Team-4 
+// Date: 2024-10-25
+// Description: This component is the problem page of the web
+// Version: 1.0.0
+// ==========================================================
 <template>
 
     <body>
