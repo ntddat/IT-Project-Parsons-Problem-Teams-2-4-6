@@ -1,10 +1,10 @@
 // ==========================================================
-// File: Problem.vue
-// Author: Team-4 Yuhao Liu & Xuanyu Liu
-// Date: 2024-10-25
-// Description: This component is the problem page of the web
+// @ File: Problem.vue
+// @ Author: Team-4 Yuhao Liu & Xuanyu Liu
+// @ Date: 2024-10-25
+// @ Description: This component is the problem page of the web
 // allow user to drag and drop python code for exercise
-// Version: 1.0.0
+// @ Version: 1.0.0
 // ==========================================================
 <template>
 
@@ -104,7 +104,8 @@
             </div>
 
             <div class="popupwindows" id="resultMessage">
-                <button class="escape-btn" id="correct-escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
+                <button class="escape-btn" id="correct-escape-btn" @click="closePop"><i
+                        class="fa-solid fa-xmark"></i></button>
                 <p class="popupnotices">Yepi!<br>Correct answer! Congratulations! q(≧▽≦q)</p>
                 <div id="button-container">
                     <button id="window-regenerate-btn" @click="windowRegenerate"
@@ -115,7 +116,8 @@
             </div>
 
             <div class="popupwindows" id="errorMessage" v-if="showError" style="display: flex;">
-                <button class="escape-btn" id="error-escape-btn" @click="closePop"><i class="fa-solid fa-xmark"></i></button>
+                <button class="escape-btn" id="error-escape-btn" @click="closePop"><i
+                        class="fa-solid fa-xmark"></i></button>
                 <!-- <p>Oops~</p> -->
                 <p class="popupnotices">Oops~<br>{{ errorMessage }}</p>
                 <div id="button-container">
@@ -169,7 +171,7 @@ export default {
             elapsedTime: 0,
             timerLock: false,
             intervalId: null,
-            showError: false,  
+            showError: false,
             errorMessage: '',
             isEventListenerAttached: false,
         }
@@ -211,7 +213,7 @@ export default {
             this.$router.push('/Generator'); // 跳转到 "/Generator" 页面
         },
 
-        closePop(){
+        closePop() {
             this.showError = false;
         },
 
@@ -379,7 +381,7 @@ export default {
             this.isRegenerateDisabled = false;
         },
 
-        showErrorPop(errorMessage){
+        showErrorPop(errorMessage) {
             this.errorMessage = errorMessage;
             this.showError = true;
         },
@@ -453,7 +455,7 @@ export default {
                     regeneration: "yes"
                 };
             }
-            
+
             console.log('Sending data to backend:', payload);
 
             this.loading = true;
@@ -603,7 +605,7 @@ export default {
                 // console.log(parson);
                 parson.init(question);
                 parson.shuffleLines();
-                if(this.isEventListenerAttached){
+                if (this.isEventListenerAttached) {
                     this.isEventListenerAttached = false;
                     document.getElementById('run-btn').removeEventListener('click', this.runListener);
                     document.getElementById('submit-btn').removeEventListener('click', this.submitListener);
@@ -613,7 +615,7 @@ export default {
                 }
 
 
-                if(!this.isEventListenerAttached){
+                if (!this.isEventListenerAttached) {
                     this.isEventListenerAttached = true;
                     document.getElementById('run-btn').addEventListener('click', () => {
                         this.refreshOutput();
@@ -635,7 +637,7 @@ export default {
 
 
                     document.getElementById('submit-btn').addEventListener('click', async () => {
-                        
+
                         // console.log("press submit");
                         var studentCode = this.getStudentCode(parson);
                         var feedback = parson.getFeedback();
@@ -643,13 +645,13 @@ export default {
                         this.stopTimer();
                         this.blockSubmission();
                         if (!this.emptyCheck(studentCode) && !this.duplicateCheck(studentCode)) {
-                            await this.runSubmit(studentCode, solution,parson);
+                            await this.runSubmit(studentCode, solution, parson);
                             this.refreshTimer();
                         }
                         this.startTimer();
                         this.activeSubmission();
                     });
-    
+
                     document.getElementById('reset-btn').addEventListener('click', () => {
                         parson.shuffleLines(); // Reshuffle the blocks for a new attempt
                         this.refreshOutput();
@@ -690,7 +692,7 @@ export default {
 
         //Checks if students result is correct and send record to database
         //shows if students result is correct on the page
-        async runSubmit(studentCode, solution,parson) {
+        async runSubmit(studentCode, solution, parson) {
 
             this.refreshOutput();
             // console.log(1);
@@ -702,7 +704,7 @@ export default {
             // console.log('feedback');
             // console.log(parson.getFeedback());
             // console.log(1);
-            
+
             console.log('feedback finish');
             if (!studentAnswer.error) {
                 const solutionOutputString = solution.output.trim();
@@ -710,25 +712,25 @@ export default {
 
                 if (solutionOutputString === studentOutputString) {
                     console.log("same");
-                    if(parson.getFeedback() === ''){
+                    if (parson.getFeedback() === '') {
                         document.getElementById('resultMessage').style.display = 'block';
                         // li.style.backgroundolor = "#efffef";
                         this.sendAttempt(1); // 提交正确的尝试
-                    }else{
+                    } else {
                         console.log("Order is not the same, but output is correct ^o^y");
                         document.getElementById('resultMessage').style.display = 'block';
                         // li.style.backgroundcolor = "#efffef";
                         this.sendAttempt(1); // 提交正确的尝试
                     }
-                    
+
                 } else {
                     //  console.log("not same");
                     // console.log(solution.output);
                     // console.log(studentAnswer.output);
-                    
+
                     this.sendAttempt(0); // 提交错误的尝试
                     this.showErrorPop("Oops, some logic errors here ~ （；´д｀）ゞ")
-                    
+
                 }
             }
             else {
@@ -1025,7 +1027,7 @@ main {
         text-align: flex-start;
     } */
 
-#output-icon{
+#output-icon {
     font-size: 22px;
 }
 
@@ -1161,16 +1163,20 @@ main {
         scrollbar-gutter: stable;
     } */
 #sortableTrash {
-    width: calc(100% - 45px); /* 确保宽度适应父容器 */
+    width: calc(100% - 45px);
+    /* 确保宽度适应父容器 */
     background: #13d4bd00;
     max-height: 50%;
     overflow-y: auto;
     overflow-x: hidden;
     font-size: 12px;
-    margin: 5px 35px; /* 左右外边距 */
+    margin: 5px 35px;
+    /* 左右外边距 */
     border-left: 3px solid #6e8c64;
-    padding: 10px; /* 添加内边距来增加可视空间 */
-    box-sizing: border-box; /* 确保 padding 包含在宽度内 */
+    padding: 10px;
+    /* 添加内边距来增加可视空间 */
+    box-sizing: border-box;
+    /* 确保 padding 包含在宽度内 */
 }
 
 /* 鼠标悬浮时显示滚动条 */
@@ -1349,14 +1355,14 @@ button i {
     font-weight: 600;
 }
 
-.popupwindows{
+.popupwindows {
     margin: 0;
     padding-top: 0;
     /* padding-bottom: 0; */
 }
 
-#errorMessage{
- background-color: #fe7e88;
+#errorMessage {
+    background-color: #fe7e88;
 }
 
 #button-container {
@@ -1415,6 +1421,7 @@ button i {
     transform: scale(2.0) rotate(360deg);
     /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); */
 }
+
 /* 以上为弹窗格式 */
 
 
@@ -1553,14 +1560,14 @@ button i {
         font-size: 14px;
         height: 65px;
         width: 300px;
-        
+
     }
 
     #errorMessage {
         font-size: 14px;
     }
 
-    #button-container{
+    #button-container {
         gap: 10px;
     }
 
@@ -1569,7 +1576,7 @@ button i {
         font-size: 12px;
         font-weight: 500;
         min-width: 70px;
-        
+
         white-space: nowrap;
     }
 
