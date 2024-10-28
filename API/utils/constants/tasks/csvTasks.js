@@ -6,8 +6,8 @@ taskCSVRead.push("- Read a CSV file using the pandas library, and use it to crea
 taskCSVRead.push("- Read a CSV file without using the pandas library, and use it to create a DataFrame.\n");
 
 let taskCSVWrite = [];
-taskCSVWrite.push("- Create a DataFrame and write its content to a CSV file using the pandas libary.\n");
-taskCSVWrite.push("- Create a DataFrame and write its content to a CSV file without using the pandas libary.\n");
+taskCSVWrite.push("- Create a DataFrame and write its content to a CSV file using the pandas library.\n");
+taskCSVWrite.push("- Create a DataFrame and write its content to a CSV file without using the pandas library.\n");
 
 let taskCSVBoth = [];
 taskCSVBoth.push("- Read a CSV file using the pandas library, use it to create a DataFrame, and write the contents of the DataFrame to a new CSV file.\n");
