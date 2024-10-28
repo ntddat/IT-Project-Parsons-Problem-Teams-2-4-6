@@ -12,11 +12,11 @@ taskDFSort.push(" sort the DataFrame in ascending order.\n");
 taskDFSort.push(" sort the DataFrame in descending order.\n"); 
 
 let taskDFGroupby = [];
-taskDFGroupby.push(" use groupby and the Pandas sum function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and the Pandas sum function on the original DataFrame, and print the grouped DataFrame.\n");
 //taskDFGroupby.push(" use groupby and the Pandas count function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-taskDFGroupby.push(" use groupby and the Pandas mean function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-taskDFGroupby.push(" use groupby and the Pandas median function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
-taskDFGroupby.push(" use groupby and the Pandas mode function on the original DataFrame, and the Pandas print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and the Pandas mean function on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and the Pandas median function on the original DataFrame, and print the grouped DataFrame.\n");
+taskDFGroupby.push(" use groupby and the Pandas mode function on the original DataFrame, and print the grouped DataFrame.\n");
 //taskDFGroupby.push(" use groupby and agg on the original DataFrame, and print the grouped DataFrame.\n");
 
 let taskDFJoin = [];
