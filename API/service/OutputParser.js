@@ -215,9 +215,7 @@ export function processString(string) {
  * Checks if the code gemini generated defines any functions that aren't subsequently used
  * MAKES THE ASSUMPTION THAT IF THE FUNCTION NAME APPEARS TWICE AND THE CODE IS SYNTACTICALLY CORRECT
  * THEN THE FUNCTION MUST BE CALLED AT LEAST ONCE
- * 
- * ^This fails if a function name is a substring of another
- * 
+ *  
  * It first identifies the names of all defined functions. Then it matches for strings that don't
  * start with def and aren't included within '' and "". Then 
  * This does not account for the possibility of a function call beingincluded within
