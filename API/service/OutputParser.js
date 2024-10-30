@@ -85,9 +85,6 @@ export function processString(string) {
 
   for (let i = 0; i < string.length; i++) {
     currentChar = string[i];
-
-    //flags
-
     //Assuming comments end in a newline character
     //Also assuming that the ai doesn't write code on the same line as a comment following the comment
     if (!commentFlag && !commentFlag2) {
@@ -133,7 +130,7 @@ export function processString(string) {
     }
 
     //Doesn't handle multiple embedded quotation marks ie: "'""'"
-    //For when a new line character appears within a console.log statement
+    //For when a new line character appears within a print statement
     // eg ("Number of cats:\n)
     if (acceptNewLines) {
       if (currentChar == "'") {
@@ -233,8 +230,10 @@ export function checkUnusedFunctions(pythonCode) {
   let functionName = "";
   let lookForCalls = [];
   //make a list of names of defined functions
-  for (let i = 0; i < pythonCode.length - 2; i++) {
-    if (!defFlag && pythonCode[i] == "d" && pythonCode[i+1] == "e" && pythonCode[i+2] == "f") {
+  for (let i = 0; i < pythonCode.length - 3; i++) {
+    if (!defFlag && pythonCode[i] == "d" && pythonCode[i+1] == "e" && pythonCode[i+2] == "f" &&
+        (pythonCode[i+3] == " " || pythonCode[i+3] == "\t")
+    ) {
       defFlag = true;
       i = i + 2;
       continue;
