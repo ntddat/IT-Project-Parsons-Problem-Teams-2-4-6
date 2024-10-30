@@ -247,7 +247,7 @@ export function checkUnusedFunctions(pythonCode) {
     }
 
     //If we just saw a def then start building function name
-    if (defFlag && pythonCode[i] != " "){
+    if (defFlag && pythonCode[i] != " " && pythonCode[i] != "\t"){
       functionName = functionName + pythonCode[i];
     }
   }
