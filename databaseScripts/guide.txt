@@ -1,0 +1,38 @@
+// PLAYGROUND CONNECTION GUIDE
+// https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
+
+Step 1: Go to MongoDB on the web, login using the team email, navigate to clusters and hit "Connect" on ParsonsProblemCluster.
+
+Step 2: Go to drivers and follow instructions. Copy the Connection String (replace <db_password> with real password).
+We will use this in a bit.
+
+Step 3: Install MongoDB for VSCode Extension on VSCode (Extensions tab on your left).
+
+Step 4: Open the MongoDB tab (on your left, looks like a leaf). Hit the plus (+) when you hover over collections.
+
+Step 5: Paste the Connection String and hit Enter.
+
+Step 6: Create a New Playground (hit plus(+) when you hover over playgrounds), then can do what you want (e.g. copy paste pre-existing scripts)
+Hit run (near top right of screen) and the refresh MongoDB on the web, it will be changed.
+
+
+// PLAYGROUND GUIDE
+
+// Select the DATABASE to use.
+use('example'); <- insert database name, not cluster or collection
+
+// Delete a few documents from the desired collection
+db.getCollection('example_collection').deleteMany({
+  "a": 1234, <- narrow down on search (e.g. There are 3 entries, but only one has "a": Number -> delete that only)
+}); 
+Empty -> delete all documents from the collection
+
+// Insert a few documents into the desired collection.
+db.getCollection('example_collection').insertMany([ <- to insert into the collection
+  {
+    "a": 1234, <- data based on how you shaped the model (e.g. "a": Number)
+    "b": "hello", <- data based on how you shaped the model (e.g. "b": String)
+    "c": true, <- data based on how you shaped the model (e.g. "c": Boolean)
+  },
+]);
+
