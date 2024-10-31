@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import LZString from 'lz-string';
 
 // Importing our modules
-import { outputParserJson, checkUnusedFunctions} from "./OutputParser.js";
+import { outputParserJson, replaceSpacesWithTabs, processString} from "./OutputParser.js";
 import { findClosestTopic } from "../utils/constants/TopicsContexts.js";
 import { createCSV, syntaxCheck } from "../utils/functions/compiler.js";
 import { PythonShell } from 'python-shell';
