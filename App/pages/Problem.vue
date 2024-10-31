@@ -439,6 +439,7 @@ export default {
             this.stopTimer();
             this.blockSubmission();
             this.refreshOutput();
+            // document.getElementsByClassName('sortable-code').textContent = '';
             var payload;
             if (this.$cookies.isKey("userID")) {
                 payload = {
@@ -491,6 +492,8 @@ export default {
                     this.startTimer();
                     this.activeSubmission();
                     this.activeRegeneration();
+                    // this.parson.shuffleLines();
+                    
                 });
         },
 
@@ -613,6 +616,8 @@ export default {
                     document.getElementById('reset-btn').removeEventListener('click', this.resetListener);
                     document.getElementById('window-retry-btn').removeEventListener('click', this.retryListener);
                     document.getElementById('correct-escape-btn').removeEventListener('click', this.escapeListener);
+                    document.getElementById('regenerate-btn').removeEventListener('click', this.regenerateListener);
+                    document.getElementById('window-regenerate-btn').removeEventListener('click', this.windowRegenerateListener);
                 }
 
 
@@ -636,6 +641,14 @@ export default {
                         //document.getElementById('output').textContent = studentCode; // Display the code
                     });
 
+                    document.getElementById('regenerate-btn').addEventListener('click', async () => {
+
+                        parson.shuffleLines();
+                    });
+                    document.getElementById('window-regenerate-btn').addEventListener('click', async () => {
+
+                        parson.shuffleLines();
+                    });
 
                     document.getElementById('submit-btn').addEventListener('click', async () => {
 
