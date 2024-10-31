@@ -23,7 +23,7 @@ const questionController = {
       
       // Generate a new question ID
       const questionID = await questionService.generateNewQuestionID(questionsDbName);
-      if (!questionID.success) {
+      if (!questionID) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,
           message: "Error generating new question ID"
