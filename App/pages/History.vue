@@ -7,195 +7,193 @@
 // @ Version: 1.0.0
 // ==========================================================
 <template>
-    <div class="history">
-        <!-- Navigation Bar -->
-        <nav class="top">
-            <div class="back-links" v-if="showBack" @click="backButton">
-                <svg t="1729144190487" class="top-logo" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="4866" xmlns:xlink="http://www.w3.org/1999/xlink"
-                    width="25px" height="25px">
-                    <path
-                        d="M485.6 249.9L198.2 498c-8.3 7.1-8.3 20.8 0 27.9l287.4 248.2c10.7 9.2 26.4 0.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z m320 0L518.2 498c-4.1 3.6-6.2 8.8-6.2 14 0 5.2 2.1 10.4 6.2 14l287.4 248.2c10.7 9.2 26.4 0.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z"
-                        fill="#2c2c2c" p-id="4867"></path>
-                </svg>
-                <div class="back">Back to {{ backWords }}</div>
-            </div>
-            <div class="header" v-else>
-                <img src="/App/logo.png" alt="Logo" class="top-logo" />
-                <div class="web-name">Learnr</div>
-            </div>
-            <div class="info-mes" v-if="showData">Get more information by clicking on the list below</div>
-            <div class="nav-links">
-                <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
-                <router-link to="/Generator" class="nav-link">Home</router-link>
-            </div>
-        </nav>
-        <!-- Navigation Bar -->
 
-        <!-- Load animation -->
-        <div v-if="isLoading" class="loading-overlay">
-            <div class="spinner"></div>
-            <p class="loading-text">{{ loadingWord }}</p>
+    <!-- Navigation Bar -->
+    <nav class="top">
+        <div class="back-links" v-if="showBack" @click="backButton">
+            <svg t="1729144190487" class="top-logo" viewBox="0 0 1024 1024" version="1.1"
+                xmlns="http://www.w3.org/2000/svg" p-id="4866" xmlns:xlink="http://www.w3.org/1999/xlink" width="25px"
+                height="25px">
+                <path
+                    d="M485.6 249.9L198.2 498c-8.3 7.1-8.3 20.8 0 27.9l287.4 248.2c10.7 9.2 26.4 0.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z m320 0L518.2 498c-4.1 3.6-6.2 8.8-6.2 14 0 5.2 2.1 10.4 6.2 14l287.4 248.2c10.7 9.2 26.4 0.9 26.4-14V263.8c0-14.8-15.7-23.2-26.4-13.9z"
+                    fill="#2c2c2c" p-id="4867"></path>
+            </svg>
+            <div class="back">Back to {{ backWords }}</div>
         </div>
-        <!-- Load animation -->
-
-        <!-- Main Body -->
-        <div v-show="!isLoading">
-            <!-- Not accept Page -->
-            <div id="notacceptCookie" v-if="!showData">
-                <div id="cookie-request">You must accept the cookie if you want check this page</div>
-                <button @click="accept" id="accept-btn">Accept</button>
-            </div>
-            <!-- Not accept Page -->
-
-            <!-- User data Page -->
-            <div id="cont_box" v-else>
-
-                <!-- Profile Section -->
-                <div class="profile-container">
-                    <div class="profile-header">
-                        <div class="profile-pic">
-                            <span class="profile-initial">{{ userName.charAt(0).toUpperCase() }}</span>
-                        </div>
-                        <div class="profile-info">
-
-                            <!-- Name Edit -->
-                            <h1 v-if="!editing">
-                                {{ userName }}
-                                <img v-show="canEditName" @click="startEditing" src="/App/assets/icon/edit.png"
-                                    width="20" height="20"></img>
-                            </h1>
-                            <div v-else>
-                                <input v-model="newName" @keyup.enter="saveName" type="text" class="name-input"
-                                    autofocus />
-                                <button class="changeNameButton" @click="saveName">Change</button>
-                                <button class="changeNameButton" @click="NotChangeName">Not Now</button>
-                            </div>
-                            <!-- Name Edit -->
-
-                            <h3>#{{ userID.toString().padStart(5, '0') }}</h3>
-
-                        </div>
-                    </div>
-                    <div class="stats">
-                        <div class="stat">
-                            <h2>{{ accuracy }}%</h2>
-                            <p>Accuracy</p>
-                        </div>
-                        <div class="stat1"></div>
-                        <div class="stat">
-                            <h2>{{ exercises }}</h2>
-                            <p>Exercises</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Profile Section -->
-
-                <!-- Graph Section -->
-                <div class="graph-container">
-                    <div id="graph"></div>
-                </div>
-                <!-- Graph Section -->
-
-                <!-- History Section -->
-                <div class="history-container">
-                    <!-- History Header -->
-                    <div class="history-header">
-                        <span class="header-topic">Topic</span>
-                        <span class="tit_text header-practice">Total Practice</span>
-                        <span class="tit_text header-accuracy">Accuracy</span>
-                    </div>
-                    <!-- History Header -->
-
-                    <!-- History detail -->
-                    <ul class="history-list">
-                        <li v-for="(item, index) in topicSummary" :key="index">
-                            <div @click="questionDropdown(index)" class="history-item">
-                                <div class="history-topic">
-                                    <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
-                                </div>
-                                <div class="history-practice">
-                                    {{ item.numQuestions }}
-                                </div>
-                                <div class="history-accuracy">
-                                    {{ item.accuracy }}%
-                                </div>
-                            </div>
-
-                            <!-- Question details -->
-                            <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
-
-                                <div class="question-header">
-                                    <span class="question-topic">Question</span>
-                                    <span class="question-attempts">Attempts</span>
-                                    <span class="question-time">Total-Time (minutes)</span>
-                                    <span class="question-correct">Had Been Correct</span>
-                                </div>
-
-                                <ul class="question-datas">
-                                    <li @click="attemptDropdown(index, questionIndex)"
-                                        v-for="(question, questionIndex) in item.attemptedQuestions"
-                                        :key="questionIndex" class="question-data">
-                                        <div class="question">
-                                            {{ questionIndex + 1 }}
-                                        </div>
-                                        <div class="attempts">
-                                            {{ question.numAttempts }}
-                                        </div>
-                                        <div class="time">
-                                            {{ (question.totalTime / 60).toFixed(2) }}
-                                        </div>
-                                        <div class="correct">
-                                            <img :src="question.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
-                                                alt="Correctness">
-                                        </div>
-
-                                        <!-- Attempts details -->
-                                        <div v-show="question.isExpanded" class="attempt-dropdown">
-                                            <div class="attempts-header">
-                                                <span class="question-topic">Attempt</span>
-                                                <span class="question-time">Time (minutes)</span>
-                                                <span class="question-correct">Correct</span>
-                                            </div>
-
-                                            <ul class="attempts-datas">
-                                                <li v-for="(attempt, attemptIndex) in question.attempts"
-                                                    :key="attemptIndex" class="attempts-data">
-                                                    <div class="attempt">
-                                                        {{ attempt.attemptID }}
-                                                    </div>
-                                                    <div class="time">
-                                                        {{ (attempt.time / 60).toFixed(2) }}
-                                                    </div>
-                                                    <div class="correct">
-                                                        <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
-                                                            alt="Correctness">
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <!-- Attempts details -->
-
-                                    </li>
-                                </ul>
-
-                            </div>
-                            <!-- Question details -->
-
-                        </li>
-                    </ul>
-                    <!-- History detail -->
-
-                </div>
-                <!-- History Section -->
-
-            </div>
-            <!-- User data Page -->
-
+        <div class="header" v-else>
+            <img src="/App/logo.png" alt="Logo" class="top-logo" />
+            <div class="web-name">Learnr</div>
         </div>
-        <!-- Main Body -->
+        <div class="info-mes" v-if="showData">Get more information by clicking on the list below</div>
+        <div class="nav-links">
+            <router-link to="/AdminLogin" class="nav-link">Admin</router-link>
+            <router-link to="/Generator" class="nav-link">Home</router-link>
+        </div>
+    </nav>
+    <!-- Navigation Bar -->
 
+    <!-- Load animation -->
+    <div v-if="isLoading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p class="loading-text">{{ loadingWord }}</p>
     </div>
+    <!-- Load animation -->
+
+    <!-- Main Body -->
+    <div v-show="!isLoading">
+        <!-- User data Page -->
+        <div id="cont_box" v-if="showData">
+
+            <!-- Profile Section -->
+            <div class="profile-container">
+                <div class="profile-header">
+                    <div class="profile-pic">
+                        <span class="profile-initial">{{ userName.charAt(0).toUpperCase() }}</span>
+                    </div>
+                    <div class="profile-info">
+
+                        <!-- Name Edit -->
+                        <h1 v-if="!editing">
+                            {{ userName }}
+                            <img v-show="canEditName" @click="startEditing" src="/App/assets/icon/edit.png" width="20"
+                                height="20"></img>
+                        </h1>
+                        <div v-else>
+                            <input v-model="newName" @keyup.enter="saveName" type="text" class="name-input" autofocus />
+                            <button class="changeNameButton" @click="saveName">Change</button>
+                            <button class="changeNameButton" @click="NotChangeName">Not Now</button>
+                        </div>
+                        <!-- Name Edit -->
+
+                        <h3>#{{ userID.toString().padStart(5, '0') }}</h3>
+
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <h2>{{ accuracy }}%</h2>
+                        <p>Accuracy</p>
+                    </div>
+                    <div class="stat1"></div>
+                    <div class="stat">
+                        <h2>{{ exercises }}</h2>
+                        <p>Exercises</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Profile Section -->
+
+            <!-- Graph Section -->
+            <div class="graph-container">
+                <div id="graph"></div>
+            </div>
+            <!-- Graph Section -->
+
+            <!-- History Section -->
+            <div class="history-container">
+                <!-- History Header -->
+                <div class="history-header">
+                    <span class="header-topic">Topic</span>
+                    <span class="tit_text header-practice">Total Practice</span>
+                    <span class="tit_text header-accuracy">Accuracy</span>
+                </div>
+                <!-- History Header -->
+
+                <!-- History detail -->
+                <ul class="history-list">
+                    <li v-for="(item, index) in topicSummary" :key="index">
+                        <div @click="questionDropdown(index)" class="history-item">
+                            <div class="history-topic">
+                                <img class="tubiao" src="/App/tubiao.png" /> {{ item.topic }}
+                            </div>
+                            <div class="history-practice">
+                                {{ item.numQuestions }}
+                            </div>
+                            <div class="history-accuracy">
+                                {{ item.accuracy }}%
+                            </div>
+                        </div>
+
+                        <!-- Question details -->
+                        <div v-show="item.isExpanded" class="question-dropdown" v-if="item.numQuestions != 0">
+
+                            <div class="question-header">
+                                <span class="question-topic">Question</span>
+                                <span class="question-attempts">Attempts</span>
+                                <span class="question-time">Total-Time (minutes)</span>
+                                <span class="question-correct">Had Been Correct</span>
+                            </div>
+
+                            <ul class="question-datas">
+                                <li @click="attemptDropdown(index, questionIndex)"
+                                    v-for="(question, questionIndex) in item.attemptedQuestions" :key="questionIndex"
+                                    class="question-data">
+                                    <div class="question">
+                                        {{ questionIndex + 1 }}
+                                    </div>
+                                    <div class="attempts">
+                                        {{ question.numAttempts }}
+                                    </div>
+                                    <div class="time">
+                                        {{ (question.totalTime / 60).toFixed(2) }}
+                                    </div>
+                                    <div class="correct">
+                                        <img :src="question.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
+                                            alt="Correctness">
+                                    </div>
+
+                                    <!-- Attempts details -->
+                                    <div v-show="question.isExpanded" class="attempt-dropdown">
+                                        <div class="attempts-header">
+                                            <span class="question-topic">Attempt</span>
+                                            <span class="question-time">Time (minutes)</span>
+                                            <span class="question-correct">Correct</span>
+                                        </div>
+
+                                        <ul class="attempts-datas">
+                                            <li v-for="(attempt, attemptIndex) in question.attempts" :key="attemptIndex"
+                                                class="attempts-data">
+                                                <div class="attempt">
+                                                    {{ attempt.attemptID }}
+                                                </div>
+                                                <div class="time">
+                                                    {{ (attempt.time / 60).toFixed(2) }}
+                                                </div>
+                                                <div class="correct">
+                                                    <img :src="attempt.correct ? '/App/assets/icon/true.png' : '/App/assets/icon/false.png'"
+                                                        alt="Correctness">
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- Attempts details -->
+
+                                </li>
+                            </ul>
+
+                        </div>
+                        <!-- Question details -->
+
+                    </li>
+                </ul>
+                <!-- History detail -->
+
+            </div>
+            <!-- History Section -->
+
+        </div>
+        <!-- User data Page -->
+
+        <!-- Not accept Page -->
+        <div id="notacceptCookie" v-else>
+            <div id="cookie-request">You must accept the cookie if you want check this page</div>
+            <button @click="accept" id="accept-btn">Accept</button>
+        </div>
+        <!-- Not accept Page -->
+    </div>
+    <!-- Main Body -->
+
+
 </template>
 
 <script>
