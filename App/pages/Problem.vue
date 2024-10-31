@@ -9,9 +9,9 @@
 <template>
 
     <body>
-        <!-- 导航 + 计时 -->
+        <!-- Navigation Bar + Clock -->
         <div id=" top-panel">
-            <!-- 导航栏 -->
+            <!-- Navigation Bar -->
             <nav class="top">
                 <div class="header">
                     <img src="/App/logo.png" alt="Logo" class="top-logo" />
@@ -24,7 +24,7 @@
                 </div>
             </nav>
 
-            <!-- 进度条 -->
+            <!-- Clock -->
             <div id="progress-container">
                 <!-- <div id="progress-percent">0%</div>
                 <div id="progress-bar">
@@ -37,9 +37,9 @@
             </div>
         </div>
 
-        <!-- 下部分，问题+输出 -->
+        <!-- Main Body -->
         <main id="main-box">
-            <!-- 左侧面板，问题和拖动代码块的区域 -->
+            <!-- Left Panel: Question Description and Draggable Code Block -->
             <div id="left-panel">
 
                 <div v-if="loading" id="loading-overlay">
@@ -65,10 +65,10 @@
                 <div id="sortableTrash" class="sortable-code"> </div>
             </div>
 
-            <!-- 可拖动的中分线 -->
+            <!-- Mid Resizable Split Pane -->
             <div id="divider"></div>
 
-            <!-- 右侧面板，用户构建解决方案的区域 -->
+            <!-- Right Panel: Answer Area and Feedback Area -->
             <div id="right-panel">
                 <div id="right-top">
                     <!-- <div id="code-table"> -->
@@ -87,10 +87,10 @@
                     </div>
                 </div>
 
-                <!-- 右侧可移动线 -->
+                <!-- Right Resizable Split Pane -->
                 <div id="horizontal-divider"></div>
 
-                <!-- output 栏 -->
+                <!-- Output -->
                 <div id="calculated-value">
                     <div id="output-icon">
                         <!-- <i class="fas fa-chevron-left"></i> 
@@ -103,6 +103,7 @@
                 </div>
             </div>
 
+            <!-- Feedback PopUp -->
             <div class="popupwindows" id="resultMessage">
                 <button class="escape-btn" id="correct-escape-btn" @click="closePop"><i
                         class="fa-solid fa-xmark"></i></button>

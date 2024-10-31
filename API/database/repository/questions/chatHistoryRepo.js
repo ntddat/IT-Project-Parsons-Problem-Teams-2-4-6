@@ -13,10 +13,10 @@ const getChatHistoryModel = async (questionsDbName) =>{
 }
 
 const chatHistoryRepo = {
-  getChatHistory: async (userID, questionsDbName) => {
+  getChatHistory: async (userID, questionsDbName, topic) => {
     const chatHistoryModel = await getChatHistoryModel(questionsDbName);
     const chatHistory = await chatHistoryModel.find(
-      { userID: userID },
+      { userID: userID, topic: topic },
       { 
         prompt: 1, 
         question: 1, 
@@ -44,9 +44,7 @@ const chatHistoryRepo = {
     
       transformedHistory.push(user, model)
     });
-
-    // console.log(userID)
-    // console.log("testing")
+    
     return transformedHistory;
   },
   createNewChatHistory: async (userID, topic, context, prompt, question, questionsDbName) => {

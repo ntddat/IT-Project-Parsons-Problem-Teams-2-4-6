@@ -3,16 +3,29 @@ import questionRepo from "../../database/repository/questions/questionRepo.js";
 import { topicsList } from "../../utils/constants/TopicsContexts.js";
 
 const userDataService = {
+  /**
+   * @param {*} usersDbName: the name of the database containing the user_data collection
+   * @returns a new user ID
+   */
   newUserID: async (usersDbName) => {
     try {
+      // generate a new user ID
       const userID = await userDataRepo.newUserID(usersDbName);
-      const newUser = await userDataRepo.createUser(userID, topicsList, usersDbName);
-      if (!userID || !newUser) {
+      if (!userID) {
         return {
           success: false,
-          message: "Error generating new user ID and new user",
+          message: "Error generating new user ID",
         };
       }
+      // create a new user with the new user ID with fresh analytics, using the topicsList in TopicsContexts.js
+      const newUser = await userDataRepo.createUser(userID, topicsList, usersDbName);
+      if (!newUser) {
+        return {
+          success: false,
+          message: "Error saving new user",
+        };
+      }
+
       return {
         success: true,
         message: "New user ID generated successfully",
@@ -27,8 +40,15 @@ const userDataService = {
     }
   },
 
+  /**
+   * @param {*} userID: the ID of the user
+   * @param {*} newUsername: the new username to change to
+   * @param {*} usersDbName: the name of the database containing the user_data collection
+   * @returns true if the username was changed successfully, false otherwise
+   */
   changeUsername: async (userID, newUsername, usersDbName) => {
     try {
+      // change username for the user
       const result = await userDataRepo.changeUsername(userID, newUsername, usersDbName);
       if (!result.acknowledged) {
         return {
@@ -49,8 +69,14 @@ const userDataService = {
     }
   },
 
+  /**
+   * @param {*} userID: the ID of the user
+   * @param {*} usersDbName: the name of the database containing the user_data collection
+   * @returns the user data if found, or an error message if not
+   */
   getUserData: async (userID, usersDbName) => {
     try {
+      // get the user data
       const user = await userDataRepo.getUserData(userID, usersDbName);
       if (!user) {
         return {
@@ -73,6 +99,11 @@ const userDataService = {
     }
   },
 
+  /**
+   * @param {*} userData: the user data to enrich with question details
+   * @param {*} questionsDbName: the name of the database containing the questions_details collection
+   * @returns the user data enriched with question details if successful, or an error message if not
+   */
   addQuestionDetailsToUserData: async (userData, questionsDbName) => {
     try {
       // squash everything into a giant list of questionIDs
@@ -111,6 +142,15 @@ const userDataService = {
     }
   },
 
+  /**
+   * @param {*} userID: the ID of the user
+   * @param {*} topic: the topic of the question
+   * @param {*} correct: whether the ATTEMPT was correct
+   * @param {*} time: the amount of time of the ATTEMPT
+   * @param {*} questionID: the ID of the question
+   * @param {*} usersDbName: the name of the database containing the user_data collection
+   * @returns a successful message if the user analytics were updated successfully, or an error message if not
+   */
   updateUserAnalytics: async (userID, topic, correct, time, questionID, usersDbName) => {
     try {
       const result = await userDataRepo.updateUserAnalytics(userID, topic, correct, time, questionID, usersDbName);
