@@ -20,9 +20,17 @@ const questionController = {
       }
     
       const questionsDbName = await getQuestionsDbName();
-    
-      const questionID = await questionService.generateNewQuestionID(questionsDbName);
       
+      // Generate a new question ID
+      const questionID = await questionService.generateNewQuestionID(questionsDbName);
+      if (!questionID.success) {
+        return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message: "Error generating new question ID"
+        });
+      }
+      
+      // ask Gemini for a question
       const question = await askGemini(topic, context, userID, regeneration);
       if (!question.success) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
@@ -31,15 +39,15 @@ const questionController = {
         });
       }
 
-      // save this question to the database
-      const saveResult = await questionService.saveNewQuestion(questionID, topic, context, questionsDbName);
+      // save this question to the database as a fresh, no analytics question
+      const saveResult = await questionService.createNewQuestion(questionID, topic, context, questionsDbName);
       if (!saveResult.success) {
         return res.status(httpCodes.INTERNAL_SERVER_ERROR).json({
           success: false,
-          message: saveResult.message
+          message: "Error saving a new question"
         });
       }
-    
+  
       return res.status(httpCodes.OK).json({
         success: true,
         message: "Question generated successfully",

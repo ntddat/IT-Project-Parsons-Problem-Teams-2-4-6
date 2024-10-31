@@ -3,9 +3,14 @@ import { getUsersDbName, getQuestionsDbName } from '../../utils/functions/dbName
 import httpCodes from "../../utils/constants/httpsCodes.js";
 
 const userController = {
+  /**
+   * Request: { }
+   * Response: { success, message, userID }
+   */
   newUserID: async (req, res) => {
     try {
       const usersDbName = await getUsersDbName();
+      // generate a new user ID
       const userID = await userDataService.newUserID(usersDbName);
       if (!userID.success) {
         return res.status(httpCodes.BAD_REQUEST).json({

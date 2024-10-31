@@ -94,6 +94,8 @@ const questionRepo = {
   },
 
   // -------------------------------------UPDATES-------------------------------------
+
+  // returns the new question ID for this question (number of questions already saved + 1)
   generateNewQuestionID: async (questionsDbName) => {
     try {
       const questionModel = await getQuestionModel(questionsDbName);
@@ -105,6 +107,7 @@ const questionRepo = {
     }
   },
 
+  // saves a new question with this questionID, topic, and context
   createNewQuestion: async (questionID, topic, context, questionsDbName) => {
     try {
       const questionModel = await getQuestionModel(questionsDbName);
@@ -113,6 +116,7 @@ const questionRepo = {
         topic: topic,
         context: context,
       });
+      // since default values are added to the model, we don't need to add them here
       return await newQuestion.save();
     } catch (e) {
       console.error("Error saving the question:", e);
@@ -120,6 +124,7 @@ const questionRepo = {
     }
   },
 
+  // returns the new attempt ID for this question (number of attempts already made + 1)
   generateNewAttemptID: async (questionID, questionsDbName) => {
     try {
       const questionModel = await getQuestionModel(questionsDbName);
@@ -137,8 +142,10 @@ const questionRepo = {
       const questionModel = await getQuestionModel(questionsDbName);
       // Only updates the fields that are present in updatedDetails
       return await questionModel.updateOne(
+        // find the question with this questionID to update
         { questionID: questionID },
         { 
+          // increase the number of attempts by 1, add the time to the total time
           $inc: {
             numAttempts: 1,
             totalTime: time,
@@ -146,6 +153,7 @@ const questionRepo = {
           $max: {
             correct: correct, // makes it so it only updates if correct is true, and never updates if correct is false
           },
+          // add the attempt deatils, which contains attemptID, time, and correctness to the list of attempts
           $push: {
             attempts: {
               attemptID: attemptID,
