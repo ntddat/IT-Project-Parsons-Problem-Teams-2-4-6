@@ -22,6 +22,9 @@ node_modules/
 script.py
 test.py
 
+# Ignore testing folder
+testLogs/
+
 #TEAM 2's GITIGNORE
 # Logs
 logs

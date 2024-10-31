@@ -1,8 +1,12 @@
 import questionRepo from '../../database/repository/questions/questionRepo.js'
 const questionService = {
-  generateNewQuestionID: async (dbName) => {
+  /**
+   * @param {*} questionsDbName: the name of the database containing the questions_details collection
+   * @returns a new questionID based on the number of questions already saved
+   */
+  generateNewQuestionID: async (questionsDbName) => {
     try {
-      return await questionRepo.generateNewQuestionID(dbName);
+      return await questionRepo.generateNewQuestionID(questionsDbName);
     } catch (e) {
       console.error('Error generating new question ID:', e);
       return {
@@ -12,7 +16,14 @@ const questionService = {
     }
   },
 
-  saveNewQuestion: async (questionID, topic, context, questionsDbName) => {
+  /**
+   * @param {*} questionID: the ID of the question
+   * @param {*} topic: the topic of the question
+   * @param {*} context: the context of the question
+   * @param {*} questionsDbName: the name of the database containing the questions_details collection
+   * @returns a successful message if the question was saved successfully, or an error message if not
+   */
+  createNewQuestion: async (questionID, topic, context, questionsDbName) => {
     try {
       const createResult = await questionRepo.createNewQuestion(questionID, topic, context, questionsDbName);
       if (!createResult) {
@@ -34,9 +45,18 @@ const questionService = {
     }
   },
 
+  /**
+   * @param {*} questionID: the ID of the question
+   * @param {*} time: the amount of time of the ATTEMPT
+   * @param {*} correct: whether the ATTEMPT was correct
+   * @param {*} questionsDbName: the name of the database containing the questions_details collection
+   * @returns a successful message if the question details were updated successfully, or an error message if not
+   */
   updateQuestionDetails: async (questionID, time, correct, questionsDbName) => {
     try {
+      // generate a new attemptID based on the number of attempts already made for this question
       const newAttemptID = await questionRepo.generateNewAttemptID(questionID, questionsDbName);
+      // update the question details with the new attempt
       const updateResults = await questionRepo.updateQuestionDetails(newAttemptID, questionID, time, correct, questionsDbName);
       if (!updateResults.acknowledged) {
         return {

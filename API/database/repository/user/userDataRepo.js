@@ -15,15 +15,18 @@ const getUserDataModel = async (usersDbName) => {
 
 const userDataRepo = {
   // -------------------------------------FOR USER ANALYTICS-------------------------------------
+  // Get the user data of the user with the given userID
   getUserData: async (userID, usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
       
       const result = await userDataModel.aggregate([
+        // match the user with the given userID
         { $match: { userID: userID } },
         {
           $project: {
-            _id: 0,
+            _id: 0, // exclude the _id field
+            // include the following fields
             userID: 1,
             name: 1,
             accuracy: 1,
@@ -45,7 +48,7 @@ const userDataRepo = {
           }
         }
       ]);
-      return result[0];
+      return result[0]; // aggregate returns an array, so return the first element
     } catch (e) {
       console.error("Error getting user data:", e);
       throw e;
@@ -53,18 +56,23 @@ const userDataRepo = {
   },
 
   //-------------------------------------FOR ADMIN ANALYTICS-------------------------------------
+  // Get the summary of all users' data
   getUserSummaryOfTopic: async (usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
 
       const result = await userDataModel.aggregate([
-        { $unwind: "$topicSummary" },
+        { $match: { userID: { $ne: 1 } } }, // Exclude the control user
+        { $unwind: "$topicSummary" }, // unwinds the array into individual documents, one for each topic for each user
         {
           $group: {
-            _id: "$topicSummary.topic",
-            numQuestions: { $sum: "$topicSummary.numQuestions" },
-            numCorrect: { $sum: "$topicSummary.numCorrect" },
+            _id: "$topicSummary.topic", // group by topic
+            // for each topic:
+            numQuestions: { $sum: "$topicSummary.numQuestions" }, // sum up numQuestions of the topic from ALL USERS
+            numCorrect: { $sum: "$topicSummary.numCorrect" }, // sum up numCorrect of the topic from ALL USERS
+            // set up a list of users with their userID, accuracy, numQuestions, numCorrect, totalTime, for the topic
             users: {
+              // se
               $push: {
                 userID: "$userID",
                 accuracy: "$topicSummary.accuracy",
@@ -77,20 +85,20 @@ const userDataRepo = {
         },
         {
           $project: {
-            topic: "$_id",
-            numQuestions: 1,
-            numCorrect: 1,
+            topic: "$_id", // show the topic
+            numQuestions: 1, // show the total number of questions in the topic
+            numCorrect: 1, // show the total number of correct questions in the topic
             accuracy: {
               $cond: [
                 { $eq: ["$numQuestions", 0] }, 0,
                 { $round: [{$multiply: [{ $divide: ["$numCorrect", "$numQuestions"] }, 100] }, 2]}
               ]
-            },
+            }, // calculate the overall accuracy of the topic based on number of correct questions answered
             users: {
               $filter: {
                 input: "$users",
                 as: "user",
-                cond: { $gt: ["$$user.numQuestions", 0] }
+                cond: { $gt: ["$$user.numQuestions", 0] } // user must have attempted at least 1 question in the topic
               }
             }
           }
@@ -100,7 +108,7 @@ const userDataRepo = {
             users: {
               $sortArray: {
                 input: "$users",
-                sortBy: { numQuestions: -1 }
+                sortBy: { numQuestions: -1 } // sort users by numQuestions in descending order
               }
             }
           }
@@ -114,6 +122,7 @@ const userDataRepo = {
   },
 
   // -------------------------------------UPDATES-------------------------------------
+  // returns a new userID (number of users + 1)
   newUserID: async (usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
@@ -125,9 +134,11 @@ const userDataRepo = {
     }
   },
 
+  // creates a new user with the given userID and topicsList
   createUser: async (userID, topicsList, usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
+      // for each topic, make fresh analytics
       const topicSummary = topicsList.map(topic => ({
         topic: topic,  // String value for the topic
         numQuestions: 0,
@@ -138,10 +149,12 @@ const userDataRepo = {
         correctQuestions: []
       }));
   
+      // create a new user with the given userID and fresh analytics
       const newUser = new userDataModel({
         userID: userID,
         topicSummary: topicSummary,
       });
+      // save the new user into the database
       return await newUser.save();
     } catch (e) {
       console.error("Error creating user:", e);
@@ -149,6 +162,7 @@ const userDataRepo = {
     }
   },
 
+  // changes the username of the user with the given userID
   changeUsername: async (userID, newUsername, usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
@@ -162,16 +176,20 @@ const userDataRepo = {
     }
   },
 
+  // updates the user analytics after answering a question
   updateUserAnalytics: async (userID, topic, correct, time, questionID, usersDbName) => {
     try {
       const userDataModel = await getUserDataModel(usersDbName);
       // First update: save the attempted question into the question SET (unique) of the topic
       await userDataModel.updateOne(
+        // Find the user with the given userID
         { userID: userID },
+        // Adds the questionID to the attemptedQuestions array of the topic. Using addtoset to ensure UNIQUE values
         {
           $addToSet: {
             "topicSummary.$[element].attemptedQuestions": questionID,
           },
+          // Increase the total time and the time for the topic
           $inc: {
             totalTime: time,
             "topicSummary.$[element].totalTime": time,
@@ -188,7 +206,9 @@ const userDataRepo = {
 
       if (correct) {
         await userDataModel.updateOne(
+          // Find the user with the given userID
           { userID: userID },
+          // Adds the questionID to the correctQuestions array of the topic. Using addtoset to ensure UNIQUE values
           {
             $addToSet: {
               "topicSummary.$[element].correctQuestions": questionID,
@@ -204,6 +224,8 @@ const userDataRepo = {
         );
       }
 
+      // This step is not included in the first two updateOne operations because the steps NOT GUARANTEED to be sequential.
+      // If the first two operations are done in parallel, the updated topicSummary may not be accurate.
       const updatedTopic = await userDataModel.findOne(
         { userID: userID, "topicSummary.topic": topic },
         { "topicSummary.$": 1 }
@@ -218,6 +240,7 @@ const userDataRepo = {
       await userDataModel.updateOne(
         { userID: userID },
         {
+          // Update the number of questions, correct, and accuracy of the topic
           $set: {
             "topicSummary.$[element].numQuestions": numQuestionsTopic,
             "topicSummary.$[element].numCorrect": numCorrectTopic,

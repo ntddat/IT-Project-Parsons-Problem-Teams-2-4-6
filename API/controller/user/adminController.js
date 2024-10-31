@@ -13,6 +13,7 @@ const adminController = {
     try {
       const usersDbName = await getUsersDbName();
 
+      // Summarise number of questions, accuracy, and users in each topic
       const topicsInfo = await adminService.summariseTopicsInfo(usersDbName);
       if (!topicsInfo.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
@@ -21,6 +22,8 @@ const adminController = {
           error: topicsInfo.error
         });
       }
+
+      // Get the overall number of questions and accuracy
       const overallInfo = await adminService.summariseInfo(topicsInfo.topicsAnalytics);
       if (!overallInfo.success) {
         return res.status(httpCodes.BAD_REQUEST).json({
