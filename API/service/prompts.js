@@ -57,8 +57,6 @@ export function generatePrompt(topic, context, regeneration) {
   if (hasHelperFunction) {
     prompt += "- The code must contain one helper function.\n";
   }  
-  prompt += "- The code MUST contain AT LEAST ONE helper function.\n";
-  prompt += "- You must NOT call that helper function later.\n";
   prompt += "- The code must have only one output, and it must be printed to console at the end of the code.\n";
   prompt += "- The code must be limited to at most 20 lines of code, not including comments.\n"
 
