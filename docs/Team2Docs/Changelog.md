@@ -1,6 +1,7 @@
 # Sprint 1 Release
 ### Format: [Short Description][User Story ID][Commit ID - Author]
 **Feature Development:**
+
 Created a basic front-end skeleton for the application [FUS-3], (741e2d1 - ntddat).
 
 Integrated response handling from the front-end to the interpreter, connecting to Gemini prompting [FUS-3], (347fb44 - MinhNghiaVu).
