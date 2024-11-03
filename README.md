@@ -49,3 +49,6 @@ When all commands are run, if nothing has gone wrong, a localhost link should be
 ## Checking correctness of User's Submissions
 ## Viewing your own Analytics and Performance (if cookies are accepted)
 ## (ADMIN ONLY) Viewing users' overall analytics and performances
+
+# Changelog
+[Versions changelog][Changelog.md]

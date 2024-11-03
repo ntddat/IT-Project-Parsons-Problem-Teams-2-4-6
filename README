@@ -1,7 +1,0 @@
-This assumes you already have node.js installed
-
-Should be able to just run npm install to install all required libraries, if not:
-    Server demon ->npm i --save-dev nodemon
-    Server library ->npm install express
-    String formatting -> npm install string-format
-To start server ->npm run dev
