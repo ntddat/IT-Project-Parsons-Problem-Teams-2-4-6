@@ -1,6 +1,6 @@
 # Sprint 1 Release
 ### Format: [Short Description][User Story ID][Commit ID - Author]
-Feature Development:
+**Feature Development:**
 Created a basic front-end skeleton for the application [FUS-3], (741e2d1 - ntddat).
 
 Integrated response handling from the front-end to the interpreter, connecting to Gemini prompting [FUS-3], (347fb44 - MinhNghiaVu).
@@ -13,7 +13,7 @@ Cleaned up prompt formats and created a JSON output parser for structured data h
 
 Updated background and interface components, aligning with UI Design 3.0 standards [NFUS-1], (3cdd5db - Mokkieee).
 
-Bug Fix:
+**Bug Fix:**
 
 Modified component spacing to support different screen sizes, ensuring responsiveness across devices [NFUS-2], (a4c652f - Mokkieee).
 
@@ -27,7 +27,7 @@ Removed redundant CSV files (koala_data.csv) to streamline project structure [FU
 
 # Sprint 2 Release
 ### Format: [Short Description][User Story ID][Commit ID - Author]
-New Features:
+**New Features:**
 
 Established MongoDB connection [FUS-7], (b0a87e3 - ErnestTayJieJun).
 
@@ -51,7 +51,7 @@ Added the password visibility function in the Admin Login Page [FUS-6], (b141126
 
 Integrated the problem page and generator page with the backend server [FUS-3], (20b8b31 - JiayingLu9).
 
-Bug Fixes:
+**Bug Fixes:**
 
 Addressed the logout issue [FUS-6], (4a37e9a - JiayingLu9).
 
@@ -75,7 +75,7 @@ Solved the issue with the backend not receiving/defining data [FUS-7], (6cd261f 
 
 Fixed the bug where code blocks could not be presented [FUS-3], (d67fc05 - JiayingLu9).
 
-UI/UX Enhancements:
+**UI/UX Enhancements:**
 
 Introduced a new UI design for the generator page [NFUS-1], (dff894f - JiayingLu9).
 
@@ -99,19 +99,19 @@ Adjusted layouts and improved the appearance of various components [NFUS-1], (8d
 
 # Sprint 3 Release
 ### Format: [Short Description][User Story ID][Commit ID - Author]
-Backend integrations:
+**Backend integrations:**
 
 Completed the database connection and optimized the database model [FUS-5], (5b7edc1, 43404ef -MinhNghiaVu)
 
 Created the API for sending student history data and summmay of performanc to frontend [FUS-7], (02b1ebf -ntddat)
 
-New functions:
+**New functions:**
 
 Added new features to the admin dashboard to display student performance, including completed questions, accuracy, and time spent on each topic. Added a bar chart to show the total correct answers by students for each topic [FUS-7],(e085a23,b73d20f -KyaLiu)
 
 Admins can sort students based on student ID, questions, and accuracy [FUS-7],(b73d20f -kyaLiu)
 
-UI/UX Echancements: 
+**UI/UX Echancements:**
 
 Unify fonts on all pages, navigation bar format [NFUS-4], (f0f7e36 -JiayingLu9, c70991b -JiayingLu9, 6622698 f7eb16c -JiayingLu9)
 
@@ -119,7 +119,7 @@ Updated the question page and history page [NFUS-4], (1b2741f -SeeleVollerle, 6f
 
 Changed the color of code blocks based on results, enhancing the intuitiveness of the user interface [NFUS-4], (872e900 -SeeleVollerie)
 
-Bugfix:
+**Bugfix:**
 
 Fixed issues with the timer refresh [FUS-5], (451c440 -dohuyminh, 09b5635 yuhao8, ce69a05 -yuhaokevinliu)
 
