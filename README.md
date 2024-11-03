@@ -8,7 +8,7 @@ A Parsons Problem Generation Website made in collaboration between Teams 2, 4, a
 
 ### Cloning
 ```sh
-git clone https://github.com/MinhNghiaVu/IT-Project-Parsons-Problem-Teams-2-4-6.git
+git clone https://github.com/gcheeumelb/IT-Project-Parsons-Problem-Teams-2-4-6.git
 ```
 
 ### Setting up the .env file
