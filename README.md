@@ -3,7 +3,7 @@ A Parsons Problem Generation Website made in collaboration between Teams 2, 4, a
 
 ## Getting Started
 ### Pre-requisites
-- Node.js (https://github.com/amplication/amplication/blob/master/README.md)
+- Node.js (https://nodejs.org/en/download)
 - Git (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ### Cloning
